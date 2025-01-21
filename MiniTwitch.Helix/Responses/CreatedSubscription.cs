@@ -13,7 +13,8 @@ public class CreatedSubscription : BaseResponse<CreatedSubscription.Info>
     public int MaxTotalCost { get; init; }
 
     public record Condition(
-      long UserId
+      string BroadcasterUserId,
+      string UserId
     );
 
     public record Info(

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Models;
 
 namespace MiniTwitch.Helix.Responses;
@@ -19,7 +20,8 @@ public class EventSubSubscriptions : PaginableResponse<EventSubSubscriptions.Sub
 
     public record Subscription(
         string Id,
-        string Status,
+        [property: JsonConverter(typeof(JsonStringEnumConverter))]
+        EventSubStatus Status,
         string Type,
         string Version,
         Condition Condition,
