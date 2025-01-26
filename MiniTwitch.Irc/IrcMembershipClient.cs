@@ -16,7 +16,7 @@ public sealed class IrcMembershipClient : IAsyncDisposable
 {
     #region Constants
     private const string CONN_URL = "wss://irc-ws.chat.twitch.tv:443";
-    private const string LOG_HEADER = "[MiniTwitch:Membership]";
+    private const string LOG_HEADER = "Irc-Membership";
     #endregion
 
     #region Properties
@@ -24,6 +24,11 @@ public sealed class IrcMembershipClient : IAsyncDisposable
     /// The action to invoke when an exception is caught within an event
     /// </summary>
     public Action<Exception> ExceptionHandler { get; set; } = default!;
+    /// <summary>
+    /// The default logger for <see cref="IrcChannel"/>, only used when <see cref="ILogger"/> is not provided in client options
+    /// <para>Can be toggled with <see cref="DefaultMiniTwitchLogger{T}.Enabled"/></para>
+    /// </summary>
+    public DefaultMiniTwitchLogger<IrcMembershipClient> DefaultLogger { get; } = new();
     /// <summary>
     /// Whether the client is currently connected
     /// </summary>
@@ -64,6 +69,7 @@ public sealed class IrcMembershipClient : IAsyncDisposable
     private readonly List<string> _joinedChannels = new();
     private readonly RateLimitManager _manager;
     private bool _connectInvoked;
+    IDisposable? _loggingScope;
     #endregion
 
     #region Init
@@ -77,6 +83,7 @@ public sealed class IrcMembershipClient : IAsyncDisposable
         _options = clientOptions;
         _ws = new(_options.ReconnectionDelay, 8192);
         _manager = new(clientOptions);
+        _loggingScope = GetLogger().BeginScope(LOG_HEADER);
 
         InternalInt();
     }
@@ -308,9 +315,10 @@ public sealed class IrcMembershipClient : IAsyncDisposable
     #endregion
 
     #region Utils
+    private ILogger GetLogger() => _options.Logger ?? this.DefaultLogger;
     private void LogEventException(Exception ex) => LogException(ex, "🚨 Exception caught in an event:");
-    private void Log(LogLevel level, string template, params object[] properties) => _options.Logger?.Log(level, $"{LOG_HEADER} " + template, properties);
-    private void LogException(Exception ex, string template, params object[] properties) => _options.Logger?.LogError(ex, $"{LOG_HEADER} " + template, properties);
+    private void Log(LogLevel level, string template, params object[] properties) => GetLogger().Log(level, template, properties);
+    private void LogException(Exception ex, string template, params object[] properties) => GetLogger().LogError(ex, template, properties);
     #endregion
 
     /// <inheritdoc/>
@@ -320,5 +328,6 @@ public sealed class IrcMembershipClient : IAsyncDisposable
         _joinedChannels.Clear();
         _connectionWaiter.Dispose();
         _joinChannelWaiter.Dispose();
+        _loggingScope?.Dispose();
     }
 }
