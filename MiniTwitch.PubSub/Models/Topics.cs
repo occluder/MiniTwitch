@@ -39,6 +39,7 @@ public static class Topics
     /// </summary>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic BitsEventsV1(long channelId, string? overrideToken = null) => new($"channel-bits-events-v1.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -49,6 +50,7 @@ public static class Topics
     /// </summary>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic BitsEventsV2(long channelId, string? overrideToken = null) => new($"channel-bits-events-v2.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -59,6 +61,7 @@ public static class Topics
     /// </summary>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic BitsBadgeUnlock(long channelId, string? overrideToken = null) => new($"channel-bits-badge-unlocks.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -81,6 +84,7 @@ public static class Topics
     /// </summary>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic SubscribeEvents(long channelId, string? overrideToken = null) => new($"channel-subscribe-events-v1.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -92,6 +96,7 @@ public static class Topics
     /// <param name="moderatorId">ID of the moderator observing the events</param>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic AutomodQueue(long moderatorId, long channelId, string? overrideToken = null) => new($"automod-queue.{moderatorId}.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -104,6 +109,7 @@ public static class Topics
     /// <param name="moderatorId">ID of the moderator observing the events</param>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic LowTrustUsers(long moderatorId, long channelId, string? overrideToken = null) => new($"low-trust-users.{moderatorId}.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -115,6 +121,7 @@ public static class Topics
     /// <param name="moderatorId">ID of the moderator observing the events</param>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic ModerationNotifications(long moderatorId, long channelId, string? overrideToken = null) => new($"user-moderation-notifications.{moderatorId}.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
@@ -228,6 +235,7 @@ public static class Topics
     /// </summary>
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    [Obsolete("Twitch will decommission all official PubSub topics on April 14, 2025.")]
     public static Topic Following(long channelId, string? overrideToken = null) => new($"following.{channelId}") { OverrideToken = overrideToken };
     /// <summary>
     /// Events that can be triggered by this topic:
