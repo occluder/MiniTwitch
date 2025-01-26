@@ -41,6 +41,7 @@ public sealed class HelixApiClient
     {
         _httpClient.DefaultRequestHeaders.Remove("Authorization");
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {newToken}");
+        _httpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrHigher;
         this.UserId = newUserId;
         _tokenInfo = null;
     }
