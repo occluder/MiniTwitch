@@ -1,5 +1,15 @@
 # MiniTwitch.Helix Changelog
 
+## 1.0.1
+### Minor changes
+- Updated relevant eventsub models to include conduit fields/properties.
+- Added missing content classification label ids.
+- Set `DefaultVersionPolicy` for API calls to `HttpVersionPolicy.RequestVersionOrHigher`.
+
+### Fixes
+- Fixed several deserialization issues and missing properties on `ChannelsInformation.Information`.
+***
+
 ## 1.0.0
 - No longer in pre-release!
 - Added some missing content classification ids (#136)
