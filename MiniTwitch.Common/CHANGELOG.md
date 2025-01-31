@@ -1,5 +1,11 @@
 # MiniTwitch.Common Changelog
 
+## 2.0.1
+
+### Minor changes
+- Updated the default logger to print scopes.
+***
+
 ## 2.0.0
 This release marks the removal of .NET 6 and .NET 7 as target frameworks, as both versions are out-of-support by now.
 ***
