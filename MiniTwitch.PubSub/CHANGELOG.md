@@ -1,5 +1,10 @@
 # MiniTwitch.PubSub Changelog
 
+## 2.1.0
+### Minor changes
+- 'Official' PubSub topics that are scheduled for decommission by Twitch are now marked as obsolete.
+***
+
 ## 2.0.0
 This release marks the removal of .NET 6 and .NET 7 as target frameworks, as both versions are out-of-support by now.
 ***
