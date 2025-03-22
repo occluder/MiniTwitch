@@ -12,16 +12,13 @@ public class CustomRewardRedemptions : PaginableResponse<CustomRewardRedemptions
         long BroadcasterId,
         [property: JsonPropertyName("user_name")] string UserDisplayName,
         [property: JsonPropertyName("user_login")] string UserName,
-      long UserId,
+        long UserId,
         string Id,
         string UserInput,
         DateTime RedeemedAt,
-        RedemptionReward Reward
-    )
-    {
-        internal string status = "None";
-        public RewardRedemptionStatus Status => Enum.Parse<RewardRedemptionStatus>(status);
-    };
+        RedemptionReward Reward,
+        RewardRedemptionStatus Status
+    );
 
     public record RedemptionReward(
         string Title,

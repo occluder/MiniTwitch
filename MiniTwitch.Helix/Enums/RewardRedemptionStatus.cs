@@ -1,5 +1,8 @@
-﻿namespace MiniTwitch.Helix.Enums;
+﻿using System.Text.Json.Serialization;
 
+namespace MiniTwitch.Helix.Enums;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RewardRedemptionStatus
 {
     CANCELED,

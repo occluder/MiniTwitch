@@ -9,7 +9,7 @@ public class CustomReward : BaseResponse<CustomReward.Reward>
         [property: JsonPropertyName("broadcaster_name")] string BroadcasterDisplayName,
         [property: JsonPropertyName("broadcaster_login")] string BroadcasterName,
         long BroadcasterId,
-        string RewardId,
+        string Id,
         Image? Image,
         string BackgroundColor,
         bool IsEnabled,
