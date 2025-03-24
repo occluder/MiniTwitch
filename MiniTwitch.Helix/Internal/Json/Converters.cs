@@ -101,21 +101,20 @@ internal class EnumConverter<TEnum> : JsonConverter<TEnum>
     {
         if (reader.TokenType == JsonTokenType.String)
         {
-            ReadEnum(reader.GetString());
+            return ReadEnum(reader.GetString());
         }
 
-        throw new JsonException();
+        throw new JsonException($"Expected string token but got {reader.TokenType}");
     }
-
 
     internal static TEnum ReadEnum(string? enumString)
     {
         if (Enum.TryParse(typeof(TEnum), SnakeCase.Instance.ConvertFromCase(enumString), out object? enumMember))
         {
-            return (TEnum)enumMember!;
+            return (TEnum)enumMember;
         }
 
-        return default!;
+        throw new JsonException($"Cannot convert '{enumString}' to enum {typeof(TEnum).Name}");
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
