@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using MiniTwitch.Helix.Enums;
+using MiniTwitch.Helix.Internal.Json;
 using MiniTwitch.Helix.Models;
 
 namespace MiniTwitch.Helix.Responses;
@@ -14,13 +15,14 @@ public class EventSubSubscriptions : PaginableResponse<EventSubSubscriptions.Sub
     public int Total { get; init; }
 
     public record Condition(
-        [property: JsonPropertyName("broadcaster_user_id")] long BroadcasterId,
-      long UserId
+        [property: JsonPropertyName("broadcaster_user_id")]
+        string BroadcasterId,
+        string UserId
     );
 
     public record Subscription(
         string Id,
-        [property: JsonConverter(typeof(JsonStringEnumConverter))]
+        [property: JsonConverter(typeof(EnumConverter<EventSubStatus>))]
         EventSubStatus Status,
         string Type,
         string Version,
@@ -32,6 +34,10 @@ public class EventSubSubscriptions : PaginableResponse<EventSubSubscriptions.Sub
 
     public record Transport(
         string Method,
-        string Callback
+        string? Callback,
+        string? Secret,
+        string? SessionId,
+        string? ConnectedAt,
+        string? DisconnectedAt
     );
 }
