@@ -63,7 +63,8 @@ internal class LongConverter : JsonConverter<long>
         return long.TryParse(chars, out var l) ? l : default;
     }
 
-    public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) => writer.WriteStringValue(value.ToString());
+    public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.ToString());
 }
 
 /// <summary>
@@ -89,7 +90,8 @@ internal class IntConverter : JsonConverter<int>
         return int.TryParse(chars, out var i) ? i : default;
     }
 
-    public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options) => writer.WriteStringValue(value.ToString());
+    public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.ToString());
 }
 
 /// <summary>
@@ -114,7 +116,7 @@ internal class EnumConverter<TEnum> : JsonConverter<TEnum>
             return (TEnum)enumMember;
         }
 
-        throw new JsonException($"Cannot convert '{enumString}' to enum {typeof(TEnum).Name}");
+        return default!;
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
@@ -134,7 +136,8 @@ internal class TimeSpanToSeconds : JsonConverter<TimeSpan>
     public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         => throw new NotSupportedException("Converter should only be used for writing");
 
-    public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options) => writer.WriteNumberValue(AsSeconds(value));
+    public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options) =>
+        writer.WriteNumberValue(AsSeconds(value));
 
     internal static int AsSeconds(TimeSpan ts) => (int)ts.TotalSeconds;
 }
