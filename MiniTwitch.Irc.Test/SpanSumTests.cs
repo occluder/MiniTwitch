@@ -77,6 +77,7 @@ public class SpanSumTests
         { (int)Tags.SourceBadges, "source-badges" },
         { (int)Tags.SourceId, "source-id" },
         { (int)Tags.SourceRoomId, "source-room-id" },
+        { (int)Tags.SourceOnly, "source-only" },
     };
 
     [Fact]

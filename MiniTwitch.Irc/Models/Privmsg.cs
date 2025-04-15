@@ -153,6 +153,7 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
         string sourceBadges = string.Empty;
         string sourceId = string.Empty;
         long sourceRoomId = 0;
+        bool sourceOnly = false;
 
         using IrcTags tags = message.ParseTags();
         foreach (IrcTag tag in tags)
@@ -339,6 +340,11 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
                 case (int)Tags.SourceRoomId:
                     sourceRoomId = TagHelper.GetLong(tagValue);
                     break;
+
+                //source-only
+                case (int)Tags.SourceOnly:
+                    sourceOnly = TagHelper.GetBool(tagValue);
+                    break;
             }
         }
 
@@ -393,6 +399,7 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
             Badges = sourceBadges,
             ChannelId = sourceRoomId,
             MessageId = sourceId,
+            SourceOnly = sourceOnly
         };
     }
 
