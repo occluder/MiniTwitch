@@ -73,4 +73,6 @@ internal enum Tags
     SourceId = 104305,
     //privmsg: source-room-id
     SourceRoomId = 160655,
+    //privmsg: source-only
+    SourceOnly = 132480,
 }
