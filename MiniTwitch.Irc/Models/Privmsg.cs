@@ -399,6 +399,7 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
             Badges = sourceBadges,
             ChannelId = sourceRoomId,
             MessageId = sourceId,
+            SourceOnly = sourceOnly
         };
     }
 
