@@ -3,21 +3,15 @@ using MiniTwitch.Helix.Internal.Json;
 
 namespace MiniTwitch.Helix.Requests;
 
-public class ChatMessage
+public class ChatMessage(long broadcasterId, string message, string? replyParentMessageId = null, bool forSourceOnly = false)
 {
     [JsonConverter(typeof(LongConverter))]
-    public long BroadcasterId { get; }
-    public string Message { get; }
-    public string? ReplyParentMessageId { get; }
+    public long BroadcasterId { get; } = broadcasterId;
+    public string Message { get; } = message;
+    public string? ReplyParentMessageId { get; } = replyParentMessageId;
+    public bool ForSourceOnly { get; } = forSourceOnly;
     /// <summary>
     /// This value is assigned automatically
     /// </summary>
     public long SenderId { get; internal set; }
-
-    public ChatMessage(long broadcasterId, string message, string? replyParentMessageId = null)
-    {
-        this.BroadcasterId = broadcasterId;
-        this.Message = message;
-        this.ReplyParentMessageId = replyParentMessageId;
-    }
 }
