@@ -66,4 +66,5 @@ internal static class QueryParams
     public const string ConduitId = "conduit_id";
     public const string UnbanRequestId = "unban_request_id";
     public const string ResolutionText = "resolution_text";
+    public const string SubscriptionId = "subscription_id";
 }

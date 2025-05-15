@@ -1169,13 +1169,15 @@ public class HelixWrapper
         EventSubStatus? status = null,
         string? type = null,
         long? userId = null,
+        string? subscriptionId = null,
         CancellationToken cancellationToken = default)
     {
         HelixEndpoint endpoint = Endpoints.GetEventSubSubscriptions;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.Status, SnakeCase.Instance.ConvertToCase(status.ToString()))
             .AddParam(QueryParams.Type, type)
-            .AddParam(QueryParams.UserId, userId);
+            .AddParam(QueryParams.UserId, userId)
+            .AddParam(QueryParams.SubscriptionId, subscriptionId);
 
         return HelixResultFactory.Create<EventSubSubscriptions>(Client, request, endpoint, cancellationToken);
     }
