@@ -1,4 +1,6 @@
-﻿namespace MiniTwitch.PubSub.Interfaces;
+﻿using MiniTwitch.PubSub.Enums;
+
+namespace MiniTwitch.PubSub.Interfaces;
 
 /// <summary>
 /// Represents viewer count information for an online stream
@@ -13,4 +15,12 @@ public interface IViewerCountUpdate
     /// The amount of viewers currently watching the stream
     /// </summary>
     int Viewers { get; }
+    /// <summary>
+    /// The amount of viewers currently watching the stream of the collaboration channel
+    /// </summary>
+    int CollaborationViewers { get; }
+    /// <summary>
+    /// The collaboration status of the channel
+    /// </summary>
+    CollaborationStatus CollaborationStatus { get; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using MiniTwitch.PubSub.Enums;
 using MiniTwitch.PubSub.Interfaces;
 
 namespace MiniTwitch.PubSub.Payloads;
@@ -25,4 +26,8 @@ public readonly struct VideoPlayback : IStreamUp, IViewerCountUpdate, ICommercia
     /// <inheritdoc/>
     [JsonPropertyName("scheduled")]
     public bool Scheduled { get; init; }
+    /// <inheritdoc/>
+    public int CollaborationViewers { get; init; }
+    /// <inheritdoc/>
+    public CollaborationStatus CollaborationStatus { get; init; }
 }
