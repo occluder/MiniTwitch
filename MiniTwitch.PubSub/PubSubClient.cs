@@ -267,6 +267,11 @@ public sealed class PubSubClient : IAsyncDisposable
     {
         NumberHandling = JsonNumberHandling.AllowReadingFromString,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower),
+        }
     };
     private readonly WaitableEvents[] _topicResponses = new[]
     {
