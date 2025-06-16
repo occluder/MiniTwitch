@@ -76,6 +76,7 @@ jobs:
             project-dir: "MiniTwitch.PubSub"
             flag: "pubsub-changed"
       fail-fast: false
+    
     if: ${{ needs.detect-changes.outputs[matrix.flag] == 'true' }}
     
     steps:
@@ -97,11 +98,17 @@ jobs:
         run: |
           TIMESTAMP=$(date +%s)
           echo "new_version=${{ steps.get-version.outputs.version }}-$TIMESTAMP" >> $GITHUB_OUTPUT
+
+      - name: Build project
+        working-directory: ${{ matrix.project-dir }}
+        run: dotnet build --configuration Release
           
       - name: Pack project
+        working-directory: ${{ matrix.project-dir }}
         run: |
-          dotnet pack ${{ matrix.project-dir }}/${{ matrix.project-name }}.csproj \
+          dotnet pack \
             --configuration Release \
+            --no-build \
             -p:PackageVersion=${{ steps.prerelease-version.outputs.new_version }}
             
       - name: Push to NuGet
