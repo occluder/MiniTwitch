@@ -66,18 +66,20 @@ jobs:
           - project-name: "MiniTwitch.Common"
             project-dir: "MiniTwitch.Common"
             flag: "common-changed"
+            if: ${{ needs.detect-changes.outputs.common-changed == 'true' }}
           - project-name: "MiniTwitch.Helix"
             project-dir: "MiniTwitch.Helix"
             flag: "helix-changed"
+            if: ${{ needs.detect-changes.outputs.helix-changed == 'true' }}
           - project-name: "MiniTwitch.Irc"
             project-dir: "MiniTwitch.Irc"
             flag: "irc-changed"
+            if: ${{ needs.detect-changes.outputs.irc-changed == 'true' }}
           - project-name: "MiniTwitch.PubSub"
             project-dir: "MiniTwitch.PubSub"
             flag: "pubsub-changed"
+            if: ${{ needs.detect-changes.outputs.pubsub-changed == 'true' }}
       fail-fast: false
-    
-    if: ${{ needs.detect-changes.outputs[matrix.flag] == 'true' }}
     
     steps:
       - uses: actions/checkout@v4
