@@ -99,7 +99,7 @@ jobs:
         id: prerelease-version
         run: |
           TIMESTAMP=$(date +%s)
-          echo "new_version=${{ steps.get-version.outputs.version }}-$TIMESTAMP" >> $GITHUB_OUTPUT
+          echo "new_version=${{ steps.get-version.outputs.version }}-ts.$TIMESTAMP" >> $GITHUB_OUTPUT
 
       - name: Build project
         working-directory: ${{ matrix.project-dir }}
