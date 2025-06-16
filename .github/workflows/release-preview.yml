@@ -1,0 +1,111 @@
+name: Publish NuGet Prereleases
+
+on:
+  push:
+    paths:
+      - 'MiniTwitch.Common/**'
+      - 'MiniTwitch.Helix/**'
+      - 'MiniTwitch.Irc/**'
+      - 'MiniTwitch.PubSub/**'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      common-changed: ${{ steps.check-common.outputs.changed }}
+      helix-changed: ${{ steps.check-helix.outputs.changed }}
+      irc-changed: ${{ steps.check-irc.outputs.changed }}
+      pubsub-changed: ${{ steps.check-pubsub.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check MiniTwitch.Common changes
+        id: check-common
+        run: |
+          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.Common/ | wc -l) -gt 0 ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check MiniTwitch.Helix changes
+        id: check-helix
+        run: |
+          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.Helix/ | wc -l) -gt 0 ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check MiniTwitch.Irc changes
+        id: check-irc
+        run: |
+          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.Irc/ | wc -l) -gt 0 ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check MiniTwitch.PubSub changes
+        id: check-pubsub
+        run: |
+          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.PubSub/ | wc -l) -gt 0 ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - project-name: "MiniTwitch.Common"
+            project-dir: "MiniTwitch.Common"
+            flag: "common-changed"
+          - project-name: "MiniTwitch.Helix"
+            project-dir: "MiniTwitch.Helix"
+            flag: "helix-changed"
+          - project-name: "MiniTwitch.Irc"
+            project-dir: "MiniTwitch.Irc"
+            flag: "irc-changed"
+          - project-name: "MiniTwitch.PubSub"
+            project-dir: "MiniTwitch.PubSub"
+            flag: "pubsub-changed"
+      fail-fast: false
+    if: ${{ needs.detect-changes.outputs[matrix.flag] == 'true' }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
+          
+      - name: Extract Package Version
+        id: get-version
+        run: |
+          VERSION=$(grep '<PackageVersion>' ${{ matrix.project-dir }}/${{ matrix.project-name }}.csproj | sed -E 's/.*<PackageVersion>(.*)<\/PackageVersion>.*/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
+      - name: Generate prerelease version
+        id: prerelease-version
+        run: |
+          TIMESTAMP=$(date +%s)
+          echo "new_version=${{ steps.get-version.outputs.version }}-$TIMESTAMP" >> $GITHUB_OUTPUT
+          
+      - name: Pack project
+        run: |
+          dotnet pack ${{ matrix.project-dir }}/${{ matrix.project-name }}.csproj \
+            --configuration Release \
+            -p:PackageVersion=${{ steps.prerelease-version.outputs.new_version }}
+            
+      - name: Push to NuGet
+        run: |
+          dotnet nuget push ${{ matrix.project-dir }}/bin/Release/${{ matrix.project-name }}.${{ steps.prerelease-version.outputs.new_version }}.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json
