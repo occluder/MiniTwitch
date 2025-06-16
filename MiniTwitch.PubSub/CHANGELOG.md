@@ -1,5 +1,10 @@
 # MiniTwitch.PubSub Changelog
 
+## 2.1.1
+### Minor changes
+- Added collaboration viewer properties and status enum (#163)
+***
+
 ## 2.1.0
 ### Minor changes
 - 'Official' PubSub topics that are scheduled for decommission by Twitch are now marked as obsolete.
