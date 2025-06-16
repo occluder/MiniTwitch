@@ -1,5 +1,15 @@
 # MiniTwitch.Helix Changelog
 
+## 1.0.2
+### Minor Changes
+- Added ForSourceOnly property to ChatMessage (#161)
+- Added subscription_id to GetEventSubSubscriptions response (#164)
+
+### Fixes
+- Fixed CustomReward related issues (#157)
+- Fixed enum converter parsing and add more detailed exceptions (#158)
+***
+
 ## 1.0.1
 ### Minor changes
 - Updated relevant eventsub models to include conduit fields/properties.
