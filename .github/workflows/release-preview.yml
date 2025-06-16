@@ -84,10 +84,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup .NET 8
+      - name: Setup .NET 9
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.0.x
           
       - name: Extract Package Version
         id: get-version
