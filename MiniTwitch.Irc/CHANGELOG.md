@@ -1,5 +1,10 @@
 # MiniTwitch.Irc changelog
 
+## 2.0.2
+### Minor changes
+- Added source-only tag (#160)
+***
+
 ## 2.0.1
 ### Minor changes
 - Updated logging in `IrcMembershipClient`
