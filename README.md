@@ -154,7 +154,7 @@ public class Program
 }
 ```
 
-# MiniTwitch.Helix (Pre-release)
+# MiniTwitch.Helix
 
 MiniTwitch.Helix conveniently wraps the Twitch Helix API and exposes them through the `HelixWrapper`class.
 ## Features
@@ -192,7 +192,7 @@ public class Program
 
     static async Task Main()
     {
-        Helix = new HelixWrapper("wjm4xzd5fxp4ilaykzmmwc3dett9vm", 783267696);
+        Helix = new HelixWrapper("mytoken", 783267696);
 
         var emotes = await GetAllMyEmotes();
     }
