@@ -260,8 +260,11 @@ public sealed class PubSubClient : IAsyncDisposable
     /// <para>Requires topic: <see cref="Topics.CommunityMoments(long, string?)"/></para>
     /// </summary>
     public event Func<ChannelId, CommunityMoments, ValueTask> OnCommunityMoment = default!;
-
-    public event Func<ChannelId, ClipsLeaderboard, ValueTask> OnClipsLeaderboardUpdate = default!;
+    /// <summary>
+    /// Occurs when the clips leaderboard for a specific channel changes.
+    /// <para>Requires topic: <see cref="Topics.ChannelClipsLeaderboard(long, string?)"/></para>
+    /// </summary>
+    public event Func<ChannelId, ClipsLeaderboard, ValueTask> OnClipsLeaderboardChange = default!;
     #endregion
 
     #region Fields
@@ -787,7 +790,7 @@ public sealed class PubSubClient : IAsyncDisposable
 
                     case MessageTopic.LeaderboardEvents:
                         var leaderboard = data.Span.ReadJsonMessage<ClipsLeaderboard>(options: _sOptions, logger: GetLogger());
-                        OnClipsLeaderboardUpdate?.Invoke(info[0], leaderboard).StepOver(GetExceptionHandler());
+                        OnClipsLeaderboardChange?.Invoke(info[0], leaderboard).StepOver(GetExceptionHandler());
                         break;
                 }
 

@@ -247,5 +247,14 @@ public static class Topics
     /// <param name="channelId">ID of the channel to observe the events in</param>
     /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
     public static Topic CommunityMoments(long channelId, string? overrideToken = null) => new($"community-moments-channel-v1.{channelId}") { OverrideToken = overrideToken };
-    public static Topic ChannelClipsLeaderBoard(long channelId, string? overrideToken = null) => new($"leaderboard-events-v1.clips-{channelId}") { OverrideToken = overrideToken };
+    /// <summary>
+    /// Events that can be triggered by this topic:
+    /// <list type="bullet">
+    /// <item><see cref="PubSubClient.OnClipsLeaderboardChange"/></item>
+    /// </list>
+    /// Authentication: No authentication required
+    /// </summary>
+    /// <param name="channelId">ID of the channel to observe the events in</param>
+    /// <param name="overrideToken">Optional: An access token to override the provided token in <see cref="PubSubClient"/></param>
+    public static Topic ChannelClipsLeaderboard(long channelId, string? overrideToken = null) => new($"leaderboard-events-v1.clips-{channelId}") { OverrideToken = overrideToken };
 }
