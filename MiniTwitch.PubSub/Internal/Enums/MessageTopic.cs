@@ -12,6 +12,7 @@ internal enum MessageTopic
     PinnedChatUpdates = 236768,
     BitsEventsV1 = 210474,
     BitsEventsV2 = 210573,
+    LeaderboardEvents = 222372,
     ChannelPredictions = 243488,
     ModeratorActions = 230868,
     ChannelPoints = 240471,

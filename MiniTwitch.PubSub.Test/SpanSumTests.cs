@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using MiniTwitch.Common.Extensions;
 using MiniTwitch.PubSub.Internal.Enums;
-using Newtonsoft.Json.Linq;
 using Xunit.Sdk;
 
 namespace MiniTwitch.PubSub.Test;
@@ -28,6 +27,7 @@ public class SpanSumTests
         { (int)MessageTopic.CommunityChannelPoints, "community-points-channel-v1" },
         { (int)MessageTopic.Following, "following" },
         { (int)MessageTopic.CommunityMoments, "community-moments-channel-v1" },
+        { (int)MessageTopic.LeaderboardEvents, "leaderboard-events-v1" }
     };
 
     private static readonly Dictionary<int, string> _types = new()
