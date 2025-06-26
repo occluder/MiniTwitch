@@ -26,7 +26,8 @@ jobs:
       - name: Check MiniTwitch.Common changes
         id: check-common
         run: |
-          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.Common/ | wc -l) -gt 0 ]; then
+          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.Common/)
+          if [ -n "$changes" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -35,7 +36,8 @@ jobs:
       - name: Check MiniTwitch.Helix changes
         id: check-helix
         run: |
-          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.Helix/ | wc -l) -gt 0 ]; then
+          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.Helix/)
+          if [ -n "$changes" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -44,7 +46,8 @@ jobs:
       - name: Check MiniTwitch.Irc changes
         id: check-irc
         run: |
-          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.Irc/ | wc -l) -gt 0 ]; then
+          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.Irc/)
+          if [ -n "$changes" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -53,7 +56,8 @@ jobs:
       - name: Check MiniTwitch.PubSub changes
         id: check-pubsub
         run: |
-          if [ $(git diff --name-only ${{ github.event.before }} HEAD -- MiniTwitch.PubSub/ | wc -l) -gt 0 ]; then
+          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.PubSub/)
+          if [ -n "$changes" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
