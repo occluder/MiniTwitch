@@ -104,8 +104,22 @@ jobs:
       - name: Generate prerelease version
         id: prerelease-version
         run: |
+          BASE_VERSION=$(echo "${{ steps.get-version.outputs.version }}" | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+')
+          if [ -z "$BASE_VERSION" ]; then
+            echo "Error: Could not parse base version from ${{ steps.get-version.outputs.version }}"
+            exit 1
+          fi
+          
+          IFS='.' read -ra VERSION_PARTS <<< "$BASE_VERSION"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
+          
+          NEW_PATCH=$((PATCH + 1))
           TIMESTAMP=$(date +%s)
-          echo "new_version=${{ steps.get-version.outputs.version }}-ts.$TIMESTAMP" >> $GITHUB_OUTPUT
+          
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH-ts.$TIMESTAMP"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build project
         working-directory: ${{ matrix.project-dir }}
