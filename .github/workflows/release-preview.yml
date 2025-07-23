@@ -18,6 +18,7 @@ jobs:
       helix-changed: ${{ steps.check-helix.outputs.changed }}
       irc-changed: ${{ steps.check-irc.outputs.changed }}
       pubsub-changed: ${{ steps.check-pubsub.outputs.changed }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,28 +64,31 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Generate project matrix
+        id: set-matrix
+        run: |
+          matrix={}
+          if [ "${{ steps.check-common.outputs.changed }}" = "true" ]; then
+            matrix=$(echo $matrix | jq -c '. += [{"project-name": "MiniTwitch.Common", "project-dir": "MiniTwitch.Common"}]')
+          fi
+          if [ "${{ steps.check-helix.outputs.changed }}" = "true" ]; then
+            matrix=$(echo $matrix | jq -c '. += [{"project-name": "MiniTwitch.Helix", "project-dir": "MiniTwitch.Helix"}]')
+          fi
+          if [ "${{ steps.check-irc.outputs.changed }}" = "true" ]; then
+            matrix=$(echo $matrix | jq -c '. += [{"project-name": "MiniTwitch.Irc", "project-dir": "MiniTwitch.Irc"}]')
+          fi
+          if [ "${{ steps.check-pubsub.outputs.changed }}" = "true" ]; then
+            matrix=$(echo $matrix | jq -c '. += [{"project-name": "MiniTwitch.PubSub", "project-dir": "MiniTwitch.PubSub"}]')
+          fi
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "Generated matrix: $matrix"
+
   publish:
     needs: detect-changes
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - project-name: "MiniTwitch.Common"
-            project-dir: "MiniTwitch.Common"
-            flag: "common-changed"
-            if: ${{ needs.detect-changes.outputs.common-changed == 'true' }}
-          - project-name: "MiniTwitch.Helix"
-            project-dir: "MiniTwitch.Helix"
-            flag: "helix-changed"
-            if: ${{ needs.detect-changes.outputs.helix-changed == 'true' }}
-          - project-name: "MiniTwitch.Irc"
-            project-dir: "MiniTwitch.Irc"
-            flag: "irc-changed"
-            if: ${{ needs.detect-changes.outputs.irc-changed == 'true' }}
-          - project-name: "MiniTwitch.PubSub"
-            project-dir: "MiniTwitch.PubSub"
-            flag: "pubsub-changed"
-            if: ${{ needs.detect-changes.outputs.pubsub-changed == 'true' }}
+        project: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
       fail-fast: false
     
     steps:
@@ -98,7 +102,7 @@ jobs:
       - name: Extract Package Version
         id: get-version
         run: |
-          VERSION=$(grep '<PackageVersion>' ${{ matrix.project-dir }}/${{ matrix.project-name }}.csproj | sed -E 's/.*<PackageVersion>(.*)<\/PackageVersion>.*/\1/')
+          VERSION=$(grep '<PackageVersion>' ${{ matrix.project.project-dir }}/${{ matrix.project.project-name }}.csproj | sed -E 's/.*<PackageVersion>(.*)<\/PackageVersion>.*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           
       - name: Generate prerelease version
@@ -122,11 +126,11 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build project
-        working-directory: ${{ matrix.project-dir }}
+        working-directory: ${{ matrix.project.project-dir }}
         run: dotnet build --configuration Release
           
       - name: Pack project
-        working-directory: ${{ matrix.project-dir }}
+        working-directory: ${{ matrix.project.project-dir }}
         run: |
           dotnet pack \
             --configuration Release \
@@ -135,6 +139,6 @@ jobs:
             
       - name: Push to NuGet
         run: |
-          dotnet nuget push ${{ matrix.project-dir }}/bin/Release/${{ matrix.project-name }}.${{ steps.prerelease-version.outputs.new_version }}.nupkg \
+          dotnet nuget push ${{ matrix.project.project-dir }}/bin/Release/${{ matrix.project.project-name }}.${{ steps.prerelease-version.outputs.new_version }}.nupkg \
             --api-key ${{ secrets.NUGET_API_KEY }} \
             --source https://api.nuget.org/v3/index.json
