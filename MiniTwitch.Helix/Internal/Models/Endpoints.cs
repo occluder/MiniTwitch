@@ -861,4 +861,10 @@ internal static class Endpoints
         Method = HttpMethod.Get,
         Route = "/shared_chat/session"
     };
+
+    public static readonly HelixEndpoint GetHypeTrainStatus = new()
+    {
+        Method = HttpMethod.Get,
+        Route = "/hypetrain/status",
+    };
 }

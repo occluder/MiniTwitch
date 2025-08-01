@@ -2717,4 +2717,17 @@ public class HelixWrapper
 
         return HelixResultFactory.Create<SharedChatSession>(Client, request, endpoint, cancellationToken);
     }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference/#get-hype-train-status">API Reference</see>
+    /// <para>The broadcaster_id parameter is omitted because it must match the caller's user id. The <see cref="UserId"/> property is used for the parameter.</para>
+    /// </summary>
+    public Task<HelixResult<HypeTrainStatus>> GetHypeTrainStatus(CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetHypeTrainStatus;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, this.UserId);
+
+        return HelixResultFactory.Create<HypeTrainStatus>(Client, request, endpoint, cancellationToken);
+    }
 }
