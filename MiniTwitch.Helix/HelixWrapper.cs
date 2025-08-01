@@ -2717,4 +2717,13 @@ public class HelixWrapper
 
         return HelixResultFactory.Create<SharedChatSession>(Client, request, endpoint, cancellationToken);
     }
+
+    public Task<HelixResult<HypeTrainStatus>> GetHypeTrainStatus(CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetHypeTrainStatus;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, this.UserId);
+
+        return HelixResultFactory.Create<HypeTrainStatus>(Client, request, endpoint, cancellationToken);
+    }
 }
