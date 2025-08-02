@@ -2720,7 +2720,7 @@ public class HelixWrapper
 
     /// <summary>
     /// <see href="https://dev.twitch.tv/docs/api/reference/#get-hype-train-status">API Reference</see>
-    /// <para>The broadcaster_id parameter is omitted because it must match the caller's user id. The <see cref="UserId"/> property is used for the parameter.</para>
+    /// <para>Note: <see cref="UserId"/> is automatically supplied as broadcaster_id</para>
     /// </summary>
     public Task<HelixResult<HypeTrainStatus>> GetHypeTrainStatus(CancellationToken cancellationToken = default)
     {
