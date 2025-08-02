@@ -27,41 +27,28 @@ jobs:
       - name: Check MiniTwitch.Common changes
         id: check-common
         run: |
-          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.Common/)
-          if [ -n "$changes" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
+          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- MiniTwitch.Common; then
             echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Check MiniTwitch.Helix changes
         id: check-helix
         run: |
-          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.Helix/)
-          if [ -n "$changes" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
+          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- MiniTwitch.Helix; then
             echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Check MiniTwitch.Irc changes
         id: check-irc
         run: |
-          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.Irc/)
-          if [ -n "$changes" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
+          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- MiniTwitch.Irc; then
             echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Check MiniTwitch.PubSub changes
-        id: check-pubsub
-        run: |
-          changes=$(git log -1 --name-only --pretty=format: ${{ github.sha }} -- MiniTwitch.PubSub/)
-          if [ -n "$changes" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
           else
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Generate project matrix
