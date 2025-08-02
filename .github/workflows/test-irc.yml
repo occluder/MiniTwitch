@@ -3,8 +3,14 @@ name: Test (Irc)
 on:
   push:
     branches: [ "master" ]
+    paths:
+    - 'MiniTwitch.Irc/**'
+    - 'MiniTwitch.Irc.Test/**'
   pull_request:
     branches: [ "master" ]
+    paths:
+    - 'MiniTwitch.Irc/**'
+    - 'MiniTwitch.Irc.Test/**'
 
 jobs:
 

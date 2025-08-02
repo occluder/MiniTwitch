@@ -3,8 +3,14 @@ name: Test (Helix)
 on:
   push:
     branches: [ "master" ]
+    paths:
+    - 'MiniTwitch.Helix/**'
+    - 'MiniTwitch.Helix.Test/**'
   pull_request:
     branches: [ "master" ]
+    paths:
+    - 'MiniTwitch.Helix/**'
+    - 'MiniTwitch.Helix.Test/**'
 
 jobs:
 

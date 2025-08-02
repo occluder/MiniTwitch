@@ -3,8 +3,14 @@ name: Test (PubSub)
 on:
   push:
     branches: [ "master" ]
+    paths:
+    - 'MiniTwitch.PubSub/**'
+    - 'MiniTwitch.PubSub.Test/**'
   pull_request:
     branches: [ "master" ]
+    paths:
+    - 'MiniTwitch.PubSub/**'
+    - 'MiniTwitch.PubSub.Test/**'
 
 jobs:
 
