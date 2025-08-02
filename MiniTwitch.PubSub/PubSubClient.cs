@@ -284,7 +284,7 @@ public sealed class PubSubClient : IAsyncDisposable
         WaitableEvents.ERR_BADTOPIC, WaitableEvents.ERR_SERVER, WaitableEvents.ERR_TOO_MANY_TOPICS
     };
     private readonly AsyncEventCoordinator<WaitableEvents> _coordinator = new();
-    private readonly HashSet<Topic> _topics = new(10);
+    private readonly HashSet<Topic> _topics = new(5);
     private readonly MessageTemplates _templates;
     private readonly WebSocketClient _ws;
     private readonly ILogger? _logger;
