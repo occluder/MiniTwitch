@@ -67,7 +67,7 @@ jobs:
       - name: Generate project matrix
         id: set-matrix
         run: |
-          matrix={}
+          matrix='[]'
           if [ "${{ steps.check-common.outputs.changed }}" = "true" ]; then
             matrix=$(echo $matrix | jq -c '. += [{"project-name": "MiniTwitch.Common", "project-dir": "MiniTwitch.Common"}]')
           fi
