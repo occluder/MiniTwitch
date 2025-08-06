@@ -2,13 +2,11 @@
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using MiniTwitch.Common.Internal.Models;
 
 namespace MiniTwitch.Common;
-public sealed class WebSocketClient : IAsyncDisposable
+public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposable
 {
     #region Properties
-    internal static ArrayPool<byte> BytePool { get; } = ArrayPool<byte>.Create(4096, 8);
     public bool IsConnected => _client is not null && _client.State == WebSocketState.Open;
     #endregion
 
@@ -25,23 +23,25 @@ public sealed class WebSocketClient : IAsyncDisposable
     private readonly SemaphoreSlim _reconnectionLock = new(0);
     private readonly SemaphoreSlim _receiveLock = new(1);
     private readonly SemaphoreSlim _sendLock = new(1);
-    private readonly TimeSpan _reconnectDelay;
-    private readonly ByteBucket _bucket;
-    private CancellationTokenSource _cts;
+    private readonly TimeSpan _reconnectDelay = reconnectionDelay;
+    private readonly IByteMemoryConsumer? _consumer;
+    private CancellationTokenSource _cts = new();
     private ClientWebSocket _client = new();
     private Uri _uri = default!;
     private Task _receiveTask = default!;
     private bool _reconnecting = false;
+
     #endregion
 
-    #region Init
-    public WebSocketClient(TimeSpan reconnectionDelay, short bufferSize = 4096)
+
+    public WebSocketClient(TimeSpan reconnectionDelay, short _ = 4096) : this(reconnectionDelay)
     {
-        _bucket = new ByteBucket(bufferSize);
-        _reconnectDelay = reconnectionDelay;
-        _cts = new CancellationTokenSource();
     }
-    #endregion
+
+    public WebSocketClient(TimeSpan reconnectionDelay, IByteMemoryConsumer consumer) : this(reconnectionDelay)
+    {
+        _consumer = consumer;
+    }
 
     #region Controls
     public async Task Start(Uri uri, CancellationToken cancellationToken = default)
@@ -52,9 +52,6 @@ public sealed class WebSocketClient : IAsyncDisposable
             Log(LogLevel.Error, "Cannot start WebSocket in aborted state");
             return;
         }
-
-        // Make sure buffers are clear before starting
-        _bucket.Clear();
 
         // Set URI for reconnects
         _uri = uri;
@@ -153,17 +150,23 @@ public sealed class WebSocketClient : IAsyncDisposable
     #region Communication
     private async Task Receive()
     {
+        var buffer = MemoryPool<byte>.Shared.Rent(1024 * 32);
+        int written = 0;
         while (this.IsConnected)
         {
             try
             {
                 await _receiveLock.WaitAsync(_cts.Token);
-                // Continue if not at the end of message
-                if (!await _bucket.FillFrom(_client, _cts.Token))
-                    continue;
+                var receiveTask = _client.ReceiveAsync(buffer.Memory[written..], _cts.Token);
+                ValueWebSocketReceiveResult result = receiveTask.IsCompleted ? receiveTask.Result : await receiveTask;
+                written += result.Count;
+                if (result.EndOfMessage)
+                {
+                    OnData?.Invoke(buffer.Memory[..written]);
+                    _consumer?.Consume(buffer.Memory[..written]);
+                    written = 0;
+                }
 
-                ReadOnlyMemory<byte> message = _bucket.Drain();
-                OnData?.Invoke(message);
             }
             catch (WebSocketException wse)
             {
@@ -191,9 +194,12 @@ public sealed class WebSocketClient : IAsyncDisposable
             }
         }
 
+        buffer.Dispose();
         // Don't restart if it's a user disconnect
         if (!_cts.IsCancellationRequested)
+        {
             await Restart(_reconnectDelay);
+        }
     }
 
     public async ValueTask SendAsync(string data, bool sensitive = false, CancellationToken cancellationToken = default)
