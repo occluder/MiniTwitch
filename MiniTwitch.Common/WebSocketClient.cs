@@ -220,7 +220,7 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
 
         try
         {
-            await _client!.SendAsync(new ReadOnlyMemory<byte>(bytes)[..written], WebSocketMessageType.Text, true, cancellationToken);
+            await _client!.SendAsync(bytes.Memory[..written], WebSocketMessageType.Text, true, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -228,7 +228,7 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
         }
         finally
         {
-            BytePool.Return(bytes, true);
+            bytes.Dispose();
             _ = _sendLock.Release();
         }
     }
@@ -239,11 +239,11 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
 
     private void LogException(Exception ex, string template, params object[] properties) => OnLogEx?.Invoke(ex, template, properties);
 
-    private static (int, byte[]) StringToBytes(string s)
+    private static (int, IMemoryOwner<byte>) StringToBytes(string s)
     {
         ReadOnlySpan<char> chars = s;
-        byte[] bytes = BytePool.Rent(chars.Length * sizeof(char));
-        int written = Encoding.UTF8.GetBytes(chars, bytes.AsSpan());
+        IMemoryOwner<byte> bytes = MemoryPool<byte>.Shared.Rent(chars.Length * sizeof(char));
+        int written = Encoding.UTF8.GetBytes(chars, bytes.Memory.Span);
         return (written, bytes);
     }
     #endregion
