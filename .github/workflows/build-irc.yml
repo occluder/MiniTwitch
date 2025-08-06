@@ -5,10 +5,12 @@ on:
     branches: [ "master" ]
     paths:
     - 'MiniTwitch.Irc/**'
+    - 'MiniTwitch.Common/**'
   pull_request:
     branches: [ "master" ]
     paths:
     - 'MiniTwitch.Irc/**'
+    - 'MiniTwitch.Common/**'
 
 jobs:
 
