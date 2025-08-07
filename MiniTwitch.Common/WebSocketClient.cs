@@ -2,13 +2,11 @@
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using MiniTwitch.Common.Internal.Models;
 
 namespace MiniTwitch.Common;
-public sealed class WebSocketClient : IAsyncDisposable
+public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposable
 {
     #region Properties
-    internal static ArrayPool<byte> BytePool { get; } = ArrayPool<byte>.Create(4096, 8);
     public bool IsConnected => _client is not null && _client.State == WebSocketState.Open;
     #endregion
 
@@ -25,23 +23,25 @@ public sealed class WebSocketClient : IAsyncDisposable
     private readonly SemaphoreSlim _reconnectionLock = new(0);
     private readonly SemaphoreSlim _receiveLock = new(1);
     private readonly SemaphoreSlim _sendLock = new(1);
-    private readonly TimeSpan _reconnectDelay;
-    private readonly ByteBucket _bucket;
-    private CancellationTokenSource _cts;
+    private readonly TimeSpan _reconnectDelay = reconnectionDelay;
+    private readonly IWebSocketConsumer? _consumer;
+    private CancellationTokenSource _cts = new();
     private ClientWebSocket _client = new();
     private Uri _uri = default!;
     private Task _receiveTask = default!;
     private bool _reconnecting = false;
+
     #endregion
 
-    #region Init
-    public WebSocketClient(TimeSpan reconnectionDelay, short bufferSize = 4096)
+
+    public WebSocketClient(TimeSpan reconnectionDelay, short _ = 4096) : this(reconnectionDelay)
     {
-        _bucket = new ByteBucket(bufferSize);
-        _reconnectDelay = reconnectionDelay;
-        _cts = new CancellationTokenSource();
     }
-    #endregion
+
+    public WebSocketClient(TimeSpan reconnectionDelay, IWebSocketConsumer consumer) : this(reconnectionDelay)
+    {
+        _consumer = consumer;
+    }
 
     #region Controls
     public async Task Start(Uri uri, CancellationToken cancellationToken = default)
@@ -52,9 +52,6 @@ public sealed class WebSocketClient : IAsyncDisposable
             Log(LogLevel.Error, "Cannot start WebSocket in aborted state");
             return;
         }
-
-        // Make sure buffers are clear before starting
-        _bucket.Clear();
 
         // Set URI for reconnects
         _uri = uri;
@@ -83,7 +80,10 @@ public sealed class WebSocketClient : IAsyncDisposable
         if (this.IsConnected)
         {
             if (!_reconnecting)
-                await OnConnect.Invoke();
+            {
+                await (OnConnect?.Invoke() ?? Task.CompletedTask);
+                await (_consumer?.ConnectionEstablished() ?? Task.CompletedTask);
+            }
             else // This is a reconnect. So we want to invoke OnReconnect instead, which happens in Restart()
                 _ = _reconnectionLock.Release();
         }
@@ -103,12 +103,17 @@ public sealed class WebSocketClient : IAsyncDisposable
         _cts.Cancel();
         // Need to be connected to do this
         if (this.IsConnected)
+        {
             await Stop(cancellationToken);
+        }
 
         _client.Dispose();
-        await OnDisconnect.Invoke();
+        await (OnDisconnect?.Invoke() ?? Task.CompletedTask);
+        await (_consumer?.Disconnection() ?? Task.CompletedTask);
         if (_receiveTask.IsFaulted || _receiveTask.IsCanceled)
+        {
             _receiveTask.Dispose();
+        }
     }
 
     public async Task Restart(TimeSpan delay, CancellationToken cancellationToken = default)
@@ -146,24 +151,31 @@ public sealed class WebSocketClient : IAsyncDisposable
 
         Log(LogLevel.Information, "Successfully reconnected!");
         _reconnecting = false;
-        await OnReconnect.Invoke();
+        await (OnReconnect?.Invoke() ?? Task.CompletedTask);
+        await (_consumer?.ConnectionReestablished() ?? Task.CompletedTask);
     }
     #endregion
 
     #region Communication
     private async Task Receive()
     {
+        var buffer = MemoryPool<byte>.Shared.Rent(1024 * 32);
+        int written = 0;
         while (this.IsConnected)
         {
             try
             {
                 await _receiveLock.WaitAsync(_cts.Token);
-                // Continue if not at the end of message
-                if (!await _bucket.FillFrom(_client, _cts.Token))
-                    continue;
+                var receiveTask = _client.ReceiveAsync(buffer.Memory[written..], _cts.Token);
+                ValueWebSocketReceiveResult result = receiveTask.IsCompleted ? receiveTask.Result : await receiveTask;
+                written += result.Count;
+                if (result.EndOfMessage)
+                {
+                    OnData?.Invoke(buffer.Memory[..written]);
+                    _consumer?.BytesReceived(buffer.Memory[..written]);
+                    written = 0;
+                }
 
-                ReadOnlyMemory<byte> message = _bucket.Drain();
-                OnData?.Invoke(message);
             }
             catch (WebSocketException wse)
             {
@@ -191,9 +203,12 @@ public sealed class WebSocketClient : IAsyncDisposable
             }
         }
 
+        buffer.Dispose();
         // Don't restart if it's a user disconnect
         if (!_cts.IsCancellationRequested)
+        {
             await Restart(_reconnectDelay);
+        }
     }
 
     public async ValueTask SendAsync(string data, bool sensitive = false, CancellationToken cancellationToken = default)
@@ -214,7 +229,7 @@ public sealed class WebSocketClient : IAsyncDisposable
 
         try
         {
-            await _client!.SendAsync(new ReadOnlyMemory<byte>(bytes)[..written], WebSocketMessageType.Text, true, cancellationToken);
+            await _client!.SendAsync(bytes.Memory[..written], WebSocketMessageType.Text, true, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -222,22 +237,30 @@ public sealed class WebSocketClient : IAsyncDisposable
         }
         finally
         {
-            BytePool.Return(bytes, true);
+            bytes.Dispose();
             _ = _sendLock.Release();
         }
     }
     #endregion
 
     #region Helpers
-    private void Log(LogLevel level, string template, params object[] properties) => OnLog?.Invoke(level, template, properties);
+    private void Log(LogLevel level, string template, params object[] properties)
+    {
+        OnLog?.Invoke(level, template, properties);
+        _consumer?.ReadLogMessage(level, template, properties);
+    }
 
-    private void LogException(Exception ex, string template, params object[] properties) => OnLogEx?.Invoke(ex, template, properties);
+    private void LogException(Exception ex, string template, params object[] properties)
+    {
+        OnLogEx?.Invoke(ex, template, properties);
+        _consumer?.ReadLogException(ex, template, properties);
+    }
 
-    private static (int, byte[]) StringToBytes(string s)
+    private static (int, IMemoryOwner<byte>) StringToBytes(string s)
     {
         ReadOnlySpan<char> chars = s;
-        byte[] bytes = BytePool.Rent(chars.Length * sizeof(char));
-        int written = Encoding.UTF8.GetBytes(chars, bytes.AsSpan());
+        IMemoryOwner<byte> bytes = MemoryPool<byte>.Shared.Rent(chars.Length * sizeof(char));
+        int written = Encoding.UTF8.GetBytes(chars, bytes.Memory.Span);
         return (written, bytes);
     }
     #endregion
@@ -250,7 +273,8 @@ public sealed class WebSocketClient : IAsyncDisposable
             return;
         }
 
-        await OnDisconnect.Invoke();
+        await (OnDisconnect?.Invoke() ?? Task.CompletedTask);
+        await (_consumer?.Disconnection() ?? Task.CompletedTask);
         Log(LogLevel.Debug, "Disposed {Name}", nameof(WebSocketClient));
     }
 }
