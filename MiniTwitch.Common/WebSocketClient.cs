@@ -24,7 +24,7 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
     private readonly SemaphoreSlim _receiveLock = new(1);
     private readonly SemaphoreSlim _sendLock = new(1);
     private readonly TimeSpan _reconnectDelay = reconnectionDelay;
-    private readonly IByteMemoryConsumer? _consumer;
+    private readonly IWebSocketConsumer? _consumer;
     private CancellationTokenSource _cts = new();
     private ClientWebSocket _client = new();
     private Uri _uri = default!;
@@ -38,7 +38,7 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
     {
     }
 
-    public WebSocketClient(TimeSpan reconnectionDelay, IByteMemoryConsumer consumer) : this(reconnectionDelay)
+    public WebSocketClient(TimeSpan reconnectionDelay, IWebSocketConsumer consumer) : this(reconnectionDelay)
     {
         _consumer = consumer;
     }
@@ -80,7 +80,10 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
         if (this.IsConnected)
         {
             if (!_reconnecting)
-                await OnConnect.Invoke();
+            {
+                await (OnConnect?.Invoke() ?? Task.CompletedTask);
+                await (_consumer?.ConnectionEstablished() ?? Task.CompletedTask);
+            }
             else // This is a reconnect. So we want to invoke OnReconnect instead, which happens in Restart()
                 _ = _reconnectionLock.Release();
         }
@@ -100,12 +103,17 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
         _cts.Cancel();
         // Need to be connected to do this
         if (this.IsConnected)
+        {
             await Stop(cancellationToken);
+        }
 
         _client.Dispose();
-        await OnDisconnect.Invoke();
+        await (OnDisconnect?.Invoke() ?? Task.CompletedTask);
+        await (_consumer?.Disconnection() ?? Task.CompletedTask);
         if (_receiveTask.IsFaulted || _receiveTask.IsCanceled)
+        {
             _receiveTask.Dispose();
+        }
     }
 
     public async Task Restart(TimeSpan delay, CancellationToken cancellationToken = default)
@@ -143,7 +151,8 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
 
         Log(LogLevel.Information, "Successfully reconnected!");
         _reconnecting = false;
-        await OnReconnect.Invoke();
+        await (OnReconnect?.Invoke() ?? Task.CompletedTask);
+        await (_consumer?.ConnectionReestablished() ?? Task.CompletedTask);
     }
     #endregion
 
@@ -163,7 +172,7 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
                 if (result.EndOfMessage)
                 {
                     OnData?.Invoke(buffer.Memory[..written]);
-                    _consumer?.Consume(buffer.Memory[..written]);
+                    _consumer?.BytesReceived(buffer.Memory[..written]);
                     written = 0;
                 }
 
@@ -235,9 +244,17 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
     #endregion
 
     #region Helpers
-    private void Log(LogLevel level, string template, params object[] properties) => OnLog?.Invoke(level, template, properties);
+    private void Log(LogLevel level, string template, params object[] properties)
+    {
+        OnLog?.Invoke(level, template, properties);
+        _consumer?.ReadLogMessage(level, template, properties);
+    }
 
-    private void LogException(Exception ex, string template, params object[] properties) => OnLogEx?.Invoke(ex, template, properties);
+    private void LogException(Exception ex, string template, params object[] properties)
+    {
+        OnLogEx?.Invoke(ex, template, properties);
+        _consumer?.ReadLogException(ex, template, properties);
+    }
 
     private static (int, IMemoryOwner<byte>) StringToBytes(string s)
     {
@@ -256,7 +273,8 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
             return;
         }
 
-        await OnDisconnect.Invoke();
+        await (OnDisconnect?.Invoke() ?? Task.CompletedTask);
+        await (_consumer?.Disconnection() ?? Task.CompletedTask);
         Log(LogLevel.Debug, "Disposed {Name}", nameof(WebSocketClient));
     }
 }
