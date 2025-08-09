@@ -54,5 +54,5 @@ public interface ISubNotice : IUsernotice
     /// </summary>
     string Message { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
-    MessageSource Source { get; }
+    NoticeSource Source { get; }
 }

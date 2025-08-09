@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using MiniTwitch.Common.Extensions;
+﻿using System.Text;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Internal.Enums;
@@ -37,10 +35,10 @@ public readonly struct Notice : IEquatable<Notice>
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
 
             // JUST in case they add more shit in the future
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
                 //msg-id
-                case (int)Tags.MsgId:
+                case (int)Tags.MsgId when tagKey.SequenceEqual("msg-id"u8):
                     this.Type = TagHelper.GetEnum<NoticeType>(tagValue);
                     break;
             }

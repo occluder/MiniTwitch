@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using MiniTwitch.Common.Extensions;
-using MiniTwitch.Irc.Internal.Enums;
+﻿using MiniTwitch.Irc.Internal.Enums;
 using MiniTwitch.Irc.Internal.Parsing;
 
 namespace MiniTwitch.Irc.Internal.Models;
@@ -56,11 +54,11 @@ internal readonly ref struct IrcMessage
                 int commandEnd = span[commandStart..].IndexOf(space) + commandStart;
                 if (commandEnd - commandStart == -1)
                 {
-                    this.Command = (IrcCommand)span[commandStart..span.Length].Sum();
+                    this.Command = GetIrcCommand(span[commandStart..span.Length]);
                     return;
                 }
 
-                this.Command = (IrcCommand)span[commandStart..commandEnd].Sum();
+                this.Command = GetIrcCommand(span[commandStart..commandEnd]);
                 int contentStart;
                 if (span[commandEnd + 1] == asterisk)
                 {
@@ -112,7 +110,7 @@ internal readonly ref struct IrcMessage
             default:
                 commandStart = 0;
                 commandEnd = span.IndexOf(space);
-                this.Command = (IrcCommand)span[commandStart..commandEnd].Sum();
+                this.Command = GetIrcCommand(span[commandStart..commandEnd]);
                 int crIndex = span[commandEnd..].IndexOf(cr) + commandEnd;
                 if (crIndex - commandEnd != -1)
                 {
@@ -122,6 +120,30 @@ internal readonly ref struct IrcMessage
 
                 break;
         }
+    }
+
+    IrcCommand GetIrcCommand(ReadOnlySpan<byte> bytes)
+    {
+        return bytes.Length switch
+        {
+            3 when bytes.SequenceEqual("001"u8) => IrcCommand.Connected,
+            3 when bytes.SequenceEqual("CAP"u8) => IrcCommand.Capabilities_received,
+            4 when bytes.SequenceEqual("PING"u8) => IrcCommand.PING,
+            4 when bytes.SequenceEqual("JOIN"u8) => IrcCommand.JOIN,
+            4 when bytes.SequenceEqual("PONG"u8) => IrcCommand.PONG,
+            4 when bytes.SequenceEqual("PART"u8) => IrcCommand.PART,
+            6 when bytes.SequenceEqual("NOTICE"u8) => IrcCommand.NOTICE,
+            7 when bytes.SequenceEqual("WHISPER"u8) => IrcCommand.WHISPER,
+            7 when bytes.SequenceEqual("PRIVMSG"u8) => IrcCommand.PRIVMSG,
+            8 when bytes.SequenceEqual("CLEARMSG"u8) => IrcCommand.CLEARMSG,
+            9 when bytes.SequenceEqual("CLEARCHAT"u8) => IrcCommand.CLEARCHAT,
+            9 when bytes.SequenceEqual("RECONNECT"u8) => IrcCommand.RECONNECT,
+            9 when bytes.SequenceEqual("ROOMSTATE"u8) => IrcCommand.ROOMSTATE,
+            9 when bytes.SequenceEqual("USERSTATE"u8) => IrcCommand.USERSTATE,
+            10 when bytes.SequenceEqual("USERNOTICE"u8) => IrcCommand.USERNOTICE,
+            16 when bytes.SequenceEqual("GLOBALUSERSTATE"u8) => IrcCommand.GLOBALUSERSTATE,
+            _ => IrcCommand.Unknown,
+        };
     }
 
     public readonly string GetChannel() => TagHelper.GetString(this.Memory.Span[this.ChannelRange], true);

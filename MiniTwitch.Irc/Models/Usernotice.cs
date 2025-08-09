@@ -73,14 +73,14 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
     /// Source information about the message.
     /// <para>Only populated if <see cref="MessageSource.HasSource"/> is <see langword="true"/></para>
     /// </summary>
-    public MessageSource Source { get; init; }
+    public NoticeSource Source { get; init; }
 
     /// <inheritdoc/>
     public long TmiSentTs { get; init; } = default;
     /// <inheritdoc/>
     public DateTimeOffset SentTimestamp => DateTimeOffset.FromUnixTimeMilliseconds(this.TmiSentTs);
 
-    internal UsernoticeType MsgId { get; init; } = UsernoticeType.None;
+    internal UsernoticeType MsgId { get; init; } = UsernoticeType.Unknown;
 
     internal Usernotice(ref IrcMessage message)
     {
@@ -131,11 +131,12 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
         double actualDonationAmount = 0;
         CurrencyCode donationCurrency = CurrencyCode.None;
 
-        // MessageSource
+        // NoticeSource
         string sourceBadgeInfo = string.Empty;
         string sourceBadges = string.Empty;
         string sourceId = string.Empty;
         long sourceRoomId = 0;
+        UsernoticeType srcMsgId = UsernoticeType.Unknown;
 
         using IrcTags tags = message.ParseTags();
         foreach (IrcTag tag in tags)
@@ -143,227 +144,276 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
             ReadOnlySpan<byte> tagKey = tag.Key.Span;
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
 
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
                 //id
-                case (int)Tags.Id:
+                case (int)Tags.Id when tagKey.SequenceEqual("id"u8):
                     id = TagHelper.GetString(tagValue);
                     break;
 
                 //mod
-                case (int)Tags.Mod:
+                case (int)Tags.Mod when tagKey.SequenceEqual("mod"u8):
                     isMod = TagHelper.GetBool(tagValue);
                     break;
 
                 //flags
-                case (int)Tags.Flags:
+                case (int)Tags.Flags when tagKey.SequenceEqual("flags"u8):
                     flags = TagHelper.GetString(tagValue);
                     break;
 
                 //login
-                case (int)Tags.Login:
+                case (int)Tags.Login when tagKey.SequenceEqual("login"u8):
                     username = TagHelper.GetString(tagValue);
                     break;
 
                 //color
-                case (int)Tags.Color:
+                case (int)Tags.Color when tagKey.SequenceEqual("color"u8):
                     colorCode = TagHelper.GetColor(tagValue);
                     break;
 
                 //turbo 
-                case (int)Tags.Turbo:
+                case (int)Tags.Turbo when tagKey.SequenceEqual("turbo"u8):
                     isTurbo = TagHelper.GetBool(tagValue);
                     break;
 
                 //msg-id
-                case (int)Tags.MsgId:
-                    this.MsgId = (UsernoticeType)tagValue.Sum();
+                case (int)Tags.MsgId when tagKey.SequenceEqual("msg-id"u8):
+                    this.MsgId = tagValue.Length switch
+                    {
+                        (int)UsernoticeType.Sub when tagValue.SequenceEqual("sub"u8) => UsernoticeType.Sub,
+                        (int)UsernoticeType.Raid when tagValue.SequenceEqual("raid"u8) => UsernoticeType.Raid,
+                        (int)UsernoticeType.Resub when tagValue.SequenceEqual("resub"u8) => UsernoticeType.Resub,
+                        (int)UsernoticeType.Unraid when tagValue.SequenceEqual("unraid"u8) => UsernoticeType.Unraid,
+                        (int)UsernoticeType.Subgift when tagValue.SequenceEqual("subgift"u8) => UsernoticeType.Subgift,
+                        (int)UsernoticeType.Announcement when tagValue.SequenceEqual("announcement"u8) => UsernoticeType.Announcement,
+                        (int)UsernoticeType.BitsBadgeTier when tagValue.SequenceEqual("bitsbadgetier"u8) => UsernoticeType.BitsBadgeTier,
+                        (int)UsernoticeType.SubMysteryGift when tagValue.SequenceEqual("submysterygift"u8) => UsernoticeType.SubMysteryGift,
+                        (int)UsernoticeType.GiftPaidUpgrade when tagValue.SequenceEqual("giftpaidupgrade"u8) => UsernoticeType.GiftPaidUpgrade,
+                        15 when tagValue.SequenceEqual("charitydonation"u8) => UsernoticeType.CharityDonation,
+                        (int)UsernoticeType.PrimePaidUpgrade when tagValue.SequenceEqual("primepaidupgrade"u8) => UsernoticeType.PrimePaidUpgrade,
+                        (int)UsernoticeType.StandardPayForward when tagValue.SequenceEqual("standardpayforward"u8) => UsernoticeType.StandardPayForward,
+                        (int)UsernoticeType.AnonGiftPaidUpgrade when tagValue.SequenceEqual("anongiftpaidupgrade"u8) => UsernoticeType.AnonGiftPaidUpgrade,
+                        16 when tagValue.SequenceEqual("sharedchatnotice"u8) => UsernoticeType.SharedChatNotice,
+                        _ => UsernoticeType.Unknown,
+                    };
                     break;
 
                 //badges
-                case (int)Tags.Badges:
+                case (int)Tags.Badges when tagKey.SequenceEqual("badges"u8):
                     badges = TagHelper.GetString(tagValue, true);
                     break;
 
                 //emotes
-                case (int)Tags.Emotes:
+                case (int)Tags.Emotes when tagKey.SequenceEqual("emotes"u8):
                     emotes = TagHelper.GetString(tagValue);
                     break;
 
                 //room-id
-                case (int)Tags.RoomId:
+                case (int)Tags.RoomId when tagKey.SequenceEqual("room-id"u8):
                     channelId = TagHelper.GetLong(tagValue);
                     break;
 
                 //user-id
-                case (int)Tags.UserId:
+                case (int)Tags.UserId when tagKey.SequenceEqual("user-id"u8):
                     userId = TagHelper.GetLong(tagValue);
                     break;
 
                 //user-type
-                case (int)Tags.UserType when tagValue.Length > 0:
-                    userType = (UserType)tagValue.Sum();
+                case (int)Tags.UserType when tagValue.Length > 0 && tagKey.SequenceEqual("user-type"u8):
+                    userType = tagValue.Length switch
+                    {
+                        3 when tagValue.SequenceEqual("mod"u8) => UserType.Mod,
+                        5 when tagValue.SequenceEqual("admin"u8) => UserType.Admin,
+                        5 when tagValue.SequenceEqual("staff"u8) => UserType.Staff,
+                        10 when tagValue.SequenceEqual("global_mod"u8) => UserType.GlobalModerator,
+                        _ => UserType.None
+                    };
                     break;
 
                 //badge-info
-                case (int)Tags.BadgeInfo:
+                case (int)Tags.BadgeInfo when tagKey.SequenceEqual("badge-info"u8):
                     badgeInfo = TagHelper.GetString(tagValue, true, true);
                     break;
 
                 //system-msg
-                case (int)Tags.SystemMsg:
+                case (int)Tags.SystemMsg when tagKey.SequenceEqual("system-msg"u8):
                     systemMessage = TagHelper.GetString(tagValue, unescape: true);
                     break;
 
                 //subscriber
-                case (int)Tags.Subscriber:
+                case (int)Tags.Subscriber when tagKey.SequenceEqual("subscriber"u8):
                     isSubscriber = TagHelper.GetBool(tagValue);
                     break;
 
                 //tmi-sent-ts
-                case (int)Tags.TmiSentTs:
+                case (int)Tags.TmiSentTs when tagKey.SequenceEqual("tmi-sent-ts"u8):
                     this.TmiSentTs = TagHelper.GetLong(tagValue);
                     break;
 
                 //display-name
-                case (int)Tags.DisplayName:
+                case (int)Tags.DisplayName when tagKey.SequenceEqual("display-name"u8):
                     displayName = TagHelper.GetString(tagValue);
                     break;
 
                 //msg-param-color
-                case (int)Tags.MsgParamColor:
+                case (int)Tags.MsgParamColor when tagKey.SequenceEqual("msg-param-color"u8):
                     color = (AnnouncementColor)tagValue.Sum();
                     break;
 
                 //msg-param-months
-                case (int)Tags.MsgParamMonths:
+                case (int)Tags.MsgParamMonths when tagKey.SequenceEqual("msg-param-months"u8):
                     months = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-sub-plan
-                case (int)Tags.MsgParamSubPlan:
+                case (int)Tags.MsgParamSubPlan when tagKey.SequenceEqual("msg-param-sub-plan"u8):
                     subPlan = (SubPlan)tagValue.Sum();
                     break;
 
                 //msg-param-sender-name
-                case (int)Tags.MsgParamSenderName:
+                case (int)Tags.MsgParamSenderName when tagKey.SequenceEqual("msg-param-sender-name"u8):
                     gifterDisplayName = TagHelper.GetString(tagValue);
                     break;
 
                 //msg-param-gift-months
-                case (int)Tags.MsgParamGiftMonths:
+                case (int)Tags.MsgParamGiftMonths when tagKey.SequenceEqual("msg-param-gift-months"u8):
                     giftedMonths = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-viewerCount
-                case (int)Tags.MsgParamViewerCount:
+                case (int)Tags.MsgParamViewerCount when tagKey.SequenceEqual("msg-param-viewerCount"u8):
                     viewerCount = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-recipient-id
-                case (int)Tags.MsgParamRecipientId:
+                case (int)Tags.MsgParamRecipientId when tagKey.SequenceEqual("msg-param-recipient-id"u8):
                     recipientId = TagHelper.GetLong(tagValue);
                     break;
 
                 //msg-param-sender-login
-                case (int)Tags.MsgParamSenderLogin:
+                case (int)Tags.MsgParamSenderLogin when tagKey.SequenceEqual("msg-param-sender-login"u8):
                     gifterUsername = TagHelper.GetString(tagValue);
                     break;
 
                 //msg-param-sender-count
-                case (int)Tags.MsgParamSenderCount:
+                case (int)Tags.MsgParamSenderCount when tagKey.SequenceEqual("msg-param-sender-count"u8):
                     totalGiftCount = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-sub-plan-name
-                case (int)Tags.MsgParamSubPlanName:
+                case (int)Tags.MsgParamSubPlanName when tagKey.SequenceEqual("msg-param-sub-plan-name"u8):
                     subPlanName = TagHelper.GetString(tagValue, true, true);
                     break;
 
                 //msg-param-streak-months
-                case (int)Tags.MsgParamStreakMonths:
+                case (int)Tags.MsgParamStreakMonths when tagKey.SequenceEqual("msg-param-streak-months"u8):
                     monthStreak = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-mass-gift-count
-                case (int)Tags.MsgParamMassGiftCount:
+                case (int)Tags.MsgParamMassGiftCount when tagKey.SequenceEqual("msg-param-mass-gift-count"u8):
                     giftCount = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-community-gift-id
-                case (int)Tags.MsgParamCommunityGiftId:
+                case (int)Tags.MsgParamCommunityGiftId when tagKey.SequenceEqual("msg-param-community-gift-id"u8):
                     communityGiftId = TagHelper.GetULong(tagValue);
                     break;
 
                 //msg-param-cumulative-months
-                case (int)Tags.MsgParamCumulativeMonths:
+                case (int)Tags.MsgParamCumulativeMonths when tagKey.SequenceEqual("msg-param-cumulative-months"u8):
                     cumulativeMonths = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-recipient-user-name
-                case (int)Tags.MsgParamRecipientUserName:
+                case (int)Tags.MsgParamRecipientUserName when tagKey.SequenceEqual("msg-param-recipient-user-name"u8):
                     recipientUsername = TagHelper.GetString(tagValue);
                     break;
 
                 //msg-param-should-share-streak
-                case (int)Tags.MsgParamShouldShareStreak:
+                case (int)Tags.MsgParamShouldShareStreak when tagKey.SequenceEqual("msg-param-should-share-streak"u8):
                     shouldShareStreak = TagHelper.GetBool(tagValue);
                     break;
 
                 //msg-param-recipient-display-name
-                case (int)Tags.MsgParamRecipientDisplayName:
+                case (int)Tags.MsgParamRecipientDisplayName when tagKey.SequenceEqual("msg-param-recipient-display-name"u8):
                     recipientDisplayName = TagHelper.GetString(tagValue);
                     break;
 
                 //msg-param-charity-name
-                case (int)Tags.MsgParamCharityName:
+                case (int)Tags.MsgParamCharityName when tagKey.SequenceEqual("msg-param-charity-name"u8):
                     charityName = TagHelper.GetString(tagValue, intern: true, unescape: true);
                     break;
 
                 //msg-param-donation-amount
-                case (int)Tags.MsgParamDonationAmount:
+                case (int)Tags.MsgParamDonationAmount when tagKey.SequenceEqual("msg-param-donation-amount"u8):
                     donationAmount = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-exponent
-                case (int)Tags.MsgParamExponent:
+                case (int)Tags.MsgParamExponent when tagKey.SequenceEqual("msg-param-exponent"u8):
                     donationExponent = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-donation-currency
-                case (int)Tags.MsgParamDonationCurrency:
+                case (int)Tags.MsgParamDonationCurrency when tagKey.SequenceEqual("msg-param-donation-currency"u8):
                     donationCurrency = TagHelper.GetEnum<CurrencyCode>(tagValue);
                     break;
 
                 //source-badge-info
-                case (int)Tags.SourceBadgeInfo:
+                case (int)Tags.SourceBadgeInfo when tagKey.SequenceEqual("source-badge-info"u8):
                     sourceBadgeInfo = TagHelper.GetString(tagValue, intern: true, unescape: true);
                     break;
 
                 //source-badges
-                case (int)Tags.SourceBadges:
+                case (int)Tags.SourceBadges when tagKey.SequenceEqual("source-badges"u8):
                     sourceBadges = TagHelper.GetString(tagValue, intern: true);
                     break;
 
                 //source-id
-                case (int)Tags.SourceId:
+                case (int)Tags.SourceId when tagKey.SequenceEqual("source-id"u8):
                     sourceId = TagHelper.GetString(tagValue);
                     break;
 
                 //source-room-id
-                case (int)Tags.SourceRoomId:
+                case (int)Tags.SourceRoomId when tagKey.SequenceEqual("source-room-id"u8):
                     sourceRoomId = TagHelper.GetLong(tagValue);
+                    break;
+
+                //source-msg-id
+                case (int)Tags.SourceMsgId when tagKey.SequenceEqual("source-msg-id"u8):
+                    srcMsgId = tagValue.Length switch
+                    {
+                        (int)UsernoticeType.Sub when tagValue.SequenceEqual("sub"u8) => UsernoticeType.Sub,
+                        (int)UsernoticeType.Raid when tagValue.SequenceEqual("raid"u8) => UsernoticeType.Raid,
+                        (int)UsernoticeType.Resub when tagValue.SequenceEqual("resub"u8) => UsernoticeType.Resub,
+                        (int)UsernoticeType.Unraid when tagValue.SequenceEqual("unraid"u8) => UsernoticeType.Unraid,
+                        (int)UsernoticeType.Subgift when tagValue.SequenceEqual("subgift"u8) => UsernoticeType.Subgift,
+                        (int)UsernoticeType.Announcement when tagValue.SequenceEqual("announcement"u8) => UsernoticeType.Announcement,
+                        (int)UsernoticeType.BitsBadgeTier when tagValue.SequenceEqual("bitsbadgetier"u8) => UsernoticeType.BitsBadgeTier,
+                        (int)UsernoticeType.SubMysteryGift when tagValue.SequenceEqual("submysterygift"u8) => UsernoticeType.SubMysteryGift,
+                        (int)UsernoticeType.GiftPaidUpgrade when tagValue.SequenceEqual("giftpaidupgrade"u8) => UsernoticeType.GiftPaidUpgrade,
+                        15 when tagValue.SequenceEqual("charitydonation"u8) => UsernoticeType.CharityDonation,
+                        (int)UsernoticeType.PrimePaidUpgrade when tagValue.SequenceEqual("primepaidupgrade"u8) => UsernoticeType.PrimePaidUpgrade,
+                        (int)UsernoticeType.StandardPayForward when tagValue.SequenceEqual("standardpayforward"u8) => UsernoticeType.StandardPayForward,
+                        (int)UsernoticeType.AnonGiftPaidUpgrade when tagValue.SequenceEqual("anongiftpaidupgrade"u8) => UsernoticeType.AnonGiftPaidUpgrade,
+                        16 when tagValue.SequenceEqual("sharedchatnotice"u8) => UsernoticeType.SharedChatNotice,
+                        _ => UsernoticeType.Unknown,
+                    };
                     break;
             }
         }
 
-        if (this.MsgId is UsernoticeType.Resub or UsernoticeType.Announcement)
+        switch (this.MsgId == UsernoticeType.SharedChatNotice ? srcMsgId : this.MsgId)
         {
-            content = message.HasMessageContent ? message.GetContent().Content : string.Empty;
-        }
-        else if (this.MsgId is UsernoticeType.CharityDonation)
-        {
-            actualDonationAmount = donationAmount * Math.Pow(10, -donationExponent);
+
+            case UsernoticeType.Sub or UsernoticeType.Resub or UsernoticeType.Announcement:
+                content = message.HasMessageContent ? message.GetContent().Content : string.Empty;
+                break;
+
+            case UsernoticeType.CharityDonation:
+                actualDonationAmount = donationAmount * Math.Pow(10, -donationExponent);
+                break;
         }
 
         this.Author = new MessageAuthor()
@@ -413,12 +463,13 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
         this.DonationAmount = actualDonationAmount;
         this.DonationCurrency = donationCurrency;
         this.CommunityGiftId = communityGiftId;
-        this.Source = new MessageSource()
+        this.Source = new NoticeSource()
         {
             BadgeInfo = sourceBadgeInfo,
             Badges = sourceBadges,
             ChannelId = sourceRoomId,
-            MessageId = sourceId,
+            Id = sourceId,
+            MsgId = srcMsgId,
         };
     }
 

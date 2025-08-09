@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Internal.Enums;
 using MiniTwitch.Irc.Internal.Models;
@@ -56,39 +55,39 @@ public readonly struct IrcChannel : IGazatuChannel, IPartedChannel, IBasicChanne
         {
             ReadOnlySpan<byte> tagKey = tag.Key.Span;
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
                 //r9k
-                case (int)Tags.R9K:
+                case (int)Tags.R9K when tagKey.SequenceEqual("r9k"u8):
                     this.UniqueModeEnabled = TagHelper.GetBool(tagValue);
                     uniqueModeModified = true;
                     break;
 
                 //slow
-                case (int)Tags.Slow:
+                case (int)Tags.Slow when tagKey.SequenceEqual("slow"u8):
                     slowModeDuration = TagHelper.GetInt(tagValue);
                     slowModeModified = true;
                     break;
 
                 //room-id
-                case (int)Tags.RoomId:
+                case (int)Tags.RoomId when tagKey.SequenceEqual("room-id"u8):
                     id = TagHelper.GetLong(tagValue);
                     break;
 
                 //subs-only
-                case (int)Tags.SubsOnly:
+                case (int)Tags.SubsOnly when tagKey.SequenceEqual("subs-only"u8):
                     this.SubOnlyEnabled = TagHelper.GetBool(tagValue);
                     subModeModified = true;
                     break;
 
                 //emote-only
-                case (int)Tags.EmoteOnly:
+                case (int)Tags.EmoteOnly when tagKey.SequenceEqual("emote-only"u8):
                     this.EmoteOnlyEnabled = TagHelper.GetBool(tagValue);
                     emoteOnlyModified = true;
                     break;
 
                 //followers-only
-                case (int)Tags.FollowersOnly:
+                case (int)Tags.FollowersOnly when tagKey.SequenceEqual("followers-only"u8):
                     followerModeDuration = TagHelper.GetInt(tagValue);
                     followerModeModified = true;
                     break;

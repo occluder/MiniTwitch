@@ -161,70 +161,70 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
             ReadOnlySpan<byte> tagKey = tag.Key.Span;
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
 
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
                 //id
-                case (int)Tags.Id:
+                case (int)Tags.Id when tagKey.SequenceEqual("id"u8):
                     id = TagHelper.GetString(tagValue);
                     break;
 
                 //mod
-                case (int)Tags.Mod:
+                case (int)Tags.Mod when tagKey.SequenceEqual("mod"u8):
                     mod = TagHelper.GetBool(tagValue);
                     break;
 
                 //vip
-                case (int)Tags.Vip:
+                case (int)Tags.Vip when tagKey.SequenceEqual("vip"u8):
                     vip = true;
                     break;
 
                 //bits
-                case (int)Tags.Bits:
+                case (int)Tags.Bits when tagKey.SequenceEqual("bits"u8):
                     bits = TagHelper.GetInt(tagValue);
                     break;
 
                 //flags
-                case (int)Tags.Flags:
+                case (int)Tags.Flags when tagKey.SequenceEqual("flags"u8):
                     flags = TagHelper.GetString(tagValue);
                     break;
 
                 //color
-                case (int)Tags.Color:
+                case (int)Tags.Color when tagKey.SequenceEqual("color"u8):
                     color = TagHelper.GetColor(tagValue);
                     break;
 
                 //turbo
-                case (int)Tags.Turbo:
+                case (int)Tags.Turbo when tagKey.SequenceEqual("turbo"u8):
                     turbo = TagHelper.GetBool(tagValue);
                     break;
 
                 //badges
-                case (int)Tags.Badges:
+                case (int)Tags.Badges when tagKey.SequenceEqual("badges"u8):
                     badges = TagHelper.GetString(tagValue, true);
                     break;
 
                 //emotes
-                case (int)Tags.Emotes:
+                case (int)Tags.Emotes when tagKey.SequenceEqual("emotes"u8):
                     emotes = TagHelper.GetString(tagValue);
                     break;
 
                 //room-id
-                case (int)Tags.RoomId:
+                case (int)Tags.RoomId when tagKey.SequenceEqual("room-id"u8):
                     channelId = TagHelper.GetLong(tagValue);
                     break;
 
                 //user-id
-                case (int)Tags.UserId:
+                case (int)Tags.UserId when tagKey.SequenceEqual("user-id"u8):
                     uid = TagHelper.GetLong(tagValue);
                     break;
 
                 //first-msg
-                case (int)Tags.FirstMsg:
+                case (int)Tags.FirstMsg when tagKey.SequenceEqual("first-msg"u8):
                     firstMsg = TagHelper.GetBool(tagValue);
                     break;
 
                 //msg-id
-                case (int)Tags.MsgId:
+                case (int)Tags.MsgId when tagKey.SequenceEqual("msg-id"u8):
                     switch (tagValue.Sum())
                     {
                         case 2516:
@@ -242,107 +242,114 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
                     break;
 
                 //user-type
-                case (int)Tags.UserType when tagValue.Length > 0:
-                    userType = (UserType)tagValue.Sum();
+                case (int)Tags.UserType when tagKey.SequenceEqual("user-type"u8) && tagValue.Length > 0:
+                    userType = tagValue.Length switch
+                    {
+                        3 when tagValue.SequenceEqual("mod"u8) => UserType.Mod,
+                        5 when tagValue.SequenceEqual("admin"u8) => UserType.Admin,
+                        5 when tagValue.SequenceEqual("staff"u8) => UserType.Staff,
+                        10 when tagValue.SequenceEqual("global_mod"u8) => UserType.GlobalModerator,
+                        _ => UserType.None
+                    };
                     break;
 
                 //badge-info
-                case (int)Tags.BadgeInfo:
+                case (int)Tags.BadgeInfo when tagKey.SequenceEqual("badge-info"u8):
                     badgeInfo = TagHelper.GetString(tagValue, true, true);
                     break;
 
                 //subscriber
-                case (int)Tags.Subscriber:
+                case (int)Tags.Subscriber when tagKey.SequenceEqual("subscriber"u8):
                     sub = TagHelper.GetBool(tagValue);
                     break;
 
                 //animation-id
-                case (int)Tags.AnimationId:
+                case (int)Tags.AnimationId when tagKey.SequenceEqual("animation-id"u8):
                     animation = TagHelper.GetString(tagValue, intern: true);
                     break;
 
                 //tmi-sent-ts
-                case (int)Tags.TmiSentTs:
+                case (int)Tags.TmiSentTs when tagKey.SequenceEqual("tmi-sent-ts"u8):
                     tmiSentTs = TagHelper.GetLong(tagValue);
                     break;
 
                 //client-nonce
-                case (int)Tags.ClientNonce:
+                case (int)Tags.ClientNonce when tagKey.SequenceEqual("client-nonce"u8):
                     nonce = TagHelper.GetString(tagValue);
                     break;
 
                 //display-name
-                case (int)Tags.DisplayName:
+                case (int)Tags.DisplayName when tagKey.SequenceEqual("display-name"u8):
                     displayName = TagHelper.GetString(tagValue);
                     break;
 
                 //returning-chatter
-                case (int)Tags.ReturningChatter:
+                case (int)Tags.ReturningChatter when tagKey.SequenceEqual("returning-chatter"u8):
                     returningChatter = TagHelper.GetBool(tagValue);
                     break;
 
                 //reply-parent-msg-id
-                case (int)Tags.ReplyParentMsgId:
+                case (int)Tags.ReplyParentMsgId when tagKey.SequenceEqual("reply-parent-msg-id"u8):
                     replyMessageId = TagHelper.GetString(tagValue);
                     break;
 
                 //reply-parent-user-id
-                case (int)Tags.ReplyParentUserId:
+                case (int)Tags.ReplyParentUserId when tagKey.SequenceEqual("reply-parent-user-id"u8):
                     replyUserId = TagHelper.GetLong(tagValue);
                     break;
 
                 //reply-parent-msg-body
-                case (int)Tags.ReplyParentMsgBody:
+                case (int)Tags.ReplyParentMsgBody when tagKey.SequenceEqual("reply-parent-msg-body"u8):
                     replyMessageBody = TagHelper.GetString(tagValue, unescape: true);
                     break;
 
                 //reply-parent-user-login
-                case (int)Tags.ReplyParentUserLogin:
+                case (int)Tags.ReplyParentUserLogin when tagKey.SequenceEqual("reply-parent-user-login"u8):
                     replyUsername = TagHelper.GetString(tagValue);
                     break;
 
                 //reply-parent-display-name
-                case (int)Tags.ReplyParentDisplayName:
+                case (int)Tags.ReplyParentDisplayName when tagKey.SequenceEqual("reply-parent-display-name"u8):
                     replyDisplayName = TagHelper.GetString(tagValue);
                     break;
 
                 //reply-thread-parent-msg-id
-                case (int)Tags.ReplyThreadParentMsgId:
+                case (int)Tags.ReplyThreadParentMsgId when tagKey.SequenceEqual("reply-thread-parent-msg-id"u8):
                     threadParentMessageid = TagHelper.GetString(tagValue);
                     break;
 
                 //reply-thread-parent-user-login
-                case (int)Tags.ReplyThreadParentUserLogin:
+                case (int)Tags.ReplyThreadParentUserLogin when tagKey.SequenceEqual("reply-thread-parent-user-login"u8):
                     threadParentUsername = TagHelper.GetString(tagValue);
                     break;
 
                 //custom-reward-id
-                case (int)Tags.CustomRewardId:
+                case (int)Tags.CustomRewardId when tagKey.SequenceEqual("custom-reward-id"u8):
                     customRewardId = TagHelper.GetString(tagValue);
                     break;
 
                 //source-badge-info
-                case (int)Tags.SourceBadgeInfo:
+                case (int)Tags.SourceBadgeInfo when tagKey.SequenceEqual("source-badge-info"u8):
                     sourceBadgeInfo = TagHelper.GetString(tagValue, intern: true, unescape: true);
                     break;
 
                 //source-badges
-                case (int)Tags.SourceBadges:
+                case (int)Tags.SourceBadges when tagKey.SequenceEqual("source-badges"u8):
                     sourceBadges = TagHelper.GetString(tagValue, intern: true);
                     break;
 
                 //source-id
-                case (int)Tags.SourceId:
+                case (int)Tags.SourceId when tagKey.SequenceEqual("source-id"u8):
                     sourceId = TagHelper.GetString(tagValue);
                     break;
 
                 //source-room-id
-                case (int)Tags.SourceRoomId:
+                case (int)Tags.SourceRoomId when tagKey.SequenceEqual("source-room-id"u8):
                     sourceRoomId = TagHelper.GetLong(tagValue);
                     break;
 
                 //source-only
-                case (int)Tags.SourceOnly:
+                case (int)Tags.SourceOnly when tagKey.SequenceEqual("source-only"u8):
                     sourceOnly = TagHelper.GetBool(tagValue);
                     break;
             }

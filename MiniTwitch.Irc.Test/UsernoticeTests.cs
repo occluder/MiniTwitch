@@ -197,4 +197,34 @@ public class UsernoticeTests
         Assert.Equal("1 raiders from occluder have joined!", raid.SystemMessage);
         Assert.Equal(1676557512027, raid.TmiSentTs);
     }
+
+    [Fact]
+    public void Shared_Announcement_USERNOTICE()
+    {
+        string raw = "@badge-info=;badges=staff/1,raging-wolf-helm/1;color=#DAA520;display-name=lahoooo;emotes=;flags=;id=01cd601f-bc3f-49d5-ab4b-136fa9d6ec22;login=lahoooo;mod=0;msg-id=sharedchatnotice;msg-param-color=PRIMARY;room-id=11148817;source-badge-info=;source-badges=staff/1,moderator/1,bits-leader/1;source-id=4083dadc-9f20-40f9-ba92-949ebf6bc294;source-msg-id=announcement;source-room-id=1025594235;subscriber=0;system-msg=;tmi-sent-ts=1726118378465;user-id=612865661;user-type=staff;vip=0 :tmi.twitch.tv USERNOTICE #pajlada :hi this is an announcement from 1";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.SharedChatNotice, usernotice.MsgId);
+
+        IAnnouncementNotice announcement = usernotice;
+        Assert.Equal("01cd601f-bc3f-49d5-ab4b-136fa9d6ec22", announcement.Id);
+        Assert.Equal(string.Empty, announcement.Emotes);
+        Assert.Equal(string.Empty, announcement.Flags);
+        Assert.Equal(AnnouncementColor.Primary, announcement.Color);
+        Assert.Equal(1726118378465, announcement.TmiSentTs);
+        Assert.Equal("hi this is an announcement from 1", announcement.Message);
+        Assert.Equal("pajlada", announcement.Channel.Name);
+        Assert.Equal(11148817, announcement.Channel.Id);
+        Assert.Equal("lahoooo", announcement.Author.DisplayName);
+        Assert.Equal("lahoooo", announcement.Author.Name);
+        Assert.Equal(string.Empty, announcement.Author.BadgeInfo);
+        Assert.Equal("staff/1,raging-wolf-helm/1", announcement.Author.Badges);
+
+        Assert.True(announcement.Source.HasSource);
+        Assert.Equal(UsernoticeType.Announcement, usernotice.Source.MsgId);
+        Assert.Equal("4083dadc-9f20-40f9-ba92-949ebf6bc294", announcement.Source.Id);
+        Assert.Equal(1025594235, announcement.Source.ChannelId);
+        Assert.Equal(string.Empty, announcement.Source.BadgeInfo);
+        Assert.Equal("staff/1,moderator/1,bits-leader/1", announcement.Source.Badges);
+
+    }
 }

@@ -44,5 +44,5 @@ public interface IGiftSubNotice : IUsernotice
     /// </summary>
     ulong CommunityGiftId { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
-    MessageSource Source { get; }
+    NoticeSource Source { get; }
 }

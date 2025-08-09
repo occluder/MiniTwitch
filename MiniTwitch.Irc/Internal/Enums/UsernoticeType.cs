@@ -2,18 +2,19 @@
 
 internal enum UsernoticeType
 {
-    None,
-    Sub = 330,
-    Raid = 416,
-    Resub = 545,
-    Unraid = 643,
-    Subgift = 756,
-    Announcement = 1291,
-    BitsBadgeTier = 1369,
-    SubMysteryGift = 1553,
-    GiftPaidUpgrade = 1584,
-    CharityDonation = 1616,
-    PrimePaidUpgrade = 1699,
-    StandardPayForward = 1936,
-    AnonGiftPaidUpgrade = 2012,
+    Unknown,
+    Sub = 3, // "sub"
+    Raid = 4, // "raid"
+    Resub = 5, // "resub"
+    Unraid = 6, // "unraid"
+    Subgift = 7, // "subgift"
+    Announcement = 12, // "announcement"
+    BitsBadgeTier = 13, // "bitsbadgetier"
+    SubMysteryGift = 14, // "submysterygift"
+    GiftPaidUpgrade = 15, // "giftpaidupgrade"
+    PrimePaidUpgrade = 16, // "primepaidupgrade"
+    StandardPayForward = 18, // "standardpayforward"
+    AnonGiftPaidUpgrade = 19, // "anongiftpaidupgrade"
+    CharityDonation, // "charitydonation"; Length conflict (15)
+    SharedChatNotice, // "sharedchatnotice"; Length conflict (16)
 }
