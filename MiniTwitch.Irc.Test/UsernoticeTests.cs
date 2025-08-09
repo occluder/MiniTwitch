@@ -225,6 +225,38 @@ public class UsernoticeTests
         Assert.Equal(1025594235, announcement.Source.ChannelId);
         Assert.Equal(string.Empty, announcement.Source.BadgeInfo);
         Assert.Equal("staff/1,moderator/1,bits-leader/1", announcement.Source.Badges);
+    }
 
+    [Fact]
+    public void Shared_submystery_USERNOTICE()
+    {
+        string raw = "@badge-info=;badges=sub-gift-leader/1;color=;display-name=revelracing66;emotes=;flags=;id=0921d903-e597-42a8-9e57-28e08c922ff0;login=revelracing66;mod=0;msg-id=sharedchatnotice;msg-param-community-gift-id=4540557273074603447;msg-param-goal-contribution-type=SUB_POINTS;msg-param-goal-current-contributions=4239;msg-param-goal-description=new\\semote\\sslot!;msg-param-goal-target-contributions=4400;msg-param-goal-user-contributions=55;msg-param-mass-gift-count=55;msg-param-origin-id=4540557273074603447;msg-param-sender-count=55;msg-param-sub-plan=1000;room-id=852880224;source-badge-info=;source-badges=;source-id=d76a0318-3af3-43a3-abc3-3dad20da12de;source-msg-id=submysterygift;source-room-id=1004060561;subscriber=0;system-msg=revelracing66\\sis\\sgifting\\s55\\sTier\\s1\\sSubs\\sto\\sMinikoMew's\\scommunity!\\sThey've\\sgifted\\sa\\stotal\\sof\\s55\\sin\\sthe\\schannel!;tmi-sent-ts=1737083162400;user-id=737286301;user-type=;vip=0 :tmi.twitch.tv USERNOTICE #cerbervt";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.SharedChatNotice, usernotice.MsgId);
+
+        IGiftSubNoticeIntro intro = usernotice;
+        Assert.Equal(string.Empty, intro.Author.BadgeInfo);
+        Assert.Equal("sub-gift-leader/1", intro.Author.Badges);
+        Assert.Equal("0", intro.Author.ChatColor.Name);
+        Assert.Equal("revelracing66", intro.Author.DisplayName);
+        Assert.Equal("revelracing66", intro.Author.Name);
+        Assert.Equal("0921d903-e597-42a8-9e57-28e08c922ff0", intro.Id);
+        Assert.False(intro.Author.IsMod);
+        Assert.Equal(4540557273074603447ul, intro.CommunityGiftId);
+        Assert.Equal(55, intro.GiftCount);
+        Assert.Equal(852880224, intro.Channel.Id);
+        Assert.False(intro.Author.IsSubscriber);
+        Assert.Equal("revelracing66 is gifting 55 Tier 1 Subs to MinikoMew's community! They've gifted a total of 55 in the channel!", intro.SystemMessage);
+        Assert.False(intro.Author.IsVip);
+        Assert.Equal(1737083162400, intro.TmiSentTs);
+        Assert.Equal(UserType.None, intro.Author.Type);
+        Assert.Equal("cerbervt", intro.Channel.Name);
+
+        Assert.True(intro.Source.HasSource);
+        Assert.Equal(UsernoticeType.SubMysteryGift, intro.Source.MsgId);
+        Assert.Equal("d76a0318-3af3-43a3-abc3-3dad20da12de", intro.Source.Id);
+        Assert.Equal(1004060561, intro.Source.ChannelId);
+        Assert.Equal(string.Empty, intro.Source.BadgeInfo);
+        Assert.Equal(string.Empty, intro.Source.Badges);
     }
 }
