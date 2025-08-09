@@ -259,4 +259,33 @@ public class UsernoticeTests
         Assert.Equal(string.Empty, intro.Source.BadgeInfo);
         Assert.Equal(string.Empty, intro.Source.Badges);
     }
+
+    [Fact]
+    public void Multimonth_Subgift_HasGoal_USERNOTICE()
+    {
+        string raw = "@badge-info=subscriber/32;badges=subscriber/3030,sub-gift-leader/2;color=#FF8EA3;display-name=iNatsuFN;emotes=;flags=;id=0d0decbd-b8f4-4e83-9e18-eca9cab69153;login=inatsufn;mod=0;msg-id=subgift;msg-param-gift-months=6;msg-param-goal-contribution-type=SUBS;msg-param-goal-current-contributions=881;msg-param-goal-target-contributions=900;msg-param-goal-user-contributions=1;msg-param-months=16;msg-param-origin-id=2524053421157386961;msg-param-recipient-display-name=kimmi_tm;msg-param-recipient-id=225806893;msg-param-recipient-user-name=kimmi_tm;msg-param-sender-count=334;msg-param-sub-plan-name=Channel\\sSubscription\\s(mxddy);msg-param-sub-plan=1000;room-id=210915729;subscriber=1;system-msg=iNatsuFN\\sgifted\\s6\\smonths\\sof\\sTier\\s1\\sto\\skimmi_tm.\\sThey've\\sgifted\\s334\\smonths\\sin\\sthe\\schannel!;tmi-sent-ts=1712034497332;user-id=218205938;user-type=;vip=0 :tmi.twitch.tv USERNOTICE #pajlada";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.Subgift, usernotice.MsgId);
+
+        IGiftSubNotice gift = usernotice;
+        Assert.Equal("subscriber/32", gift.Author.BadgeInfo);
+        Assert.Equal("subscriber/3030,sub-gift-leader/2", gift.Author.Badges);
+        Assert.Equal("ff8ea3", gift.Author.ChatColor.Name);
+        Assert.Equal("iNatsuFN", gift.Author.DisplayName);
+        Assert.Equal("inatsufn", gift.Author.Name);
+        Assert.Equal("0d0decbd-b8f4-4e83-9e18-eca9cab69153", gift.Id);
+        Assert.False(gift.Author.IsMod);
+        Assert.Equal(6, gift.GiftedMonths);
+        Assert.Equal(16, gift.Months);
+        Assert.Equal(225806893, gift.Recipient.Id);
+        Assert.Equal("kimmi_tm", gift.Recipient.Name);
+        Assert.Equal("kimmi_tm", gift.Recipient.DisplayName);
+        Assert.Equal(334, gift.TotalGiftCount);
+
+        Assert.True(gift.ChannelGoal.HasGoal);
+        Assert.Empty(gift.ChannelGoal.Description);
+        Assert.Equal(900, gift.ChannelGoal.TargetContributions);
+        Assert.Equal(881, gift.ChannelGoal.CurrentContributions);
+        Assert.Equal(1, gift.ChannelGoal.UserContribution);
+    }
 }

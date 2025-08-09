@@ -24,4 +24,6 @@ public interface IPaidUpgradeNotice : IUsernotice
     string GifterDisplayName { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
     NoticeSource Source { get; }
+    /// <inheritdoc cref="Usernotice.ChannelGoal"/>
+    ChannelGoal ChannelGoal { get; }
 }

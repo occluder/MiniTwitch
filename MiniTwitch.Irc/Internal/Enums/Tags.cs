@@ -71,4 +71,8 @@ internal enum Tags
     SourceRoomId = 14, // "source-room-id"
     SourceOnly = 11, // "source-only"
     SourceMsgId = 13, // "source-msg-id"
+    MsgParamGoalCurrentContributions = 36, // "msg-param-goal-current-contributions"
+    MsgParamGoalTargetContributions = 35, // "msg-param-goal-target-contributions"
+    MsgParamGoalDescription = 26, // "msg-param-goal-description"
+    MsgParamGoalUserContributions = 33, // "msg-param-goal-user-contributions"
 }

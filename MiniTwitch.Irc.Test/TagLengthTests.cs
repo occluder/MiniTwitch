@@ -77,6 +77,10 @@ public class TagLengthTests
         { "source-room-id", (int)Tags.SourceRoomId },
         { "source-only", (int)Tags.SourceOnly },
         { "source-msg-id", (int)Tags.SourceMsgId },
+        { "msg-param-goal-current-contributions", (int)Tags.MsgParamGoalCurrentContributions },
+        { "msg-param-goal-target-contributions", (int)Tags.MsgParamGoalTargetContributions },
+        { "msg-param-goal-description", (int)Tags.MsgParamGoalDescription },
+        { "msg-param-goal-user-contributions", (int)Tags.MsgParamGoalUserContributions },
     };
 
     [Fact]

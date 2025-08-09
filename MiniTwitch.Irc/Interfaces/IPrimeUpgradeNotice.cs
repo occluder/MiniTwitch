@@ -19,4 +19,6 @@ public interface IPrimeUpgradeNotice : IUsernotice
     SubPlan SubPlan { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
     NoticeSource Source { get; }
+    /// <inheritdoc cref="Usernotice.ChannelGoal"/>
+    ChannelGoal ChannelGoal { get; }
 }

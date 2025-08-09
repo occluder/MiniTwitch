@@ -31,4 +31,6 @@ public interface IGiftSubNoticeIntro : IUsernotice
     ulong CommunityGiftId { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
     NoticeSource Source { get; }
+    /// <inheritdoc cref="Usernotice.ChannelGoal"/>
+    ChannelGoal ChannelGoal { get; }
 }

@@ -74,6 +74,8 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
     /// <para>Only populated if <see cref="MessageSource.HasSource"/> is <see langword="true"/></para>
     /// </summary>
     public NoticeSource Source { get; init; }
+    // TODO: docs
+    public ChannelGoal ChannelGoal { get; init; }
 
     /// <inheritdoc/>
     public long TmiSentTs { get; init; } = default;
@@ -137,6 +139,12 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
         string sourceId = string.Empty;
         long sourceRoomId = 0;
         UsernoticeType srcMsgId = UsernoticeType.Unknown;
+
+        // ChannelGoal
+        string goalDescription = string.Empty;
+        int goalTarget = 0;
+        int goalCurrent = 0;
+        int goalUser = 0;
 
         using IrcTags tags = message.ParseTags();
         foreach (IrcTag tag in tags)
@@ -401,6 +409,26 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
                         _ => UsernoticeType.Unknown,
                     };
                     break;
+
+                //msg-param-goal-description
+                case (int)Tags.MsgParamGoalDescription when tagKey.SequenceEqual("msg-param-goal-description"u8):
+                    goalDescription = TagHelper.GetString(tagValue, intern: true, unescape: true);
+                    break;
+
+                //msg-param-goal-target-contributions
+                case (int)Tags.MsgParamGoalTargetContributions when tagKey.SequenceEqual("msg-param-goal-target-contributions"u8):
+                    goalTarget = TagHelper.GetInt(tagValue);
+                    break;
+
+                //msg-param-goal-current-contributions
+                case (int)Tags.MsgParamGoalCurrentContributions when tagKey.SequenceEqual("msg-param-goal-current-contributions"u8):
+                    goalCurrent = TagHelper.GetInt(tagValue);
+                    break;
+
+                //msg-param-goal-user-contributions
+                case (int)Tags.MsgParamGoalUserContributions when tagKey.SequenceEqual("msg-param-goal-user-contributions"u8):
+                    goalUser = TagHelper.GetInt(tagValue);
+                    break;
             }
         }
 
@@ -470,6 +498,13 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
             ChannelId = sourceRoomId,
             Id = sourceId,
             MsgId = srcMsgId,
+        };
+        this.ChannelGoal = new ChannelGoal()
+        {
+            Description = goalDescription,
+            TargetContributions = goalTarget,
+            CurrentContributions = goalCurrent,
+            UserContribution = goalUser
         };
     }
 
