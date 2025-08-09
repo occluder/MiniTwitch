@@ -25,5 +25,5 @@ public interface ICharityDonation : IUnixTimestamped, IUsernotice
     /// </summary>
     string SystemMessage { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
-    MessageSource Source { get; }
+    NoticeSource Source { get; }
 }

@@ -27,5 +27,5 @@ public interface IAnnouncementNotice : IUsernotice
     /// </summary>
     string Flags { get; }
     /// <inheritdoc cref="Usernotice.Source"/>
-    MessageSource Source { get; }
+    NoticeSource Source { get; }
 }

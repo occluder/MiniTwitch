@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Text;
-using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Internal.Enums;
@@ -65,61 +64,68 @@ public readonly struct Userstate
 
             ReadOnlySpan<byte> tagKey = tag.Key.Span;
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
 
                 //mod
-                case (int)Tags.Mod:
+                case (int)Tags.Mod when tagKey.SequenceEqual("mod"u8):
                     mod = TagHelper.GetBool(tagValue);
                     break;
 
                 //vip
-                case (int)Tags.Vip:
+                case (int)Tags.Vip when tagKey.SequenceEqual("vip"u8):
                     vip = TagHelper.GetBool(tagValue);
                     break;
 
                 //color
-                case (int)Tags.Color:
+                case (int)Tags.Color when tagKey.SequenceEqual("color"u8):
                     color = TagHelper.GetColor(tagValue);
                     break;
 
                 //turbo
-                case (int)Tags.Turbo:
+                case (int)Tags.Turbo when tagKey.SequenceEqual("turbo"u8):
                     turbo = TagHelper.GetBool(tagValue);
                     break;
 
                 //badges
-                case (int)Tags.Badges:
+                case (int)Tags.Badges when tagKey.SequenceEqual("badges"u8):
                     badges = TagHelper.GetString(tagValue, true);
                     break;
 
                 //user-type
-                case (int)Tags.UserType when tagValue.Length > 0:
-                    type = (UserType)tagValue.Sum();
+                case (int)Tags.UserType when tagKey.SequenceEqual("user-type"u8) && tagValue.Length > 0:
+                    type = tagValue.Length switch
+                    {
+                        3 when tagValue.SequenceEqual("mod"u8) => UserType.Mod,
+                        5 when tagValue.SequenceEqual("admin"u8) => UserType.Admin,
+                        5 when tagValue.SequenceEqual("staff"u8) => UserType.Staff,
+                        10 when tagValue.SequenceEqual("global_mod"u8) => UserType.GlobalModerator,
+                        _ => UserType.None
+                    };
                     break;
 
                 //badge-info
-                case (int)Tags.BadgeInfo:
+                case (int)Tags.BadgeInfo when tagKey.SequenceEqual("badge-info"u8):
                     badgeInfo = TagHelper.GetString(tagValue, true, true);
                     break;
 
                 //emote-sets
-                case (int)Tags.EmoteSets:
+                case (int)Tags.EmoteSets when tagKey.SequenceEqual("emote-sets"u8):
                     emoteSets = TagHelper.GetString(tagValue, true);
                     break;
 
                 //subscriber
-                case (int)Tags.Subscriber:
+                case (int)Tags.Subscriber when tagKey.SequenceEqual("subscriber"u8):
                     subscriber = TagHelper.GetBool(tagValue);
                     break;
 
                 //client-nonce
-                case (int)Tags.ClientNonce:
+                case (int)Tags.ClientNonce when tagKey.SequenceEqual("client-nonce"u8):
                     nonce = TagHelper.GetString(tagValue);
                     break;
 
                 //display-name
-                case (int)Tags.DisplayName:
+                case (int)Tags.DisplayName when tagKey.SequenceEqual("display-name"u8):
                     displayName = TagHelper.GetString(tagValue);
                     break;
             }
