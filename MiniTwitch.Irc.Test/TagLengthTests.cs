@@ -1,4 +1,5 @@
-﻿using MiniTwitch.Irc.Internal.Enums;
+﻿using CaseConverter;
+using MiniTwitch.Irc.Internal.Enums;
 using Xunit;
 
 namespace MiniTwitch.Irc.Test;
@@ -75,6 +76,7 @@ public class TagLengthTests
         { "source-id", (int)Tags.SourceId },
         { "source-room-id", (int)Tags.SourceRoomId },
         { "source-only", (int)Tags.SourceOnly },
+        { "source-msg-id", (int)Tags.SourceMsgId },
     };
 
     [Fact]
@@ -83,7 +85,7 @@ public class TagLengthTests
         var tags = Enum.GetNames(typeof(Tags));
         if (tags.Length != _values.Count)
         {
-            var notIncluded = tags.Where(x => !_values.ContainsKey(x));
+            var notIncluded = tags.Where(x => x != "MsgParamViewerCount" && !_values.ContainsKey(x.ToKebabCase()));
             Assert.Fail($"Test does not account for all tags, expected {tags.Length}, got {_values.Count}." +
                 $"\nMissing tags: \n{string.Join("\n", notIncluded)}");
         }
