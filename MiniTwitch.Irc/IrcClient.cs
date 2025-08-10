@@ -13,7 +13,7 @@ namespace MiniTwitch.Irc;
 /// <summary>
 /// Responsible for all communication with Twitch IRC. Parses and invokes events for IRC messages
 /// </summary>
-public sealed class IrcClient : IAsyncDisposable
+public sealed class IrcClient : IIrcClient, IAsyncDisposable
 {
     #region Properties
     /// <summary>
