@@ -71,10 +71,13 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
     public ulong CommunityGiftId { get; init; }
     /// <summary>
     /// Source information about the message.
-    /// <para>Only populated if <see cref="MessageSource.HasSource"/> is <see langword="true"/></para>
+    /// <para>Only populated if <see cref="NoticeSource.HasSource"/> is <see langword="true"/></para>
     /// </summary>
     public NoticeSource Source { get; init; }
-    // TODO: docs
+    /// <summary>
+    /// Information about the channel's goal.
+    /// <para>Check <see cref="ChannelGoal.HasGoal"/> to see if there is a goal</para>
+    /// </summary>
     public ChannelGoal ChannelGoal { get; init; }
 
     /// <inheritdoc/>
