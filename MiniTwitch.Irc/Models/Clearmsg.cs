@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Internal.Enums;
 using MiniTwitch.Irc.Internal.Models;
@@ -45,23 +44,22 @@ public readonly struct Clearmsg : IUnixTimestamped
             ReadOnlySpan<byte> tagKey = tag.Key.Span;
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
 
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
                 //login
-                case (int)Tags.Login:
+                case (int)Tags.Login when tagKey.SequenceEqual("login"u8):
                     targetUsername = TagHelper.GetString(tagValue);
                     break;
 
                 //tmi-sent-ts
-                case (int)Tags.TmiSentTs:
+                case (int)Tags.TmiSentTs when tagKey.SequenceEqual("tmi-sent-ts"u8):
                     tmiSentTs = TagHelper.GetLong(tagValue);
                     break;
 
                 //target-msg-id
-                case (int)Tags.TargetMsgId:
+                case (int)Tags.TargetMsgId when tagKey.SequenceEqual("target-msg-id"u8):
                     messageId = TagHelper.GetString(tagValue);
                     break;
-
             }
         }
 

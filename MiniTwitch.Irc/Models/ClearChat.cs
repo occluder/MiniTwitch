@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Internal.Enums;
 using MiniTwitch.Irc.Internal.Models;
@@ -45,25 +44,25 @@ public readonly struct Clearchat : IUserTimeout, IUserBan, IChatClear
             ReadOnlySpan<byte> tagKey = tag.Key.Span;
             ReadOnlySpan<byte> tagValue = tag.Value.Span;
 
-            switch (tagKey.MSum())
+            switch (tagKey.Length)
             {
                 //room-id
-                case (int)Tags.RoomId:
+                case (int)Tags.RoomId when tagKey.SequenceEqual("room-id"u8):
                     channelId = TagHelper.GetLong(tagValue);
                     break;
 
                 //tmi-sent-ts
-                case (int)Tags.TmiSentTs:
+                case (int)Tags.TmiSentTs when tagKey.SequenceEqual("tmi-sent-ts"u8):
                     tmiSentTs = TagHelper.GetLong(tagValue);
                     break;
 
                 //ban-duration
-                case (int)Tags.BanDuration:
+                case (int)Tags.BanDuration when tagKey.SequenceEqual("ban-duration"u8):
                     duration = TagHelper.GetInt(tagValue);
                     break;
 
                 //target-user-id
-                case (int)Tags.TargetUserId:
+                case (int)Tags.TargetUserId when tagKey.SequenceEqual("target-user-id"u8):
                     targetId = TagHelper.GetLong(tagValue);
                     break;
             }

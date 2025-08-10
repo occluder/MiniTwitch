@@ -13,7 +13,7 @@ namespace MiniTwitch.Irc;
 /// <summary>
 /// Responsible for all communication with Twitch IRC. Parses and invokes events for IRC messages
 /// </summary>
-public sealed class IrcClient : IAsyncDisposable
+public sealed class IrcClient : IIrcClient, IAsyncDisposable
 {
     #region Properties
     /// <summary>
@@ -150,6 +150,7 @@ public sealed class IrcClient : IAsyncDisposable
     /// </summary>
     public event Func<ICharityDonation, ValueTask> OnCharityDonation = default!;
 
+    // Kept for testing
     internal event Func<ValueTask> OnPing = default!;
     #endregion
 
@@ -161,6 +162,7 @@ public sealed class IrcClient : IAsyncDisposable
     private readonly AsyncEventCoordinator<WaitableEvents> _coordinator = new();
     private readonly HashSet<string> _moderated = new();
     private readonly RateLimitManager _manager;
+    private readonly WebSocketConsumer _consumer;
     private readonly WebSocketClient _ws;
     private Uri _targetUrl = default!;
     private string _loggingHeader = "[MiniTwitch:Irc-default!]";
@@ -177,8 +179,22 @@ public sealed class IrcClient : IAsyncDisposable
         ClientOptions clientOptions = new();
         options.Invoke(clientOptions);
         this.Options = clientOptions;
-        _ws = new WebSocketClient(this.Options.ReconnectionDelay, 2048);
+        _consumer = new WebSocketConsumer(client: this);
+        _ws = new WebSocketClient(this.Options.ReconnectionDelay, _consumer);
         _manager = new(clientOptions);
+
+        InternalInit();
+    }
+
+    /// <summary>
+    /// Creates a new instance of <see cref="IrcClient"/>
+    /// </summary>
+    public IrcClient(ClientOptions options)
+    {
+        this.Options = options;
+        _consumer = new WebSocketConsumer(client: this);
+        _ws = new WebSocketClient(this.Options.ReconnectionDelay, _consumer);
+        _manager = new(options);
 
         InternalInit();
     }
@@ -196,13 +212,8 @@ public sealed class IrcClient : IAsyncDisposable
         }
 
         _loggingScope = GetLogger().BeginScope(_loggingHeader);
-        OnPing += Ping;
-        _ws.OnDisconnect += OnWsDisconnect;
-        _ws.OnReconnect += OnWsReconnect;
-        _ws.OnConnect += Login;
-        _ws.OnData += Parse;
-        _ws.OnLog += Log;
-        _ws.OnLogEx += LogException;
+
+        OnPing += PingReceived;
     }
     #endregion
 
@@ -258,7 +269,7 @@ public sealed class IrcClient : IAsyncDisposable
     /// </summary>
     public Task ReconnectAsync(CancellationToken cancellationToken = default) => _ws.Restart(this.Options.ReconnectionDelay, cancellationToken);
 
-    private async Task OnWsReconnect()
+    private async Task WsReconnected()
     {
         await Login();
         TimeSpan joinInterval = this.JoinedChannels.Count >= this.Options.JoinRateLimit
@@ -273,7 +284,7 @@ public sealed class IrcClient : IAsyncDisposable
         }
     }
 
-    private Task OnWsDisconnect()
+    private Task WsDisconnected()
     {
         OnDisconnect?.Invoke().StepOver(this.ExceptionHandler);
         return Task.CompletedTask;
@@ -425,10 +436,10 @@ public sealed class IrcClient : IAsyncDisposable
         await _ws.SendAsync(outMsg, cancellationToken: cancellationToken);
     }
 
-    private async ValueTask Ping()
+    private ValueTask PingReceived()
     {
         Log(LogLevel.Debug, "PING received");
-        await _ws.SendAsync("PONG");
+        return _ws.SendAsync("PONG");
     }
     #endregion
 
@@ -593,12 +604,17 @@ public sealed class IrcClient : IAsyncDisposable
                 break;
 
             case IrcCommand.PING:
+                PingReceived().StepOver(this.ExceptionHandler);
                 OnPing?.Invoke().StepOver(this.ExceptionHandler);
                 break;
 
             case IrcCommand.USERNOTICE:
                 Usernotice usernotice = new(ref message);
-                switch (usernotice.MsgId)
+                UsernoticeType msgId = usernotice.MsgId == UsernoticeType.SharedChatNotice
+                    ? usernotice.Source.MsgId
+                    : usernotice.MsgId;
+
+                switch (msgId)
                 {
                     case UsernoticeType.Sub
                     or UsernoticeType.Resub:
@@ -755,5 +771,17 @@ public sealed class IrcClient : IAsyncDisposable
         _coordinator.Dispose();
         _moderated.Clear();
         _loggingScope?.Dispose();
+    }
+
+    internal class WebSocketConsumer(IrcClient client) : IWebSocketConsumer
+    {
+        private readonly IrcClient _client = client;
+
+        public void BytesReceived(ReadOnlyMemory<byte> data) => _client.Parse(data);
+        public Task ConnectionEstablished() => _client.Login();
+        public Task ConnectionReestablished() => _client.WsReconnected();
+        public Task Disconnection() => _client.WsDisconnected();
+        public void ReadLogMessage(LogLevel level, string message, params object[] args) => _client.Log(level, message, args);
+        public void ReadLogException(Exception ex, string message, params object[] args) => _client.LogException(ex, message, args);
     }
 }
