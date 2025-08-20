@@ -197,4 +197,95 @@ public class UsernoticeTests
         Assert.Equal("1 raiders from occluder have joined!", raid.SystemMessage);
         Assert.Equal(1676557512027, raid.TmiSentTs);
     }
+
+    [Fact]
+    public void Shared_Announcement_USERNOTICE()
+    {
+        string raw = "@badge-info=;badges=staff/1,raging-wolf-helm/1;color=#DAA520;display-name=lahoooo;emotes=;flags=;id=01cd601f-bc3f-49d5-ab4b-136fa9d6ec22;login=lahoooo;mod=0;msg-id=sharedchatnotice;msg-param-color=PRIMARY;room-id=11148817;source-badge-info=;source-badges=staff/1,moderator/1,bits-leader/1;source-id=4083dadc-9f20-40f9-ba92-949ebf6bc294;source-msg-id=announcement;source-room-id=1025594235;subscriber=0;system-msg=;tmi-sent-ts=1726118378465;user-id=612865661;user-type=staff;vip=0 :tmi.twitch.tv USERNOTICE #pajlada :hi this is an announcement from 1";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.SharedChatNotice, usernotice.MsgId);
+
+        IAnnouncementNotice announcement = usernotice;
+        Assert.Equal("01cd601f-bc3f-49d5-ab4b-136fa9d6ec22", announcement.Id);
+        Assert.Equal(string.Empty, announcement.Emotes);
+        Assert.Equal(string.Empty, announcement.Flags);
+        Assert.Equal(AnnouncementColor.Primary, announcement.Color);
+        Assert.Equal(1726118378465, announcement.TmiSentTs);
+        Assert.Equal("hi this is an announcement from 1", announcement.Message);
+        Assert.Equal("pajlada", announcement.Channel.Name);
+        Assert.Equal(11148817, announcement.Channel.Id);
+        Assert.Equal("lahoooo", announcement.Author.DisplayName);
+        Assert.Equal("lahoooo", announcement.Author.Name);
+        Assert.Equal(string.Empty, announcement.Author.BadgeInfo);
+        Assert.Equal("staff/1,raging-wolf-helm/1", announcement.Author.Badges);
+
+        Assert.True(announcement.Source.HasSource);
+        Assert.Equal(UsernoticeType.Announcement, usernotice.Source.MsgId);
+        Assert.Equal("4083dadc-9f20-40f9-ba92-949ebf6bc294", announcement.Source.Id);
+        Assert.Equal(1025594235, announcement.Source.ChannelId);
+        Assert.Equal(string.Empty, announcement.Source.BadgeInfo);
+        Assert.Equal("staff/1,moderator/1,bits-leader/1", announcement.Source.Badges);
+    }
+
+    [Fact]
+    public void Shared_submystery_USERNOTICE()
+    {
+        string raw = "@badge-info=;badges=sub-gift-leader/1;color=;display-name=revelracing66;emotes=;flags=;id=0921d903-e597-42a8-9e57-28e08c922ff0;login=revelracing66;mod=0;msg-id=sharedchatnotice;msg-param-community-gift-id=4540557273074603447;msg-param-goal-contribution-type=SUB_POINTS;msg-param-goal-current-contributions=4239;msg-param-goal-description=new\\semote\\sslot!;msg-param-goal-target-contributions=4400;msg-param-goal-user-contributions=55;msg-param-mass-gift-count=55;msg-param-origin-id=4540557273074603447;msg-param-sender-count=55;msg-param-sub-plan=1000;room-id=852880224;source-badge-info=;source-badges=;source-id=d76a0318-3af3-43a3-abc3-3dad20da12de;source-msg-id=submysterygift;source-room-id=1004060561;subscriber=0;system-msg=revelracing66\\sis\\sgifting\\s55\\sTier\\s1\\sSubs\\sto\\sMinikoMew's\\scommunity!\\sThey've\\sgifted\\sa\\stotal\\sof\\s55\\sin\\sthe\\schannel!;tmi-sent-ts=1737083162400;user-id=737286301;user-type=;vip=0 :tmi.twitch.tv USERNOTICE #cerbervt";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.SharedChatNotice, usernotice.MsgId);
+
+        IGiftSubNoticeIntro intro = usernotice;
+        Assert.Equal(string.Empty, intro.Author.BadgeInfo);
+        Assert.Equal("sub-gift-leader/1", intro.Author.Badges);
+        Assert.Equal("0", intro.Author.ChatColor.Name);
+        Assert.Equal("revelracing66", intro.Author.DisplayName);
+        Assert.Equal("revelracing66", intro.Author.Name);
+        Assert.Equal("0921d903-e597-42a8-9e57-28e08c922ff0", intro.Id);
+        Assert.False(intro.Author.IsMod);
+        Assert.Equal(4540557273074603447ul, intro.CommunityGiftId);
+        Assert.Equal(55, intro.GiftCount);
+        Assert.Equal(852880224, intro.Channel.Id);
+        Assert.False(intro.Author.IsSubscriber);
+        Assert.Equal("revelracing66 is gifting 55 Tier 1 Subs to MinikoMew's community! They've gifted a total of 55 in the channel!", intro.SystemMessage);
+        Assert.False(intro.Author.IsVip);
+        Assert.Equal(1737083162400, intro.TmiSentTs);
+        Assert.Equal(UserType.None, intro.Author.Type);
+        Assert.Equal("cerbervt", intro.Channel.Name);
+
+        Assert.True(intro.Source.HasSource);
+        Assert.Equal(UsernoticeType.SubMysteryGift, intro.Source.MsgId);
+        Assert.Equal("d76a0318-3af3-43a3-abc3-3dad20da12de", intro.Source.Id);
+        Assert.Equal(1004060561, intro.Source.ChannelId);
+        Assert.Equal(string.Empty, intro.Source.BadgeInfo);
+        Assert.Equal(string.Empty, intro.Source.Badges);
+    }
+
+    [Fact]
+    public void Multimonth_Subgift_HasGoal_USERNOTICE()
+    {
+        string raw = "@badge-info=subscriber/32;badges=subscriber/3030,sub-gift-leader/2;color=#FF8EA3;display-name=iNatsuFN;emotes=;flags=;id=0d0decbd-b8f4-4e83-9e18-eca9cab69153;login=inatsufn;mod=0;msg-id=subgift;msg-param-gift-months=6;msg-param-goal-contribution-type=SUBS;msg-param-goal-current-contributions=881;msg-param-goal-target-contributions=900;msg-param-goal-user-contributions=1;msg-param-months=16;msg-param-origin-id=2524053421157386961;msg-param-recipient-display-name=kimmi_tm;msg-param-recipient-id=225806893;msg-param-recipient-user-name=kimmi_tm;msg-param-sender-count=334;msg-param-sub-plan-name=Channel\\sSubscription\\s(mxddy);msg-param-sub-plan=1000;room-id=210915729;subscriber=1;system-msg=iNatsuFN\\sgifted\\s6\\smonths\\sof\\sTier\\s1\\sto\\skimmi_tm.\\sThey've\\sgifted\\s334\\smonths\\sin\\sthe\\schannel!;tmi-sent-ts=1712034497332;user-id=218205938;user-type=;vip=0 :tmi.twitch.tv USERNOTICE #pajlada";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.Subgift, usernotice.MsgId);
+
+        IGiftSubNotice gift = usernotice;
+        Assert.Equal("subscriber/32", gift.Author.BadgeInfo);
+        Assert.Equal("subscriber/3030,sub-gift-leader/2", gift.Author.Badges);
+        Assert.Equal("ff8ea3", gift.Author.ChatColor.Name);
+        Assert.Equal("iNatsuFN", gift.Author.DisplayName);
+        Assert.Equal("inatsufn", gift.Author.Name);
+        Assert.Equal("0d0decbd-b8f4-4e83-9e18-eca9cab69153", gift.Id);
+        Assert.False(gift.Author.IsMod);
+        Assert.Equal(6, gift.GiftedMonths);
+        Assert.Equal(16, gift.Months);
+        Assert.Equal(225806893, gift.Recipient.Id);
+        Assert.Equal("kimmi_tm", gift.Recipient.Name);
+        Assert.Equal("kimmi_tm", gift.Recipient.DisplayName);
+        Assert.Equal(334, gift.TotalGiftCount);
+
+        Assert.True(gift.ChannelGoal.HasGoal);
+        Assert.Empty(gift.ChannelGoal.Description);
+        Assert.Equal(900, gift.ChannelGoal.TargetContributions);
+        Assert.Equal(881, gift.ChannelGoal.CurrentContributions);
+        Assert.Equal(1, gift.ChannelGoal.UserContribution);
+    }
 }

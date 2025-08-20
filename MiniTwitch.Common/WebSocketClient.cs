@@ -159,6 +159,7 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
     #region Communication
     private async Task Receive()
     {
+        const byte lf = (byte)'\n';
         var buffer = MemoryPool<byte>.Shared.Rent(1024 * 32);
         int written = 0;
         while (this.IsConnected)
@@ -167,12 +168,14 @@ public sealed class WebSocketClient(TimeSpan reconnectionDelay) : IAsyncDisposab
             {
                 await _receiveLock.WaitAsync(_cts.Token);
                 var receiveTask = _client.ReceiveAsync(buffer.Memory[written..], _cts.Token);
-                ValueWebSocketReceiveResult result = receiveTask.IsCompleted ? receiveTask.Result : await receiveTask;
+                ValueWebSocketReceiveResult result = await receiveTask;
                 written += result.Count;
                 if (result.EndOfMessage)
                 {
-                    OnData?.Invoke(buffer.Memory[..written]);
-                    _consumer?.BytesReceived(buffer.Memory[..written]);
+                    ReadOnlyMemory<byte> message = buffer.Memory[..written];
+                    message = (message.Span[^1] == lf) ? message[..^2] : message;
+                    OnData?.Invoke(message);
+                    _consumer?.BytesReceived(message);
                     written = 0;
                 }
 
