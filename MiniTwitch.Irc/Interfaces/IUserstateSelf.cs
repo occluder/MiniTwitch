@@ -5,7 +5,7 @@ using MiniTwitch.Irc.Models;
 namespace MiniTwitch.Irc.Interfaces;
 
 /// <summary>
-/// Represents information about you when you send a  message or join a channel
+/// Represents information about you when you send a message or join a channel
 /// </summary>
 public interface IUserstateSelf
 {

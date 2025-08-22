@@ -141,7 +141,7 @@ internal readonly ref struct IrcMessage
             9 when bytes.SequenceEqual("ROOMSTATE"u8) => IrcCommand.ROOMSTATE,
             9 when bytes.SequenceEqual("USERSTATE"u8) => IrcCommand.USERSTATE,
             10 when bytes.SequenceEqual("USERNOTICE"u8) => IrcCommand.USERNOTICE,
-            16 when bytes.SequenceEqual("GLOBALUSERSTATE"u8) => IrcCommand.GLOBALUSERSTATE,
+            15 when bytes.SequenceEqual("GLOBALUSERSTATE"u8) => IrcCommand.GLOBALUSERSTATE,
             _ => IrcCommand.Unknown,
         };
     }

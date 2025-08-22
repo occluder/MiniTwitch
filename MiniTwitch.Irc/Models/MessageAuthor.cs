@@ -9,7 +9,7 @@ namespace MiniTwitch.Irc.Models;
 /// </summary>
 public readonly struct MessageAuthor : IBanTarget, IDeletedMessageAuthor, IWhisperAuthor,
     IGiftSubRecipient, IUserstateSelf, IMembershipUser, IGazatuChannel, IPartedChannel,
-    IBasicChannel, IEquatable<MessageAuthor>, IEquatable<IrcChannel>
+    IBasicChannel, IGlobalUserstate, IEquatable<MessageAuthor>, IEquatable<IrcChannel>
 {
     /// <summary>
     /// Contains metadata related to the chat badges in the badges tag
