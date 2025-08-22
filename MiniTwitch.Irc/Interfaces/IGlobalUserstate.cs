@@ -23,4 +23,8 @@ public interface IGlobalUserstate
     /// Your user type
     /// </summary>
     UserType Type { get; }
+    /// <summary>
+    /// Your user ID
+    /// </summary>
+    public long Id { get; init; }
 }

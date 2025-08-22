@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Text;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Internal.Enums;
@@ -27,6 +28,7 @@ public readonly struct GlobalUserstate
         string badges = string.Empty;
         Color color = default;
         string displayName = string.Empty;
+        long uid = 0;
         UserType type = UserType.None;
         string emoteSets = string.Empty;
 
@@ -50,6 +52,11 @@ public readonly struct GlobalUserstate
                 //badges
                 case (int)Tags.Badges when tagKey.SequenceEqual("badges"u8):
                     badges = TagHelper.GetString(tagValue, true);
+                    break;
+
+                //user-id
+                case (int)Tags.UserId when tagKey.SequenceEqual("user-id"u8):
+                    uid = TagHelper.GetLong(tagValue);
                     break;
 
                 //user-type
@@ -87,8 +94,21 @@ public readonly struct GlobalUserstate
             ChatColor = color,
             Badges = badges,
             DisplayName = displayName,
+            Id = uid,
             Type = type
         };
         this.EmoteSets = emoteSets;
+    }
+
+    /// <summary>
+    /// Construct a <see cref="GlobalUserstate"/> from a string. Useful for testing
+    /// </summary>
+    /// <param name="rawData">The raw IRC message</param>
+    /// <returns><see cref="GlobalUserstate"/> with the related data</returns>
+    public static GlobalUserstate Construct(string rawData)
+    {
+        ReadOnlyMemory<byte> memory = new(Encoding.UTF8.GetBytes(rawData));
+        var message = new IrcMessage(memory);
+        return new(ref message);
     }
 }
