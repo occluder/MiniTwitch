@@ -149,6 +149,10 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
     /// Invoked when a user donates to a charity during a fundraiser
     /// </summary>
     public event Func<ICharityDonation, ValueTask> OnCharityDonation = default!;
+    /// <summary>
+    /// Occurs when a global user state message is received.
+    /// </summary>
+    public event Func<GlobalUserstate, ValueTask> OnGlobalUserstate = default!;
 
     // Kept for testing
     internal event Func<ValueTask> OnPing = default!;
@@ -737,12 +741,17 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
                 OnNotice?.Invoke(notice).StepOver(this.ExceptionHandler);
                 break;
 
-            case IrcCommand.USERSTATE or IrcCommand.GLOBALUSERSTATE:
+            case IrcCommand.USERSTATE:
                 Userstate state = new(ref message);
                 if (state.Self.IsMod && !_moderated.Contains(state.Channel.Name))
                     _ = _moderated.Add(state.Channel.Name);
 
                 OnUserstate?.Invoke(state).StepOver(this.ExceptionHandler);
+                break;
+
+            case IrcCommand.GLOBALUSERSTATE:
+                GlobalUserstate globalState = new(ref message);
+                OnGlobalUserstate?.Invoke(globalState).StepOver(this.ExceptionHandler);
                 break;
 
             case IrcCommand.WHISPER:
