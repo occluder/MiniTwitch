@@ -65,7 +65,7 @@ public readonly struct MessageAuthor : IBanTarget, IDeletedMessageAuthor, IWhisp
     public bool IsVip { get; init; }
     /// <summary>
     /// Whether the user has site-wide commercial free mode enabled
-    /// <para>Note: This value is always <see langword="false"/></para>
+    /// <para>Note: This value is seemingly always <see langword="false"/></para>
     /// </summary>
     public bool IsTurbo { get; init; }
 
