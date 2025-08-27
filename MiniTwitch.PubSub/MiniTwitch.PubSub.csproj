@@ -36,7 +36,7 @@
 		</None>
 	</ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(CI)' != 'true'">
     <ProjectReference Include="..\MiniTwitch.Common\MiniTwitch.Common.csproj" />
   </ItemGroup>
 

@@ -94,6 +94,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 9.0.x
+
+      - name: Add MiniTwitch.Common package reference
+        if: ${{ matrix.project.project-name != 'MiniTwitch.Common' }}
+        run: |
+          dotnet add ${{ matrix.project.project-dir }}/${{ matrix.project.project-name }}.csproj package MiniTwitch.Common --prerelease
           
       - name: Extract Package Version
         id: get-version
@@ -123,7 +128,7 @@ jobs:
 
       - name: Build project
         working-directory: ${{ matrix.project.project-dir }}
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release -p:CI=true
           
       - name: Pack project
         working-directory: ${{ matrix.project.project-dir }}
