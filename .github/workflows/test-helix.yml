@@ -32,5 +32,5 @@ jobs:
     - name: Run tests
       run: |
           cd .\MiniTwitch.Helix.Test\
-          dotnet test
+          dotnet test -p:CI=false
           
