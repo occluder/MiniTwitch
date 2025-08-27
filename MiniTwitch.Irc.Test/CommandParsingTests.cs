@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using MiniTwitch.Irc.Internal.Enums;
 using MiniTwitch.Irc.Internal.Models;
-using MiniTwitch.Irc.Internal.Parsing;
 using Xunit;
 
 namespace MiniTwitch.Irc.Test;
@@ -72,6 +71,12 @@ public class CommandParsingTests
     {
         string raw = "PONG :tmi.twitch.tv";
         Assert.Equal(IrcCommand.PONG, new IrcMessage(Encoding.UTF8.GetBytes(raw)).Command);
+    }
+    [Fact]
+    public void Parse_GLOBALUSERSTATE()
+    {
+        string raw = "@badge-info=;badges=gold-pixel-heart/1;color=#596FA0;display-name=occluder;emote-sets=0,300374282,477339272,ff12b988-d6da-4f86-a701-39ffa17c778c;user-id=783267696;user-type= :tmi.twitch.tv GLOBALUSERSTATE";
+        Assert.Equal(IrcCommand.GLOBALUSERSTATE, new IrcMessage(Encoding.UTF8.GetBytes(raw)).Command);
     }
     [Fact]
     public void Parse_Multiple()
