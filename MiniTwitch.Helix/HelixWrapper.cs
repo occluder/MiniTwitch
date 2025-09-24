@@ -1465,7 +1465,14 @@ public class HelixWrapper
 
     ///<summary>
     ///<see href="https://dev.twitch.tv/docs/api/reference/#get-hype-train-events">API Reference</see>
+    /// <para>
+    ///     Deprecated: This endpoint has been deprecated and will stop functioning on December 4, 2025. For more information, see 
+    ///     <see href="https://discuss.dev.twitch.com/t/legacy-get-hype-train-events-api-and-eventsub-hype-train-v1-subscription-types-deprecation-and-withdrawal-timeline/64299">
+    ///         Legacy Get Hype Train Events API and EventSub Hype Train v1 subscription types deprecation and withdrawal timeline
+    ///     </see>.
+    /// </para>
     ///</summary>
+    [Obsolete("This endpoint has been deprecated and will stop functioning on December 4, 2025. Use GetHypeTrainStatus instead")]
     public Task<HelixResult<HypeTrainEvents>> GetHypeTrainEvents(
         int? first = null,
         CancellationToken cancellationToken = default)
