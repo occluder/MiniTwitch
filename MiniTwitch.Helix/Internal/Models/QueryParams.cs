@@ -67,4 +67,6 @@ internal static class QueryParams
     public const string UnbanRequestId = "unban_request_id";
     public const string ResolutionText = "resolution_text";
     public const string SubscriptionId = "subscription_id";
+    public const string EditorId = "editor_id";
+    public const string ClipId = "clip_id";
 }

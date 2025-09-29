@@ -867,4 +867,10 @@ internal static class Endpoints
         Method = HttpMethod.Get,
         Route = "/hypetrain/status",
     };
+
+    public static readonly HelixEndpoint GetClipsDownload = new()
+    {
+        Method = HttpMethod.Get,
+        Route = "/clips/downloads",
+    };
 }

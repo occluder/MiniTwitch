@@ -2737,4 +2737,40 @@ public class HelixWrapper
 
         return HelixResultFactory.Create<HypeTrainStatus>(Client, request, endpoint, cancellationToken);
     }
+
+    ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference#get-clips-download">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<ClipsDownload>> GetClipsDownload(
+        long editorId,
+        long broadcasterId,
+        IEnumerable<string> clipId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetClipsDownload;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.EditorId, editorId)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddMultiParam(QueryParams.ClipId, clipId);
+
+        return HelixResultFactory.Create<ClipsDownload>(Client, request, endpoint, cancellationToken);
+    }
+
+    ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference#get-clips-download">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<ClipsDownload>> GetClipsDownload(
+        long editorId,
+        long broadcasterId,
+        string clipId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetClipsDownload;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.EditorId, editorId)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.ClipId, clipId);
+
+        return HelixResultFactory.Create<ClipsDownload>(Client, request, endpoint, cancellationToken);
+    }
 }
