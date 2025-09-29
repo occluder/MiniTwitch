@@ -84,5 +84,20 @@ public class DeserializeTest
         Assert.Equal(23850, info.SharedAllTimeHigh.Total);
         Assert.Equal("2020-04-27T20:12:21.0038022Z", info.SharedAllTimeHigh.AchievedAt.ToString("o"));
     }
+
+    [Fact]
+    public void GetClipsDownload()
+    {
+        string json = "{\r\n  \"data\": [\r\n    {\r\n      \"clip_id\": \"InexpensiveDistinctFoxChefFrank\",\r\n      \"landscape_download_url\": \"https://production.assets.clips.twitchcdn.net/yFZG...\",\r\n      \"portrait_download_url\": null\r\n    },\r\n    {\r\n      \"clip_id\": \"SpinelessCloudyLeopardMcaT\",\r\n      \"landscape_download_url\": \"https://production.assets.clips.twitchcdn.net/542j...\",\r\n      \"portrait_download_url\": null\r\n    }\r\n  ]\r\n}";
+        ClipsDownload? clipsDownload = JsonSerializer.Deserialize<ClipsDownload>(json, options);
+        Assert.NotNull(clipsDownload);
+        Assert.Equal(2, clipsDownload.Data.Count);
+        Assert.Equal("InexpensiveDistinctFoxChefFrank", clipsDownload.Data[0].ClipId);
+        Assert.Equal("https://production.assets.clips.twitchcdn.net/yFZG...", clipsDownload.Data[0].LandscapeDownloadUrl);
+        Assert.Null(clipsDownload.Data[0].PortraitDownloadUrl);
+        Assert.Equal("SpinelessCloudyLeopardMcaT", clipsDownload.Data[1].ClipId);
+        Assert.Equal("https://production.assets.clips.twitchcdn.net/542j...", clipsDownload.Data[1].LandscapeDownloadUrl);
+        Assert.Null(clipsDownload.Data[1].PortraitDownloadUrl);
+    }
 }
 
