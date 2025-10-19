@@ -99,5 +99,48 @@ public class DeserializeTest
         Assert.Equal("https://production.assets.clips.twitchcdn.net/542j...", clipsDownload.Data[1].LandscapeDownloadUrl);
         Assert.Null(clipsDownload.Data[1].PortraitDownloadUrl);
     }
+
+    [Fact]
+    public void GetAuthorizationByUser()
+    {
+        string json = """
+            {
+              "data": [
+                {
+                  "user_id": "141981764",
+                  "user_name": "TwitchDev",
+                  "user_login": "twitchdev",
+                  "scopes": [
+                    "bits:read", 
+                    "channel:bot", 
+                    "channel:manage:predictions"
+                  ]
+                },
+                {
+                  "user_id": "197886470",
+                  "user_name": "TwitchRivals",
+                  "user_login": "twitchrivals",
+                  "scopes": [
+                    "channel:manage:predictions"
+                  ]
+                }
+              ]
+            }
+            """;
+
+        AuthorizedUsers? authorizedUsers = JsonSerializer.Deserialize<AuthorizedUsers>(json, options);
+        Assert.NotNull(authorizedUsers);
+        Assert.Equal(2, authorizedUsers.Data.Count);
+        var user1 = authorizedUsers.Data[0];
+        Assert.Equal(141981764, user1.UserId);
+        Assert.Equal("TwitchDev", user1.UserDisplayName);
+        Assert.Equal("twitchdev", user1.Username);
+        Assert.Equal(["bits:read", "channel:bot", "channel:manage:predictions"], user1.Scopes);
+        var user2 = authorizedUsers.Data[1];
+        Assert.Equal(197886470, user2.UserId);
+        Assert.Equal("TwitchRivals", user2.UserDisplayName);
+        Assert.Equal("twitchrivals", user2.Username);
+        Assert.Equal(["channel:manage:predictions"], user2.Scopes);
+    }
 }
 

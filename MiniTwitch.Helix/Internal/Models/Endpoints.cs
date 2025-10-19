@@ -873,4 +873,10 @@ internal static class Endpoints
         Method = HttpMethod.Get,
         Route = "/clips/downloads",
     };
+
+    public static readonly HelixEndpoint GetAuthorizationByUser = new()
+    {
+        Method = HttpMethod.Get,
+        Route = "/authorization/users",
+    };
 }
