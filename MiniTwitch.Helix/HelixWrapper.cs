@@ -2773,4 +2773,32 @@ public class HelixWrapper
 
         return HelixResultFactory.Create<ClipsDownload>(Client, request, endpoint, cancellationToken);
     }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference/#get-authorization-by-user">API Reference</see>
+    /// </summary>
+    public Task<HelixResult<AuthorizedUsers>> GetAuthorizationByUser(
+        long userId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetAuthorizationByUser;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.UserId, userId);
+
+        return HelixResultFactory.Create<AuthorizedUsers>(Client, request, endpoint, cancellationToken);
+    }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference/#get-authorization-by-user">API Reference</see>
+    /// </summary>
+    public Task<HelixResult<AuthorizedUsers>> GetAuthorizationByUser(
+        IEnumerable<long> userId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetAuthorizationByUser;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddMultiParam(QueryParams.UserId, userId);
+
+        return HelixResultFactory.Create<AuthorizedUsers>(Client, request, endpoint, cancellationToken);
+    }
 }
