@@ -19,8 +19,8 @@ public class Clips : PaginableResponse<Clips.Clip>
         int ViewCount,
         DateTime CreatedAt,
         string ThumbnailUrl,
-        int Duration,
-        int VodOffset,
+        double Duration,
+        int? VodOffset,
         bool IsFeatured
     );
 }
