@@ -687,10 +687,38 @@ public class HelixWrapper
 
     ///<summary>
     ///<see href="https://dev.twitch.tv/docs/api/reference/#get-clips">API Reference</see>
+    ///<para>Note: one of broadcasterId or gameId must be provided for this overload</para>
     ///</summary>
     public Task<HelixResult<Clips>> GetClips(
-        long broadcasterId,
-        long gameId,
+        long? broadcasterId = null,
+        long? gameId = null,
+        DateTime? startedAt = null,
+        DateTime? endedAt = null,
+        int? first = null,
+        bool? isFeatured = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (broadcasterId == null && gameId == null)
+        {
+            throw new ArgumentException("One of broadcasterId or gameId must be provided.");
+        }
+
+        HelixEndpoint endpoint = Endpoints.GetClips;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.GameId, gameId)
+            .AddParam(QueryParams.StartedAt, startedAt)
+            .AddParam(QueryParams.EndedAt, endedAt)
+            .AddParam(QueryParams.First, first)
+            .AddParam(QueryParams.IsFeatured, isFeatured);
+
+        return HelixResultFactory.Create<Clips>(Client, request, endpoint, cancellationToken);
+    }
+
+    ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference/#get-clips">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<Clips>> GetClips(
         string id,
         DateTime? startedAt = null,
         DateTime? endedAt = null,
@@ -700,8 +728,6 @@ public class HelixWrapper
     {
         HelixEndpoint endpoint = Endpoints.GetClips;
         RequestData request = new RequestData(_baseUrl, endpoint)
-            .AddParam(QueryParams.BroadcasterId, broadcasterId)
-            .AddParam(QueryParams.GameId, gameId)
             .AddParam(QueryParams.Id, id)
             .AddParam(QueryParams.StartedAt, startedAt)
             .AddParam(QueryParams.EndedAt, endedAt)
@@ -715,8 +741,6 @@ public class HelixWrapper
     ///<see href="https://dev.twitch.tv/docs/api/reference/#get-clips">API Reference</see>
     ///</summary>
     public Task<HelixResult<Clips>> GetClips(
-        long broadcasterId,
-        long gameId,
         IEnumerable<string> ids,
         DateTime? startedAt = null,
         DateTime? endedAt = null,
@@ -726,8 +750,6 @@ public class HelixWrapper
     {
         HelixEndpoint endpoint = Endpoints.GetClips;
         RequestData request = new RequestData(_baseUrl, endpoint)
-            .AddParam(QueryParams.BroadcasterId, broadcasterId)
-            .AddParam(QueryParams.GameId, gameId)
             .AddMultiParam(QueryParams.Id, ids)
             .AddParam(QueryParams.StartedAt, startedAt)
             .AddParam(QueryParams.EndedAt, endedAt)
