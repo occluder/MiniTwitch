@@ -18,15 +18,41 @@ internal class RequestData
 
     public string GetUrl() => _url + _paramBuilder.ToString();
 
+    public RequestData AddParam(string key, DateTime? value)
+    {
+        if (value is null)
+        {
+            return this;
+        }
+
+        if (_paramBuilder.Length == 0)
+        {
+            _paramBuilder.Append('?');
+        }
+        else
+        {
+            _paramBuilder.Append('&');
+        }
+
+        _paramBuilder.Append($"{key}={value.Value:O}");
+        return this;
+    }
+
     public RequestData AddParam(string key, object? value)
     {
         if (value is null)
+        {
             return this;
+        }
 
         if (_paramBuilder.Length == 0)
+        {
             _paramBuilder.Append('?');
+        }
         else
+        {
             _paramBuilder.Append('&');
+        }
 
         _paramBuilder.Append($"{key}={value}");
         return this;
@@ -35,7 +61,9 @@ internal class RequestData
     public RequestData AddMultiParam(string key, IEnumerable<object>? value)
     {
         if (value is null)
+        {
             return this;
+        }
 
         foreach (object obj in value)
         {
@@ -54,7 +82,9 @@ internal class RequestData
     public RequestData AddMultiParam<T>(string key, IEnumerable<T>? value)
     {
         if (value is null)
+        {
             return this;
+        }
 
         foreach (T? obj in value)
         {
