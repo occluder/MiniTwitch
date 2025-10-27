@@ -34,7 +34,7 @@ internal class RequestData
             _paramBuilder.Append('&');
         }
 
-        _paramBuilder.Append($"{key}={value.Value:O}");
+        _paramBuilder.Append($"{key}={value.Value.ToUniversalTime():O}");
         return this;
     }
 
