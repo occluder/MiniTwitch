@@ -1,5 +1,17 @@
 # MiniTwitch.Helix Changelog
 
+## 1.0.3
+### Minor Changes
+- Marked `GetHypeTrainEvents` as deprecated (#181)
+- Added `Get Hype Train Status` Endpoint (#173)
+- Added `Get Clips Download` Endpoint (#182)
+- Added `Get Authorization By User` Endpoint (#186)
+
+### Fixes
+- Parameters for the `Get Clips` endpoint are now mutually exclusive, conforming to docs (#189)
+- Fixed DateTime parameters not being formatted to RFC3339 (#191)
+***
+
 ## 1.0.2
 ### Minor Changes
 - Added ForSourceOnly property to ChatMessage (#161)

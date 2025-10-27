@@ -3,8 +3,8 @@
   <PropertyGroup>
       <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
       <PackageId>MiniTwitch.Helix</PackageId>
-      <PackageVersion>1.0.2</PackageVersion>
-      <Version>1.0.2</Version>
+      <PackageVersion>1.0.3</PackageVersion>
+      <Version>1.0.3</Version>
       <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
       <GenerateDocumentationFile>true</GenerateDocumentationFile>
       <Title>MiniTwitch.Helix</Title>

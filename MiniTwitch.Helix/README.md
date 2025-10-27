@@ -1,4 +1,4 @@
-# MiniTwitch.Helix (Pre-release)
+# MiniTwitch.Helix
 
 MiniTwitch.Helix conveniently wraps the Twitch Helix API and exposes them through the `HelixWrapper`class.
 ## Features
