@@ -1,5 +1,9 @@
 # MiniTwitch.Helix Changelog
 
+## 1.0.4
+### Fixes
+- Fixed DateTime parameters not being formatted to RFC3339 (again)
+
 ## 1.0.3
 ### Minor Changes
 - Marked `GetHypeTrainEvents` as deprecated (#181)
