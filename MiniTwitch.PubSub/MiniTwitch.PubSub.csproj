@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>2.1.1</PackageVersion>
-    <Version>2.1.1</Version>
+    <PackageVersion>3.0.0</PackageVersion>
+    <Version>3.0.0</Version>
     <PackageId>MiniTwitch.PubSub</PackageId>
     <Title>MiniTwitch.Irc</Title>
     <Description>Fast and easy to use async library for Twitch's PubSub service</Description>
@@ -21,20 +21,20 @@
     <PackageIcon>icon256.png</PackageIcon>
   </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="..\icon256.png">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="..\icon256.png">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
   <ItemGroup Condition="'$(CI)' != 'true'">
     <ProjectReference Include="..\MiniTwitch.Common\MiniTwitch.Common.csproj" />

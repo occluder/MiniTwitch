@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
       <PackageId>MiniTwitch.Common</PackageId>
       <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-      <PackageVersion>2.0.1</PackageVersion>
-      <Version>2.0.1</Version>
+      <PackageVersion>3.0.0</PackageVersion>
+      <Version>3.0.0</Version>
       <ImplicitUsings>enable</ImplicitUsings>
       <Nullable>enable</Nullable>
       <Title>MiniTwitch.Common</Title>
