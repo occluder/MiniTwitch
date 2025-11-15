@@ -1,5 +1,14 @@
 # MiniTwitch.Irc changelog
 
+## 3.0.0
+- Target frameworks updated to include .NET 10
+### Minor changes
+- Added ChannelGoal to relevant usernotice events (#175)
+- Added IIrcClient interface (#175)
+- Improvments to parsing logic (#175)
+- Handle GLOBALUSERSTATE events (#178)
+***
+
 ## 2.0.2
 ### Minor changes
 - Added source-only tag (#160)

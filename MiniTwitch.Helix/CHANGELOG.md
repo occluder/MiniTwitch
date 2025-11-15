@@ -1,5 +1,9 @@
 # MiniTwitch.Helix Changelog
 
+## 2.0.0
+- Target frameworks updated to include .NET 10
+***
+
 ## 1.0.4
 ### Fixes
 - Fixed DateTime parameters not being formatted to RFC3339 (again)

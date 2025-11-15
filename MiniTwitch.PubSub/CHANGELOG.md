@@ -1,5 +1,12 @@
 # MiniTwitch.PubSub Changelog
 
+## 3.0.0
+- Target frameworks updated to include .NET 10
+### Minor changes
+- Add clips leaderboard topic (#170)
+- Lowered default topics hashset size to 5
+***
+
 ## 2.1.1
 ### Minor changes
 - Added collaboration viewer properties and status enum (#163)

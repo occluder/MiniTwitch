@@ -1,5 +1,11 @@
 # MiniTwitch.Common Changelog
 
+## 3.0.0
+- Target frameworks updated to include .NET 10
+### Minor changes
+- Improve consumer memory handling for WebSocketClient (#174)
+***
+
 ## 2.0.1
 
 ### Minor changes
