@@ -59,6 +59,10 @@ public interface IIrcClient
     event Func<Whisper, ValueTask> OnWhisper;
     /// <inheritdoc cref="IrcClient.OnCharityDonation"/>
     event Func<ICharityDonation, ValueTask> OnCharityDonation;
+    /// <inheritdoc cref="IrcClient.OnGlobalUserstate"/>
+    event Func<GlobalUserstate, ValueTask> OnGlobalUserstate;
+    /// <inheritdoc cref="IrcClient.OnViewerMilestone"/>
+    event Func<IViewerMilestone, ValueTask> OnViewerMilestone;
     /// <inheritdoc cref="IrcClient.Connect"/>
     void Connect(string url = "wss://irc-ws.chat.twitch.tv:443");
     /// <inheritdoc cref="IrcClient.ConnectAsync"/>
