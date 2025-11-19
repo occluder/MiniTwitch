@@ -16,5 +16,6 @@ internal enum UsernoticeType
     StandardPayForward = 18, // "standardpayforward"
     AnonGiftPaidUpgrade = 19, // "anongiftpaidupgrade"
     CharityDonation, // "charitydonation"; Length conflict (15)
+    ViewerMilestone, // "viewermilestone"; Length conflict (15)
     SharedChatNotice, // "sharedchatnotice"; Length conflict (16)
 }

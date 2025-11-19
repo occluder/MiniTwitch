@@ -153,6 +153,10 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
     /// Occurs when a global user state message is received.
     /// </summary>
     public event Func<GlobalUserstate, ValueTask> OnGlobalUserstate = default!;
+    /// <summary>
+    /// Invoked when a user reaches a consecutive streams watched milestone
+    /// </summary>
+    public event Func<IViewerMilestone, ValueTask> OnViewerMilestone = default!;
 
     // Kept for testing
     internal event Func<ValueTask> OnPing = default!;
@@ -652,6 +656,10 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
                     case UsernoticeType.CharityDonation:
                         OnCharityDonation?.Invoke(usernotice).StepOver(this.ExceptionHandler);
+                        break;
+
+                    case UsernoticeType.ViewerMilestone:
+                        OnViewerMilestone?.Invoke(usernotice).StepOver(this.ExceptionHandler);
                         break;
                 }
 

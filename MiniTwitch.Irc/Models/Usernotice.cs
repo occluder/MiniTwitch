@@ -15,7 +15,7 @@ namespace MiniTwitch.Irc.Models;
 /// </summary>
 public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IPaidUpgradeNotice,
     ISubNotice, IGiftSubNotice, IRaidNotice, IPrimeUpgradeNotice, IEquatable<Usernotice>,
-    ICharityDonation
+    ICharityDonation, IViewerMilestone
 {
     private const string VIP_ROLE = "vip/1";
 
@@ -79,6 +79,8 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
     /// <para>Check <see cref="ChannelGoal.HasGoal"/> to see if there is a goal</para>
     /// </summary>
     public ChannelGoal ChannelGoal { get; init; }
+    /// <inheritdoc/>
+    public int ConsecutiveStreamsWatched { get; init; }
 
     /// <inheritdoc/>
     public long TmiSentTs { get; init; } = default;
@@ -149,6 +151,9 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
         int goalCurrent = 0;
         int goalUser = 0;
 
+        // for msg-id=viewermilestone
+        int consecutiveStreamsWatched = 0;
+
         using IrcTags tags = message.ParseTags();
         foreach (IrcTag tag in tags)
         {
@@ -201,6 +206,7 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
                         (int)UsernoticeType.SubMysteryGift when tagValue.SequenceEqual("submysterygift"u8) => UsernoticeType.SubMysteryGift,
                         (int)UsernoticeType.GiftPaidUpgrade when tagValue.SequenceEqual("giftpaidupgrade"u8) => UsernoticeType.GiftPaidUpgrade,
                         15 when tagValue.SequenceEqual("charitydonation"u8) => UsernoticeType.CharityDonation,
+                        15 when tagValue.SequenceEqual("viewermilestone"u8) => UsernoticeType.ViewerMilestone,
                         (int)UsernoticeType.PrimePaidUpgrade when tagValue.SequenceEqual("primepaidupgrade"u8) => UsernoticeType.PrimePaidUpgrade,
                         (int)UsernoticeType.StandardPayForward when tagValue.SequenceEqual("standardpayforward"u8) => UsernoticeType.StandardPayForward,
                         (int)UsernoticeType.AnonGiftPaidUpgrade when tagValue.SequenceEqual("anongiftpaidupgrade"u8) => UsernoticeType.AnonGiftPaidUpgrade,
@@ -269,6 +275,17 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
                 //msg-param-color
                 case (int)Tags.MsgParamColor when tagKey.SequenceEqual("msg-param-color"u8):
                     color = (AnnouncementColor)tagValue.Sum();
+                    break;
+
+                //msg-param-value
+                case (int)Tags.MsgParamValue when tagKey.SequenceEqual("msg-param-value"u8):
+                    // This might be used in the future for other notice types
+                    switch (MsgId)
+                    {
+                        case UsernoticeType.ViewerMilestone:
+                            consecutiveStreamsWatched = TagHelper.GetInt(tagValue);
+                            break;
+                    }
                     break;
 
                 //msg-param-months
@@ -509,6 +526,7 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
             CurrentContributions = goalCurrent,
             UserContribution = goalUser
         };
+        this.ConsecutiveStreamsWatched = consecutiveStreamsWatched;
     }
 
     /// <summary>

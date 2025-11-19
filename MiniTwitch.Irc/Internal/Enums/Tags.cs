@@ -40,6 +40,7 @@ internal enum Tags
     ReplyThreadParentUserLogin = 30, // "reply-thread-parent-user-login"
     SystemMsg = 10, // "system-msg"
     MsgParamColor = 15, // "msg-param-color"
+    MsgParamValue = 15, // "msg-param-value"
     MsgParamMonths = 16, // "msg-param-months"
     MsgParamSubPlan = 18, // "msg-param-sub-plan"
     MsgParamSenderName = 21, // "msg-param-sender-name"
