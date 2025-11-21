@@ -306,7 +306,7 @@ public class UsernoticeTests
         Assert.Equal("Exzodia1337", milestone.Author.DisplayName);
         Assert.Equal("subscriber/2", milestone.Author.Badges);
         Assert.Equal("subscriber/2", milestone.Author.BadgeInfo);
-        Assert.Equal("#8A2BE2", milestone.Author.ChatColor.Name);
+        Assert.Equal("8a2be2", milestone.Author.ChatColor.Name);
 
         Assert.Equal(3, milestone.ConsecutiveStreamsWatched);
         Assert.Equal("Exzodia1337 watched 3 consecutive streams and sparked a watch streak!", milestone.SystemMessage);
