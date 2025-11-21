@@ -43,6 +43,8 @@ internal enum Tags
     MsgParamValue = 15, // "msg-param-value"
     MsgParamMonths = 16, // "msg-param-months"
     MsgParamSubPlan = 18, // "msg-param-sub-plan"
+    MsgParamCategory = 18, // "msg-param-category"
+    MsgParamCopoReward = 20, // "msg-param-copoReward"
     MsgParamSenderName = 21, // "msg-param-sender-name"
     MsgParamGiftMonths = 21, // "msg-param-gift-months"
     MsgParamViewerCount = 21, // "msg-param-viewerCount"

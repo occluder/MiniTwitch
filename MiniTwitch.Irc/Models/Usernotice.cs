@@ -81,6 +81,10 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
     public ChannelGoal ChannelGoal { get; init; }
     /// <inheritdoc/>
     public int ConsecutiveStreamsWatched { get; init; }
+    /// <inheritdoc/>
+    public int Reward { get; init; }
+    /// <inheritdoc/>
+    public string Category { get; init; }
 
     /// <inheritdoc/>
     public long TmiSentTs { get; init; } = default;
@@ -153,6 +157,8 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
 
         // for msg-id=viewermilestone
         int consecutiveStreamsWatched = 0;
+        int reward = 0;
+        string category = string.Empty;
 
         using IrcTags tags = message.ParseTags();
         foreach (IrcTag tag in tags)
@@ -296,6 +302,16 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
                 //msg-param-sub-plan
                 case (int)Tags.MsgParamSubPlan when tagKey.SequenceEqual("msg-param-sub-plan"u8):
                     subPlan = (SubPlan)tagValue.Sum();
+                    break;
+
+                //msg-param-category
+                case (int)Tags.MsgParamCategory when tagKey.SequenceEqual("msg-param-category"u8):
+                    category = TagHelper.GetString(tagValue, intern: true);
+                    break;
+
+                //msg-param-copoReward
+                case (int)Tags.MsgParamCopoReward when tagKey.SequenceEqual("msg-param-copoReward"u8):
+                    reward = TagHelper.GetInt(tagValue);
                     break;
 
                 //msg-param-sender-name
@@ -527,6 +543,8 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
             UserContribution = goalUser
         };
         this.ConsecutiveStreamsWatched = consecutiveStreamsWatched;
+        this.Reward = reward;
+        this.Category = category;
     }
 
     /// <summary>

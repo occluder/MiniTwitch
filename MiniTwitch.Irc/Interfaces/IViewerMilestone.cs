@@ -13,4 +13,12 @@ public interface IViewerMilestone : IUnixTimestamped, IUsernotice
     /// The message emitted in chat when the event occurs
     /// </summary>
     string SystemMessage { get; }
+    /// <summary>
+    /// The amount of channel points rewarded for reaching the milestone
+    /// </summary>
+    int Reward { get; }
+    /// <summary>
+    /// The category of the milestone, currently only "watch-streak" is known
+    /// </summary>
+    string Category { get; }
 }
