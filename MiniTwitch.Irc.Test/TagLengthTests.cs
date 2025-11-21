@@ -3,6 +3,7 @@ using MiniTwitch.Irc.Internal.Enums;
 using Xunit;
 
 namespace MiniTwitch.Irc.Test;
+
 public class TagLengthTests
 {
     // <string, expected length>
@@ -81,6 +82,9 @@ public class TagLengthTests
         { "msg-param-goal-target-contributions", (int)Tags.MsgParamGoalTargetContributions },
         { "msg-param-goal-description", (int)Tags.MsgParamGoalDescription },
         { "msg-param-goal-user-contributions", (int)Tags.MsgParamGoalUserContributions },
+        { "msg-param-value", (int)Tags.MsgParamValue },
+        { "msg-param-copoReward", (int)Tags.MsgParamCopoReward },
+        { "msg-param-category", (int)Tags.MsgParamCategory },
     };
 
     [Fact]
