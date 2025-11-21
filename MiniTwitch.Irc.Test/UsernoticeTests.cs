@@ -288,4 +288,29 @@ public class UsernoticeTests
         Assert.Equal(881, gift.ChannelGoal.CurrentContributions);
         Assert.Equal(1, gift.ChannelGoal.UserContribution);
     }
+
+    [Fact]
+    public void ViewerMilestone_USERNOTICE()
+    {
+        string raw = "@tmi-sent-ts=1763560164374;subscriber=1;id=22a4a44d-b7a8-4609-b110-2a15847a35cb;room-id=128856353;user-id=157318356;login=exzodia1337;display-name=Exzodia1337;badges=subscriber/2;badge-info=subscriber/2;color=#8A2BE2;flags=;user-type=;emotes=;msg-id=viewermilestone;msg-param-value=3;system-msg=Exzodia1337\\swatched\\s3\\sconsecutive\\sstreams\\sand\\ssparked\\sa\\swatch\\sstreak!;msg-param-id=419db818-9cd7-4d6d-bedd-a4b1fd7e6079;msg-param-copoReward=350;msg-param-category=watch-streak :tmi.twitch.tv USERNOTICE #mande";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.ViewerMilestone, usernotice.MsgId);
+
+        IViewerMilestone milestone = usernotice;
+        Assert.Equal(1763560164374, milestone.TmiSentTs);
+        Assert.True(milestone.Author.IsSubscriber);
+        Assert.Equal("22a4a44d-b7a8-4609-b110-2a15847a35cb", milestone.Id);
+        Assert.Equal(128856353, milestone.Channel.Id);
+        Assert.Equal(157318356, milestone.Author.Id);
+        Assert.Equal("exzodia1337", milestone.Author.Name);
+        Assert.Equal("Exzodia1337", milestone.Author.DisplayName);
+        Assert.Equal("subscriber/2", milestone.Author.Badges);
+        Assert.Equal("subscriber/2", milestone.Author.BadgeInfo);
+        Assert.Equal("8a2be2", milestone.Author.ChatColor.Name);
+
+        Assert.Equal(3, milestone.ConsecutiveStreamsWatched);
+        Assert.Equal("Exzodia1337 watched 3 consecutive streams and sparked a watch streak!", milestone.SystemMessage);
+        Assert.Equal(350, milestone.Reward);
+        Assert.Equal("watch-streak", milestone.Category);
+    }
 }
