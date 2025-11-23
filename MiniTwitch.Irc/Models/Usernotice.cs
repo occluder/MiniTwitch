@@ -471,7 +471,10 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
         switch (this.MsgId == UsernoticeType.SharedChatNotice ? srcMsgId : this.MsgId)
         {
 
-            case UsernoticeType.Sub or UsernoticeType.Resub or UsernoticeType.Announcement:
+            case UsernoticeType.Sub
+            or UsernoticeType.Resub
+            or UsernoticeType.Announcement
+            or UsernoticeType.ViewerMilestone:
                 content = message.HasMessageContent ? message.GetContent().Content : string.Empty;
                 break;
 

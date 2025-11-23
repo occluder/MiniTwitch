@@ -21,4 +21,8 @@ public interface IViewerMilestone : IUnixTimestamped, IUsernotice
     /// The category of the milestone, currently only "watch-streak" is known
     /// </summary>
     string Category { get; }
+    /// <summary>
+    /// The viewer's message content for the milestone
+    /// </summary>
+    string Message { get; }
 }
