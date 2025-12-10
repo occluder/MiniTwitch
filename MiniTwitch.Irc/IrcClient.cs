@@ -31,6 +31,13 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
     /// </summary>
     public DefaultMiniTwitchLogger<IrcChannel> DefaultLogger { get; } = new();
     /// <summary>
+    /// Gets or sets the message interceptor used to inspect or modify IRC messages before they are processed or sent.
+    /// </summary>
+    /// <remarks>Assign an implementation of <see cref="IrcMessageInterceptor"/> to customize message handling, such as filtering, logging, or transforming messages.
+    /// <para>If <see langword="null"/>, no interception is performed.</para>
+    /// </remarks>
+    public IrcMessageInterceptor? Interceptor { get; set; }
+    /// <summary>
     /// Whether the client is currently connected
     /// </summary>
     public bool IsConnected => _ws.IsConnected;
@@ -556,6 +563,12 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
     #region Parsing
     internal void Parse(ReadOnlyMemory<byte> data)
     {
+        // skip if true or null
+        if (Interceptor?.BeforeParse(data.Span) is false)
+        {
+            return;
+        }
+
         IrcMessage message = new(data);
         HandleMessage(ref message);
         if (message.IsMultipleMessages)
@@ -589,6 +602,11 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
         {
             case IrcCommand.PRIVMSG:
                 Privmsg ircMessage = new(ref message, this);
+                if (Interceptor?.AfterParse(ircMessage, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 OnMessage?.Invoke(ircMessage).StepOver(this.ExceptionHandler);
                 break;
 
@@ -621,6 +639,10 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
                 UsernoticeType msgId = usernotice.MsgId == UsernoticeType.SharedChatNotice
                     ? usernotice.Source.MsgId
                     : usernotice.MsgId;
+                if (Interceptor?.AfterParse(usernotice, message.Memory.Span) is false)
+                {
+                    return;
+                }
 
                 switch (msgId)
                 {
@@ -667,6 +689,11 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.CLEARCHAT:
                 Clearchat clearchat = new(ref message);
+                if (Interceptor?.AfterParse(clearchat, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 if (clearchat.IsClearChat)
                     OnChatClear?.Invoke(clearchat).StepOver(this.ExceptionHandler);
                 else if (clearchat.IsBan)
@@ -678,11 +705,21 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.CLEARMSG:
                 Clearmsg clearmsg = new(ref message);
+                if (Interceptor?.AfterParse(clearmsg, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 OnMessageDelete?.Invoke(clearmsg).StepOver(this.ExceptionHandler);
                 break;
 
             case IrcCommand.ROOMSTATE:
                 IrcChannel ircChannel = new(ref message);
+                if (Interceptor?.AfterParse(ircChannel, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 if (ircChannel.Roomstate == RoomstateType.All)
                 {
                     _coordinator.ReleaseIfLocked(WaitableEvents.JoinedChannel);
@@ -724,6 +761,11 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.PART:
                 IrcChannel channel = new(ref message);
+                if (Interceptor?.AfterParse(channel, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 if (this.JoinedChannels.Remove(channel))
                 {
                     Log(LogLevel.Information, "Parted #{Channel}", channel.Name);
@@ -736,6 +778,11 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.NOTICE:
                 Notice notice = new(ref message);
+                if (Interceptor?.AfterParse(notice, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 if (notice.Type == NoticeType.Msg_channel_suspended)
                 {
                     Log(LogLevel.Error, "Failed to join #{Channel}: Channel does not exist anymore.", notice.Channel.Name);
@@ -751,6 +798,11 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.USERSTATE:
                 Userstate state = new(ref message);
+                if (Interceptor?.AfterParse(state, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 if (state.Self.IsMod && !_moderated.Contains(state.Channel.Name))
                     _ = _moderated.Add(state.Channel.Name);
 
@@ -759,11 +811,21 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.GLOBALUSERSTATE:
                 GlobalUserstate globalState = new(ref message);
+                if (Interceptor?.AfterParse(globalState, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 OnGlobalUserstate?.Invoke(globalState).StepOver(this.ExceptionHandler);
                 break;
 
             case IrcCommand.WHISPER:
                 Whisper whisper = new(ref message);
+                if (Interceptor?.AfterParse(whisper, message.Memory.Span) is false)
+                {
+                    return;
+                }
+
                 OnWhisper?.Invoke(whisper).StepOver(this.ExceptionHandler);
                 break;
         }
