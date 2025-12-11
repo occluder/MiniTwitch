@@ -564,7 +564,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
     internal void Parse(ReadOnlyMemory<byte> data)
     {
         // skip if true or null
-        if (Interceptor?.BeforeParse(data.Span) is false)
+        if (Interceptor?.BeforeParse(this, data.Span) is false)
         {
             return;
         }
@@ -602,7 +602,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
         {
             case IrcCommand.PRIVMSG:
                 Privmsg ircMessage = new(ref message, this);
-                if (Interceptor?.AfterParse(ircMessage, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, ircMessage, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -639,7 +639,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
                 UsernoticeType msgId = usernotice.MsgId == UsernoticeType.SharedChatNotice
                     ? usernotice.Source.MsgId
                     : usernotice.MsgId;
-                if (Interceptor?.AfterParse(usernotice, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, usernotice, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -689,7 +689,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.CLEARCHAT:
                 Clearchat clearchat = new(ref message);
-                if (Interceptor?.AfterParse(clearchat, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, clearchat, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -705,7 +705,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.CLEARMSG:
                 Clearmsg clearmsg = new(ref message);
-                if (Interceptor?.AfterParse(clearmsg, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, clearmsg, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -715,7 +715,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.ROOMSTATE:
                 IrcChannel ircChannel = new(ref message);
-                if (Interceptor?.AfterParse(ircChannel, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, ircChannel, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -761,7 +761,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.PART:
                 IrcChannel channel = new(ref message);
-                if (Interceptor?.AfterParse(channel, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, channel, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -778,7 +778,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.NOTICE:
                 Notice notice = new(ref message);
-                if (Interceptor?.AfterParse(notice, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, notice, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -798,7 +798,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.USERSTATE:
                 Userstate state = new(ref message);
-                if (Interceptor?.AfterParse(state, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, state, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -811,7 +811,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.GLOBALUSERSTATE:
                 GlobalUserstate globalState = new(ref message);
-                if (Interceptor?.AfterParse(globalState, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, globalState, message.Memory.Span) is false)
                 {
                     return;
                 }
@@ -821,7 +821,7 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
             case IrcCommand.WHISPER:
                 Whisper whisper = new(ref message);
-                if (Interceptor?.AfterParse(whisper, message.Memory.Span) is false)
+                if (Interceptor?.AfterParse(this, whisper, message.Memory.Span) is false)
                 {
                     return;
                 }
