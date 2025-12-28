@@ -44,4 +44,9 @@ public interface IUserstateSelf
     /// <para>Note: This value is always <see langword="false"/></para>
     /// </summary>
     bool IsTurbo { get; }
+    /// <summary>
+    /// Whether you are the lead moderator of the channel
+    /// <para>Note: Might not be working as Twitch is not sending this info for USERSTATEs yet</para>
+    /// </summary>
+    bool IsLeadMod { get; }
 }

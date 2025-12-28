@@ -351,4 +351,23 @@ public class PrivmsgTests
         // Gigantified
         Assert.True(privmsg.IsGigantifiedEmoteMessage);
     }
+
+    [Fact]
+    public void LeadMod()
+    {
+        var privmsg = Privmsg.Construct("@badge-info=;badges=lead_moderator/1;client-nonce=eed215dbfe1f62033bd287c5f832ff64;color=#1E90FF;display-name=AlcaBot;emotes=;first-msg=0;flags=;id=e85c9083-b998-44fc-a392-a9a8ea64d3aa;mod=1;returning-chatter=0;room-id=7676884;subscriber=0;tmi-sent-ts=1766900598952;turbo=0;user-id=70310077;user-type=mod :alcabot!alcabot@alcabot.tmi.twitch.tv PRIVMSG #alca :Test");
+        // Author
+        Assert.Equal(70310077, privmsg.Author.Id);
+        Assert.Equal(UserType.Mod, privmsg.Author.Type);
+        Assert.False(privmsg.Author.IsSubscriber);
+        Assert.Equal("AlcaBot", privmsg.Author.DisplayName);
+        Assert.Equal("alcabot", privmsg.Author.Name);
+        Assert.True(privmsg.Author.IsMod);
+        Assert.False(privmsg.Author.IsTurbo);
+        Assert.Equal("1E90FF".ToLower(), privmsg.Author.ChatColor.Name);
+        Assert.Empty(privmsg.Author.BadgeInfo);
+        Assert.Equal("lead_moderator/1", privmsg.Author.Badges);
+        Assert.False(privmsg.Author.IsVip);
+        Assert.True(privmsg.Author.IsLeadMod);
+    }
 }
