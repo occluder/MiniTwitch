@@ -672,6 +672,7 @@ public class HelixWrapper
     ///<summary>
     ///<see href="https://dev.twitch.tv/docs/api/reference/#create-clip">API Reference</see>
     ///</summary>
+    [Obsolete("The has_delay parameter has been removed from the Twitch API. Use the overload without the has_delay parameter instead.")]
     public Task<HelixResult<Clip>> CreateClip(
         long broadcasterId,
         bool? hasDelay = null,
@@ -681,6 +682,24 @@ public class HelixWrapper
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, broadcasterId)
             .AddParam(QueryParams.HasDelay, hasDelay);
+
+        return HelixResultFactory.Create<Clip>(Client, request, endpoint, cancellationToken);
+    }
+
+    ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference/#create-clip">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<Clip>> CreateClip(
+        long broadcasterId,
+        string? title = null,
+        int? duration = null,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.CreateClip;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.Title, title)
+            .AddParam(QueryParams.Duration, duration);
 
         return HelixResultFactory.Create<Clip>(Client, request, endpoint, cancellationToken);
     }
@@ -2822,5 +2841,29 @@ public class HelixWrapper
             .AddMultiParam(QueryParams.UserId, userId);
 
         return HelixResultFactory.Create<AuthorizedUsers>(Client, request, endpoint, cancellationToken);
+    }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference#create-clip-from-vod">API Reference</see>
+    /// </summary>
+    public Task<HelixResult<Clip>> CreateClipFromVOD(
+        long editorId,
+        long broadcasterId,
+        string vodId,
+        int vodOffset,
+        string title,
+        int? duration,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.CreateClipFromVOD;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.EditorId, editorId)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.VodId, vodId)
+            .AddParam(QueryParams.VodOffset, vodOffset)
+            .AddParam(QueryParams.Title, title)
+            .AddParam(QueryParams.Duration, duration);
+
+        return HelixResultFactory.Create<Clip>(Client, request, endpoint, cancellationToken);
     }
 }
