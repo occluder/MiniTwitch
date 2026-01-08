@@ -879,4 +879,10 @@ internal static class Endpoints
         Method = HttpMethod.Get,
         Route = "/authorization/users",
     };
+
+    public static readonly HelixEndpoint CreateClipFromVOD = new()
+    {
+        Method = HttpMethod.Post,
+        Route = "/videos/clips",
+    };
 }
