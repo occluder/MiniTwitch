@@ -885,4 +885,16 @@ internal static class Endpoints
         Method = HttpMethod.Post,
         Route = "/videos/clips",
     };
+
+    public static readonly HelixEndpoint AddSuspiciousStatusToChatUser = new()
+    {
+        Method = HttpMethod.Post,
+        Route = "/moderation/suspicious_users"
+    };
+
+    public static readonly HelixEndpoint RemoveSuspiciousStatusFromChatUser = new()
+    {
+        Method = HttpMethod.Delete,
+        Route = "/moderation/suspicious_users"
+    };
 }

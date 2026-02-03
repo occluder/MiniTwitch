@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Internal;
+using MiniTwitch.Helix.Requests;
 using MiniTwitch.Helix.Responses;
 
 namespace MiniTwitch.Helix.Test;
@@ -141,6 +142,43 @@ public class DeserializeTest
         Assert.Equal("TwitchRivals", user2.UserDisplayName);
         Assert.Equal("twitchrivals", user2.Username);
         Assert.Equal(["channel:manage:predictions"], user2.Scopes);
+    }
+
+    [Fact]
+    public void AddSuspiciousStatusToChatUser()
+    {
+        string json = """
+            {
+              "data": [
+                {
+                  "user_id": "9876",
+                  "broadcaster_id": "141981764",
+                  "moderator_id": "12826",
+                  "updated_at": "2025-12-01T23:08:18+00:00",
+                  "status": "RESTRICTED",
+                  "types": [
+                    "MANUALLY_ADDED"
+                  ]
+                }
+              ]
+            }
+            """;
+
+        SuspiciousUserInfo? info = JsonSerializer.Deserialize<SuspiciousUserInfo>(json, options);
+        Assert.NotNull(info);
+        Assert.NotEmpty(info.Data);
+        var user = info.Data[0];
+        Assert.Equal(9876, user.UserId);
+        Assert.Equal(141981764, user.BroadcasterId);
+        Assert.Equal(12826, user.ModeratorId);
+        Assert.Equal(DateTime.Parse("2025-12-01T23:08:18+00:00").ToUniversalTime(), user.UpdatedAt.ToUniversalTime());
+        Assert.Equal("RESTRICTED", user.Status);
+        Assert.Equal(["MANUALLY_ADDED"], user.Types);
+
+        string requestJson = """{"user_id":"9876","status":"RESTRICTED"}""";
+        var requestObject = new SuspiciousUserStatusUpdate(9876, SuspiciousUserStatus.RESTRICTED);
+        var asJson = JsonSerializer.Serialize(requestObject, options);
+        Assert.Equal(requestJson, asJson);
     }
 }
 
