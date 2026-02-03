@@ -4,7 +4,7 @@ using MiniTwitch.Helix.Internal.Json;
 
 namespace MiniTwitch.Helix.Requests;
 
-internal class SuspiciousUserStatusUpdate(long userId, SuspiciousUserStatus status)
+public class SuspiciousUserStatusUpdate(long userId, SuspiciousUserStatus status)
 {
     [JsonConverter(typeof(LongConverter))]
     public long UserId { get; } = userId;
