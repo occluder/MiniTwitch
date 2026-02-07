@@ -2866,4 +2866,40 @@ public class HelixWrapper
 
         return HelixResultFactory.Create<Clip>(Client, request, endpoint, cancellationToken);
     }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference/#add-suspicious-status-to-chat-user">API Reference</see>
+    /// </summary>
+    public Task<HelixResult<SuspiciousUserInfo>> AddSuspiciousStatusToChatUser(
+        long broadcasterId,
+        long userId,
+        SuspiciousUserStatus status,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.AddSuspiciousStatusToChatUser;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+        {
+            Body = new SuspiciousUserStatusUpdate(userId, status)
+        }.AddParam(QueryParams.BroadcasterId, broadcasterId)
+         .AddParam(QueryParams.ModeratorId, this.UserId);
+
+        return HelixResultFactory.Create<SuspiciousUserInfo>(Client, request, endpoint, cancellationToken);
+    }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference/#remove-suspicious-status-from-chat-user">API Reference</see>
+    /// </summary>
+    public Task<HelixResult<SuspiciousUserInfo>> RemoveSuspiciousStatusFromChatUser(
+        long broadcasterId,
+        long userId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.RemoveSuspiciousStatusFromChatUser;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.ModeratorId, this.UserId)
+            .AddParam(QueryParams.UserId, userId);
+
+        return HelixResultFactory.Create<SuspiciousUserInfo>(Client, request, endpoint, cancellationToken);
+    }
 }
