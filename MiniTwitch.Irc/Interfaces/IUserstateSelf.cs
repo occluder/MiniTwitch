@@ -49,4 +49,8 @@ public interface IUserstateSelf
     /// <para>Note: Might not be working as Twitch is not sending this info for USERSTATEs yet</para>
     /// </summary>
     bool IsLeadMod { get; }
+    /// <summary>
+    /// Whether you are a bot
+    /// </summary>
+    bool IsBot { get; }
 }
