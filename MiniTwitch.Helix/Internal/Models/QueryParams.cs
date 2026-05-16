@@ -71,6 +71,7 @@ internal static class QueryParams
     public const string ClipId = "clip_id";
     public const string Title = "title";
     public const string Duration = "duration";
+    public const string DurationSeconds = "duration_seconds";
     public const string VodId = "vod_id";
     public const string VodOffset = "vod_offset";
 }
