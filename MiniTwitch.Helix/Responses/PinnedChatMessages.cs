@@ -15,13 +15,13 @@ public class PinnedChatMessages : BaseResponse<PinnedChatMessages.Pin>
         [property: JsonPropertyName("sender_user_id")]
         string SenderUserId,
         [property: JsonPropertyName("sender_user_login")]
-        string SenderUserLogin,
+        string SenderUsername,
         [property: JsonPropertyName("sender_user_name")]
         string SenderUserDisplayName,
         [property: JsonPropertyName("pinned_by_user_id")]
         string PinnedByUserId,
         [property: JsonPropertyName("pinned_by_user_login")]
-        string PinnedByUserLogin,
+        string PinnedByUsername,
         [property: JsonPropertyName("pinned_by_user_name")]
         string PinnedByUserDisplayName,
         [property: JsonPropertyName("message")]
@@ -79,7 +79,7 @@ public class PinnedChatMessages : BaseResponse<PinnedChatMessages.Pin>
         [property: JsonPropertyName("user_id")]
         string UserId,
         [property: JsonPropertyName("user_login")]
-        string UserLogin,
+        string Username,
         [property: JsonPropertyName("user_name")]
         string UserDisplayName
     );

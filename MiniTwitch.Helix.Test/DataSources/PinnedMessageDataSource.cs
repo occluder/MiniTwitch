@@ -11,10 +11,10 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
         MessageId: "a42a84b2-7ad7-4ac1-95bb-0843d70e005a",
         BroadcasterId: "46673989",
         SenderUserId: "77481472",
-        SenderUserLogin: "jpsauce",
+        SenderUsername: "jpsauce",
         SenderUserDisplayName: "JPSauce",
         PinnedByUserId: "82674227",
-        PinnedByUserLogin: "jammehge",
+        PinnedByUsername: "jammehge",
         PinnedByUserDisplayName: "JAMMEHGE",
         Message: new PinnedChatMessages.Message(
             Text: "fix it! now!!!",
@@ -48,10 +48,10 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
                 },
                 "message_id": "{{pin.MessageId}}",
                 "pinned_by_user_id": "{{pin.PinnedByUserId}}",
-                "pinned_by_user_login": "{{pin.PinnedByUserLogin}}",
+                "pinned_by_user_login": "{{pin.PinnedByUsername}}",
                 "pinned_by_user_name": "{{pin.PinnedByUserDisplayName}}",
                 "sender_user_id": "{{pin.SenderUserId}}",
-                "sender_user_login": "{{pin.SenderUserLogin}}",
+                "sender_user_login": "{{pin.SenderUsername}}",
                 "sender_user_name": "{{pin.SenderUserDisplayName}}",
                 "starts_at": "{{pin.StartsAt:yyyy-MM-ddTHH:mm:sszzz}}",
                 "updated_at": "{{pin.UpdatedAt:yyyy-MM-ddTHH:mm:sszzz}}"
@@ -65,7 +65,7 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
           {
             "cheermote": {{(fragment.Cheermote is { } c ? $"{{\"prefix\": \"{c.Prefix}\", \"bits\": {c.Bits}, \"tier\": {c.Tier}}}" : "null")}},
             "emote": {{(fragment.Emote is { } e ? $"{{\"id\": \"{e.Id}\", \"emote_set_id\": \"{e.EmoteSetId}\", \"owner_id\": \"{e.OwnerId}\", \"format\": [{string.Join(", ", e.Format.Select(f => $"\"{f}\""))}]}}" : "null")}},
-            "mention": {{(fragment.Mention is { } m ? $"{{\"user_id\": \"{m.UserId}\", \"user_login\": \"{m.UserLogin}\", \"user_name\": \"{m.UserDisplayName}\"}}" : "null")}},
+            "mention": {{(fragment.Mention is { } m ? $"{{\"user_id\": \"{m.UserId}\", \"user_login\": \"{m.Username}\", \"user_name\": \"{m.UserDisplayName}\"}}" : "null")}},
             "text": "{{fragment.Text}}",
             "type": "{{SnakeCase.Instance.ConvertToCase(fragment.Type.ToString())}}"
           }
@@ -117,7 +117,7 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
                         Type = MessageFragmentType.Mention,
                         Cheermote = null,
                         Emote = null,
-                        Mention = new PinnedChatMessages.MentionFragment("userId_1", "userLogin_1", "userDisplayName_1")
+                        Mention = new PinnedChatMessages.MentionFragment("userId_1", "username_1", "userDisplayName_1")
                     }
                 ]
             }
