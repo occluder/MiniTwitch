@@ -11,15 +11,15 @@ public class PinnedChatMessages : BaseResponse<PinnedChatMessages.Pin>
         [property: JsonPropertyName("message_id")]
         string MessageId,
         [property: JsonPropertyName("broadcaster_id")]
-        string BroadcasterId,
+        long BroadcasterId,
         [property: JsonPropertyName("sender_user_id")]
-        string SenderUserId,
+        long SenderUserId,
         [property: JsonPropertyName("sender_user_login")]
         string SenderUsername,
         [property: JsonPropertyName("sender_user_name")]
         string SenderUserDisplayName,
         [property: JsonPropertyName("pinned_by_user_id")]
-        string PinnedByUserId,
+        long PinnedByUserId,
         [property: JsonPropertyName("pinned_by_user_login")]
         string PinnedByUsername,
         [property: JsonPropertyName("pinned_by_user_name")]
@@ -70,14 +70,14 @@ public class PinnedChatMessages : BaseResponse<PinnedChatMessages.Pin>
         [property: JsonPropertyName("emote_set_id")]
         string EmoteSetId,
         [property: JsonPropertyName("owner_id")]
-        string OwnerId,
+        long OwnerId,
         [property: JsonPropertyName("format")]
         IReadOnlyList<string> Format
     );
 
     public record MentionFragment(
         [property: JsonPropertyName("user_id")]
-        string UserId,
+        long UserId,
         [property: JsonPropertyName("user_login")]
         string Username,
         [property: JsonPropertyName("user_name")]

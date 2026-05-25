@@ -9,11 +9,11 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
 {
     private static readonly PinnedChatMessages.Pin Base = new(
         MessageId: "a42a84b2-7ad7-4ac1-95bb-0843d70e005a",
-        BroadcasterId: "46673989",
-        SenderUserId: "77481472",
+        BroadcasterId: 46673989,
+        SenderUserId: 77481472,
         SenderUsername: "jpsauce",
         SenderUserDisplayName: "JPSauce",
-        PinnedByUserId: "82674227",
+        PinnedByUserId: 82674227,
         PinnedByUsername: "jammehge",
         PinnedByUserDisplayName: "JAMMEHGE",
         Message: new PinnedChatMessages.Message(
@@ -100,7 +100,7 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
                     {
                         Type = MessageFragmentType.Emote,
                         Cheermote = null,
-                        Emote = new PinnedChatMessages.EmoteFragment("emoteId_1", "emoteSetId_1", "ownerId_1", ["format_1"]),
+                        Emote = new PinnedChatMessages.EmoteFragment("emoteId_1", "emoteSetId_1", 1, ["format_1"]),
                         Mention = null
                     }
                 ]
@@ -117,7 +117,7 @@ public class PinnedMessageDataSource : IEnumerable<object[]>
                         Type = MessageFragmentType.Mention,
                         Cheermote = null,
                         Emote = null,
-                        Mention = new PinnedChatMessages.MentionFragment("userId_1", "username_1", "userDisplayName_1")
+                        Mention = new PinnedChatMessages.MentionFragment(1, "username_1", "userDisplayName_1")
                     }
                 ]
             }
