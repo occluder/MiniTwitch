@@ -2902,4 +2902,74 @@ public class HelixWrapper
 
         return HelixResultFactory.Create<SuspiciousUserInfo>(Client, request, endpoint, cancellationToken);
     }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference#get-pinned-chat-message">API Reference</see>
+    /// </summary>
+    public Task<HelixResult<PinnedChatMessages>> GetPinnedChatMessage(
+        long broadcasterId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetPinnedChatMessage;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.ModeratorId, this.UserId);
+
+        return HelixResultFactory.Create<PinnedChatMessages>(Client, request, endpoint, cancellationToken);
+    }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference#pin-chat-message">API Reference</see>
+    /// </summary>
+    public Task<HelixResult> PinChatMessage(
+        long broadcasterId,
+        string messageId,
+        int? durationSeconds = null,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.PinChatMessage;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.ModeratorId, this.UserId)
+            .AddParam(QueryParams.MessageId, messageId)
+            .AddParam(QueryParams.DurationSeconds, durationSeconds);
+
+        return HelixResultFactory.Create(Client, request, endpoint, cancellationToken);
+    }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference#update-pinned-chat-message">API Reference</see>
+    /// </summary>
+    public Task<HelixResult> UpdatePinChatMessage(
+        long broadcasterId,
+        string messageId,
+        int? durationSeconds = null,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.UpdatePinnedChatMessage;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.ModeratorId, this.UserId)
+            .AddParam(QueryParams.MessageId, messageId)
+            .AddParam(QueryParams.DurationSeconds, durationSeconds);
+
+        return HelixResultFactory.Create(Client, request, endpoint, cancellationToken);
+    }
+
+    /// <summary>
+    /// <see href="https://dev.twitch.tv/docs/api/reference#unpin-chat-message">API Reference</see>
+    /// </summary>
+    public Task<HelixResult> UnpinChatMessage(
+        long broadcasterId,
+        string messageId,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.UnpinChatMessage;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.ModeratorId, this.UserId)
+            .AddParam(QueryParams.MessageId, messageId);
+
+        return HelixResultFactory.Create(Client, request, endpoint, cancellationToken);
+    }
 }

@@ -897,4 +897,28 @@ internal static class Endpoints
         Method = HttpMethod.Delete,
         Route = "/moderation/suspicious_users"
     };
+
+    public static readonly HelixEndpoint GetPinnedChatMessage = new()
+    {
+        Method = HttpMethod.Get,
+        Route = "/chat/pins"
+    };
+
+    public static readonly HelixEndpoint PinChatMessage = new()
+    {
+        Method = HttpMethod.Put,
+        Route = "/chat/pins"
+    };
+
+    public static readonly HelixEndpoint UpdatePinnedChatMessage = new()
+    {
+        Method = HttpMethod.Patch,
+        Route = "/chat/pins"
+    };
+
+    public static readonly HelixEndpoint UnpinChatMessage = new()
+    {
+        Method = HttpMethod.Delete,
+        Route = "/chat/pins"
+    };
 }

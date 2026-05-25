@@ -3,7 +3,7 @@ using MiniTwitch.Helix.Internal.Json;
 
 namespace MiniTwitch.Helix.Requests;
 
-public class ChatMessage(long broadcasterId, string message, string? replyParentMessageId = null, bool? forSourceOnly = null)
+public class ChatMessage(long broadcasterId, string message, string? replyParentMessageId = null, bool? forSourceOnly = null, bool? shouldPin = null)
 {
     [JsonConverter(typeof(LongConverter))]
     public long BroadcasterId { get; } = broadcasterId;
@@ -14,4 +14,7 @@ public class ChatMessage(long broadcasterId, string message, string? replyParent
     /// This value is assigned automatically
     /// </summary>
     public long SenderId { get; internal set; }
+
+    [JsonPropertyName("pin")]
+    public bool? Pin { get; } = shouldPin;
 }

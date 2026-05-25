@@ -3,6 +3,7 @@ using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Internal;
 using MiniTwitch.Helix.Requests;
 using MiniTwitch.Helix.Responses;
+using MiniTwitch.Helix.Test.DataSources;
 
 namespace MiniTwitch.Helix.Test;
 
@@ -180,5 +181,13 @@ public class DeserializeTest
         var asJson = JsonSerializer.Serialize(requestObject, options);
         Assert.Equal(requestJson, asJson);
     }
-}
 
+    [Theory]
+    [ClassData(typeof(PinnedMessageDataSource))]
+    public void GetPinnedMessage(string jsonResponse, PinnedChatMessages expected)
+    {
+        var result = JsonSerializer.Deserialize<PinnedChatMessages>(jsonResponse, options);
+
+        Assert.Equivalent(expected, result);
+    }
+}
