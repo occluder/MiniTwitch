@@ -1211,6 +1211,7 @@ public class HelixWrapper
         string? type = null,
         long? userId = null,
         string? subscriptionId = null,
+        string? conduitId = null,
         CancellationToken cancellationToken = default)
     {
         HelixEndpoint endpoint = Endpoints.GetEventSubSubscriptions;
@@ -1218,7 +1219,8 @@ public class HelixWrapper
             .AddParam(QueryParams.Status, SnakeCase.Instance.ConvertToCase(status.ToString()))
             .AddParam(QueryParams.Type, type)
             .AddParam(QueryParams.UserId, userId)
-            .AddParam(QueryParams.SubscriptionId, subscriptionId);
+            .AddParam(QueryParams.SubscriptionId, subscriptionId)
+            .AddParam(QueryParams.ConduitId, conduitId);
 
         return HelixResultFactory.Create<EventSubSubscriptions>(Client, request, endpoint, cancellationToken);
     }
