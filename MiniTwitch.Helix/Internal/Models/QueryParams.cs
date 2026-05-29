@@ -74,4 +74,5 @@ internal static class QueryParams
     public const string DurationSeconds = "duration_seconds";
     public const string VodId = "vod_id";
     public const string VodOffset = "vod_offset";
+    public const string ForSourceOnly = "for_source_only";
 }

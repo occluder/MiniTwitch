@@ -583,12 +583,14 @@ public class HelixWrapper
     public Task<HelixResult> SendChatAnnouncement(
         long broadcasterId,
         Announcement body,
+        bool? forSourceOnly = null,
         CancellationToken cancellationToken = default)
     {
         HelixEndpoint endpoint = Endpoints.SendChatAnnouncement;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, broadcasterId)
-            .AddParam(QueryParams.ModeratorId, this.UserId);
+            .AddParam(QueryParams.ModeratorId, this.UserId)
+            .AddParam(QueryParams.ForSourceOnly, forSourceOnly);
 
         request.Body = body;
         return HelixResultFactory.Create(Client, request, endpoint, cancellationToken);
