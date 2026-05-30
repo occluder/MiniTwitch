@@ -1,22 +1,25 @@
 # MiniTwitch.PubSub
 
-MiniTwitch.PubSub is the component responsible for interaction with the Twitch PubSub service. The usage of this package revolves around the `PubSubClient`  class and the `Topics` static class.
+MiniTwitch.PubSub is the component responsible for interaction with the Twitch PubSub service. The usage of this package revolves around the `PubSubClient` class and the `Topics` static class.
+
+> **Note:** Twitch has decommissioned most official PubSub topics.
 
 ## Features
 
-* Package code is fully documented with XML comments
-* Exposes documented & undocumented PubSub topics
-* Uses `System.Text.Json` under the hood; Fast, efficient and without unnecessary dependencies
-* Exposes events with `Func<T1, .., ValueTask>` delegates, making asynchronous handling very easy
-* Automatically reconnects upon disconnection & automatically re-listens to topics
-* Simplistic; Events have clear descriptions on what they do and how to get them invoked
-* Multi-token support; You're not limited to 1 auth token per `PubSubClient`
-* Comes with a built-in logger, which can be disabled or replaced easily
-* Events return the topic parameters as `ChannelId` or `UserId`, making them easily distinguishable
+- Fully documented with XML comments
+- Covers both documented and undocumented PubSub topics
+- Built on `System.Text.Json`: fast, efficient, and without unnecessary dependencies
+- Asynchronous event model using `Func<T..., ValueTask>` delegates
+- Automatic reconnection upon disconnection and automatic topic re-listening
+- Multi-token support: you're not limited to one auth token per `PubSubClient`
+- Events receive typed identifiers (`ChannelId`, `UserId`) for easy routing
+- Comes with a built-in default logger, which can be disabled or replaced
+- Pluggable logging via `ILogger`: works with any logging framework
+- Clear event descriptions explaining what triggers them and how to listen
 
 ## Getting Started
 
-here is an example usage of the `PubSubClient` class:
+Here is an example usage of the `PubSubClient` class:
 
 ```c#
 using MiniTwitch.PubSub;
@@ -45,7 +48,6 @@ public class Program
         }
 
         client.OnStreamUp += OnStreamUp;
-        client.OnFollow += OnFollow;
         client.OnTimedOut += OnTimedOut;
 
         _ = Console.ReadLine();
@@ -57,12 +59,6 @@ public class Program
         return ValueTask.CompletedTask;
     }
 
-    private static ValueTask OnFollow(ChannelId channelId, Follower follower)
-    {
-        Console.WriteLine($"{follower.Name} just followed you!");
-        return ValueTask.CompletedTask;
-    }
-
     private static ValueTask OnTimedOut(UserId userId, ITimeOutData timeout)
     {
         Console.WriteLine(
@@ -71,5 +67,3 @@ public class Program
     }
 }
 ```
-
-****

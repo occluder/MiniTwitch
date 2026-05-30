@@ -1,27 +1,25 @@
 # MiniTwitch.Helix
 
-MiniTwitch.Helix conveniently wraps the Twitch Helix API and exposes them through the `HelixWrapper`class.
+MiniTwitch.Helix conveniently wraps the Twitch Helix API and exposes it through the `HelixWrapper` class.
+
 ## Features
 
-- Contains all generally available and beta Helix API endpoints
-- Virtually no dependencies
-- Returns meaningful information about responses with `HelixResult`:
-	- **HelixResult.Success**: Whether the request was successful
-	- **HelixResult.StatusCode**: Status code of the response
-	- **HelixResult.Message**: Contains the error message for the request, if not successful
-	- **HelixResult.Elapsed**: The amount of time the request took to get a response
-	- **HelixResult.RateLimit.Limit**: Maximum amount of requests that can be made in a period
-	- **HelixResult.RateLimit.Remaining**: The amount of requests that can be made before the ratelimit resets
-	- **HelixResult.RateLimit.ResetsIn**: The amount of time before the ratelimit resets
-
-- Validates access tokens & warns before their expiry
-- Easy pagination API for `HelixResult<T>`:
-	- **HelixResult.CanPaginate**: Determines whether the next page of content can be requested
-	- **HelixResult.Paginate()**: Fetches the next page of content
+- Full coverage of all generally available and beta Helix API endpoints
+- Minimal dependencies: only [MiniTwitch.Common](https://www.nuget.org/packages/MiniTwitch.Common/)
+- Informative `HelixResult<T>` responses with:
+  - **Success**: Whether the request was successful
+  - **StatusCode**: HTTP status code of the response
+  - **Message**: Error message (if not successful)
+  - **Elapsed**: Time the request took to complete
+  - **Ratelimit.Limit**: Max requests allowed in the current window
+  - **Ratelimit.Remaining**: Requests remaining before the limit resets
+  - **Ratelimit.ResetsIn**: Time until the rate-limit window resets
+- Automatic access token validation with expiry warnings
+- Built-in pagination: check `CanPaginate`, fetch the next page with `Paginate()`, or iterate all pages with `EnumeratePages()`
 
 ## Getting Started
 
-This example demonstrates the usage of `HelixWrapper` and  pagination through `HelixResult<T>`
+This example demonstrates the usage of `HelixWrapper` and pagination through `HelixResult<T>`:
 
 ```csharp
 using MiniTwitch.Helix;
@@ -37,7 +35,6 @@ public class Program
     static async Task Main()
     {
         Helix = new HelixWrapper("mytoken", 783267696);
-
         var emotes = await GetAllMyEmotes();
     }
 

@@ -1,7 +1,7 @@
 ﻿namespace MiniTwitch.PubSub.Interfaces;
 
 /// <summary>
-/// Represents information about a stream that just went oline
+/// Represents information about a stream that just went online
 /// </summary>
 public interface IStreamUp
 {
@@ -10,7 +10,7 @@ public interface IStreamUp
     /// </summary>
     double ServerTime { get; }
     /// <summary>
-    /// This is likley the stream delay
+    /// This is likely the stream delay
     /// </summary>
     int PlayDelay { get; }
 }

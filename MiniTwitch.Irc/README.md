@@ -1,21 +1,22 @@
 # MiniTwitch.Irc
 
-MiniTwitch.Irc is the component responsible for Twitch chat services. The usage of this package revolves around the `IrcClient`  class which handles connection, communication and channel management
+MiniTwitch.Irc is the component responsible for Twitch chat services. The usage of this package revolves around the `IrcClient` class which handles connection, communication, and channel management.
 
 ## Features
 
-* Package code is fully documented with XML comments
-* Full coverage of chatroom messages and events with convenient APIs
-* Built with performance and memory in mind. Nanosecond speeds, with low memory allocation
-* Exposes events as `ValueTask`, making for efficient & concurrent usage
-* Automatically reconnects upon disconnection & automatically rejoins channels
-* Simple & customizable ratelimiting of sending messages and joining channels
-* Allows for connecting anonymously - No need for authorization if you don't plan to send anything!
-* Understand what happens behind the scenes by supplying an `ILogger`. Allows you to use any logging library which implements [logging abstractions](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging)
+- Fully documented with XML comments
+- Complete coverage of Twitch chat messages and events with convenient APIs
+- High-performance parsing designed for speed and low memory allocation
+- Asynchronous event model using `Func<T..., ValueTask>` delegates for efficient concurrency
+- Automatic reconnection upon disconnection and automatic channel rejoining
+- Configurable rate-limiting for sending messages and joining channels
+- Anonymous connection support: no authorization needed for read-only usage
+- Pluggable logging via `ILogger`: works with any logging framework
+- Benchmarks available [here](https://github.com/occluder/MiniTwitch/blob/master/MiniTwitch.Irc.Benchmarks/README.md)
 
 ## Getting Started
 
-here is an example usage of the `IrcClient` class:
+Here is an example usage of the `IrcClient` class:
 
 ```c#
 using MiniTwitch.Irc;
@@ -27,45 +28,25 @@ public class Program
 {
     static async Task Main()
     {
-        Bot bot = new("myusername", "mytoken");
-        await bot.Client.ConnectAsync();
-        await bot.Client.JoinChannel("occluder");
-
-        _ = Console.ReadLine();
-    }
-}
-
-public class Bot
-{
-    public IrcClient Client { get; init; }
-
-    public Bot(string username, string token)
-    {
-        Client = new IrcClient(options =>
+        IrcClient client = new(options =>
         {
-            options.Username = username;
-            options.OAuth = token;
+            options.Username = "myusername";
+            options.OAuth = "myoauth";
         });
 
-        Client.OnChannelJoin += ChannelJoinEvent;
-        Client.OnMessage += MessageEvent;
+        client.OnMessage += OnMessage;
+
+        await client.ConnectAsync();
+        await client.JoinChannel("yourchannel");
+
+        await Task.Delay(-1);
     }
 
-    private ValueTask ChannelJoinEvent(IrcChannel channel)
+    private static async ValueTask OnMessage(Privmsg message)
     {
-        return Client.SendMessage(channel.Name, "Hello from MiniTwitch!");
-    }
-
-    private async ValueTask MessageEvent(Privmsg message)
-    {
-        if (message.Content == "penis123")
+        if (message.Content.Equals("!hello", StringComparison.OrdinalIgnoreCase))
         {
-            await message.ReplyWith("That's my password!!");
-        }
-        else if (message.Content == "Wait a minute!")
-        {
-            await Task.Delay(TimeSpan.FromMinutes(1));
-            await message.ReplyWith("I waited. Now what?");
+            await message.ReplyWith($"Hello @{message.Author.Name}!");
         }
     }
 }
