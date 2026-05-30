@@ -63,6 +63,8 @@ public interface IIrcClient
     event Func<GlobalUserstate, ValueTask> OnGlobalUserstate;
     /// <inheritdoc cref="IrcClient.OnViewerMilestone"/>
     event Func<IViewerMilestone, ValueTask> OnViewerMilestone;
+    /// <inheritdoc cref="IrcClient.OnModiversaryNotice"/>
+    event Func<IModiversaryNotice, ValueTask> OnModiversaryNotice;
     /// <inheritdoc cref="IrcClient.Connect"/>
     void Connect(string url = "wss://irc-ws.chat.twitch.tv:443");
     /// <inheritdoc cref="IrcClient.ConnectAsync"/>

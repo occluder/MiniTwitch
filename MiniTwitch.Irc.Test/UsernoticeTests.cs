@@ -315,6 +315,26 @@ public class UsernoticeTests
     }
 
     [Fact]
+    public void Modiversary_USERNOTICE()
+    {
+        string raw = "@badge-info=subscriber/79;badges=moderator/1,subscriber/3078,alterra-corporation/1;color=#007EFE;display-name=Alca;emotes=;flags=;id=5d0a7492-b2c4-441b-be78-8606d16ec5e8;login=alca;mod=1;msg-id=modiversary;msg-param-months=24;room-id=29158331;subscriber=1;system-msg=has\\sbeen\\sa\\smoderator\\sfor\\s24\\smonths!;tmi-sent-ts=1780142048673;user-id=7676884;user-type=mod;vip=0 :tmi.twitch.tv USERNOTICE #cardboard_cowboy :I'm celebrating my 2 year Mod Anniversary! It's gotta be way more than that, Twitch";
+        var usernotice = Usernotice.Construct(raw);
+        Assert.Equal(UsernoticeType.Modiversary, usernotice.MsgId);
+
+        IModiversaryNotice modiversary = usernotice;
+        Assert.Equal("5d0a7492-b2c4-441b-be78-8606d16ec5e8", modiversary.Id);
+        Assert.Equal(24, modiversary.ModerationMonths);
+        Assert.Equal("has been a moderator for 24 months!", modiversary.SystemMessage);
+        Assert.Equal("I'm celebrating my 2 year Mod Anniversary! It's gotta be way more than that, Twitch", modiversary.Message);
+        Assert.Equal(1780142048673, modiversary.TmiSentTs);
+        Assert.Equal("Alca", modiversary.Author.DisplayName);
+        Assert.Equal("alca", modiversary.Author.Name);
+        Assert.True(modiversary.Author.IsMod);
+        Assert.Equal("cardboard_cowboy", modiversary.Channel.Name);
+        Assert.Equal(29158331, modiversary.Channel.Id);
+    }
+
+    [Fact]
     public void ViewerMilestone_Message_USERNOTICE()
     {
         string raw = "@tmi-sent-ts=1763840626218;id=f9cd6680-19be-4099-bf60-97a6a566031c;room-id=128856353;user-id=454659114;login=6uoxerror;display-name=6UOxError;badges=;badge-info=;color=#1E90FF;flags=;user-type=;emotes=;msg-param-id=60d252f5-966f-453b-94ae-b232877cd2cf;msg-id=viewermilestone;msg-param-category=watch-streak;msg-param-value=7;msg-param-copoReward=450;system-msg=6UOxError\\swatched\\s7\\sconsecutive\\sstreams\\sand\\ssparked\\sa\\swatch\\sstreak! :tmi.twitch.tv USERNOTICE #mande :Mandiddy";
