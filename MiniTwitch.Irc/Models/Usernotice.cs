@@ -15,7 +15,7 @@ namespace MiniTwitch.Irc.Models;
 /// </summary>
 public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IPaidUpgradeNotice,
     ISubNotice, IGiftSubNotice, IRaidNotice, IPrimeUpgradeNotice, IEquatable<Usernotice>,
-    ICharityDonation, IViewerMilestone
+    ICharityDonation, IViewerMilestone, IModiversaryNotice
 {
     private const string VIP_ROLE = "vip/1";
 
@@ -55,6 +55,8 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
     public int CumulativeMonths { get; init; }
     /// <inheritdoc/>
     public int Months { get; init; }
+    /// <inheritdoc/>
+    public int ModerationMonths => this.Months;
     /// <inheritdoc/>
     public int MonthStreak { get; init; }
     /// <inheritdoc/>
@@ -207,6 +209,7 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
                         (int)UsernoticeType.Resub when tagValue.SequenceEqual("resub"u8) => UsernoticeType.Resub,
                         (int)UsernoticeType.Unraid when tagValue.SequenceEqual("unraid"u8) => UsernoticeType.Unraid,
                         (int)UsernoticeType.Subgift when tagValue.SequenceEqual("subgift"u8) => UsernoticeType.Subgift,
+                        (int)UsernoticeType.Modiversary when tagValue.SequenceEqual("modiversary"u8) => UsernoticeType.Modiversary,
                         (int)UsernoticeType.Announcement when tagValue.SequenceEqual("announcement"u8) => UsernoticeType.Announcement,
                         (int)UsernoticeType.BitsBadgeTier when tagValue.SequenceEqual("bitsbadgetier"u8) => UsernoticeType.BitsBadgeTier,
                         (int)UsernoticeType.SubMysteryGift when tagValue.SequenceEqual("submysterygift"u8) => UsernoticeType.SubMysteryGift,
@@ -433,6 +436,7 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
                         (int)UsernoticeType.Resub when tagValue.SequenceEqual("resub"u8) => UsernoticeType.Resub,
                         (int)UsernoticeType.Unraid when tagValue.SequenceEqual("unraid"u8) => UsernoticeType.Unraid,
                         (int)UsernoticeType.Subgift when tagValue.SequenceEqual("subgift"u8) => UsernoticeType.Subgift,
+                        (int)UsernoticeType.Modiversary when tagValue.SequenceEqual("modiversary"u8) => UsernoticeType.Modiversary,
                         (int)UsernoticeType.Announcement when tagValue.SequenceEqual("announcement"u8) => UsernoticeType.Announcement,
                         (int)UsernoticeType.BitsBadgeTier when tagValue.SequenceEqual("bitsbadgetier"u8) => UsernoticeType.BitsBadgeTier,
                         (int)UsernoticeType.SubMysteryGift when tagValue.SequenceEqual("submysterygift"u8) => UsernoticeType.SubMysteryGift,
@@ -474,7 +478,8 @@ public readonly struct Usernotice : IGiftSubNoticeIntro, IAnnouncementNotice, IP
             case UsernoticeType.Sub
             or UsernoticeType.Resub
             or UsernoticeType.Announcement
-            or UsernoticeType.ViewerMilestone:
+            or UsernoticeType.ViewerMilestone
+            or UsernoticeType.Modiversary:
                 content = message.HasMessageContent ? message.GetContent().Content : string.Empty;
                 break;
 

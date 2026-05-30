@@ -8,6 +8,7 @@ internal enum UsernoticeType
     Resub = 5, // "resub"
     Unraid = 6, // "unraid"
     Subgift = 7, // "subgift"
+    Modiversary = 11, // "modiversary"
     Announcement = 12, // "announcement"
     BitsBadgeTier = 13, // "bitsbadgetier"
     SubMysteryGift = 14, // "submysterygift"

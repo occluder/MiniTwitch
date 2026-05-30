@@ -164,6 +164,10 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
     /// Invoked when a user reaches a consecutive streams watched milestone
     /// </summary>
     public event Func<IViewerMilestone, ValueTask> OnViewerMilestone = default!;
+    /// <summary>
+    /// Invoked when a moderator anniversary notice is received
+    /// </summary>
+    public event Func<IModiversaryNotice, ValueTask> OnModiversaryNotice = default!;
 
     // Kept for testing
     internal event Func<ValueTask> OnPing = default!;
@@ -678,6 +682,10 @@ public sealed class IrcClient : IIrcClient, IAsyncDisposable
 
                     case UsernoticeType.CharityDonation:
                         OnCharityDonation?.Invoke(usernotice).StepOver(this.ExceptionHandler);
+                        break;
+
+                    case UsernoticeType.Modiversary:
+                        OnModiversaryNotice?.Invoke(usernotice).StepOver(this.ExceptionHandler);
                         break;
 
                     case UsernoticeType.ViewerMilestone:
