@@ -136,6 +136,38 @@ public class HelixWrapper
     }
 
     ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference/#get-custom-power-up">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<CustomPowerUp>> GetCustomPowerUp(
+        long broadcasterId,
+        string? id = null,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetCustomPowerUp;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddParam(QueryParams.Id, id);
+
+        return HelixResultFactory.Create<CustomPowerUp>(Client, request, endpoint, cancellationToken);
+    }
+
+    ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference/#get-custom-power-up">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<CustomPowerUp>> GetCustomPowerUp(
+        long broadcasterId,
+        IEnumerable<string>? ids = null,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetCustomPowerUp;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, broadcasterId)
+            .AddMultiParam(QueryParams.Id, ids);
+
+        return HelixResultFactory.Create<CustomPowerUp>(Client, request, endpoint, cancellationToken);
+    }
+
+    ///<summary>
     ///<see href="https://dev.twitch.tv/docs/api/reference/#get-extension-transactions">API Reference</see>
     ///</summary>
     public Task<HelixResult<ExtensionTransactions>> GetExtensionTransactions(

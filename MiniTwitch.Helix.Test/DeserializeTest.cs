@@ -190,4 +190,78 @@ public class DeserializeTest
 
         Assert.Equivalent(expected, result);
     }
+
+    [Fact]
+    public void GetCustomPowerUp()
+    {
+        string json = """
+            {
+              "data": [
+                {
+                  "broadcaster_name": "torpedo09",
+                  "broadcaster_login": "torpedo09",
+                  "broadcaster_id": "274637212",
+                  "id": "92af127c-7326-4483-a52b-b0da0be61c02",
+                  "image": null,
+                  "background_color": "#00FF00",
+                  "is_enabled": true,
+                  "bits": 100,
+                  "title": "game analysis",
+                  "prompt": "",
+                  "is_user_input_required": false,
+                  "max_per_stream_setting": {
+                    "is_enabled": false,
+                    "max_per_stream": 0
+                  },
+                  "max_per_user_per_stream_setting": {
+                    "is_enabled": false,
+                    "max_per_user_per_stream": 0
+                  },
+                  "global_cooldown_setting": {
+                    "is_enabled": false,
+                    "global_cooldown_seconds": 0
+                  },
+                  "is_paused": false,
+                  "is_in_stock": true,
+                  "default_image": {
+                    "url_1x": "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-28x28.png",
+                    "url_2x": "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-56x56.png",
+                    "url_4x": "https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-112x112.png"
+                  },
+                  "redemptions_redeemed_current_stream": null,
+                  "cooldown_expires_at": null
+                }
+              ]
+            }
+            """;
+
+        CustomPowerUp? response = JsonSerializer.Deserialize<CustomPowerUp>(json, options);
+        Assert.NotNull(response);
+        var item = Assert.Single(response.Data);
+        Assert.Equal("torpedo09", item.BroadcasterDisplayName);
+        Assert.Equal("torpedo09", item.BroadcasterUsername);
+        Assert.Equal(274637212, item.BroadcasterId);
+        Assert.Equal("92af127c-7326-4483-a52b-b0da0be61c02", item.Id);
+        Assert.Null(item.Image);
+        Assert.Equal("#00FF00", item.BackgroundColor);
+        Assert.True(item.IsEnabled);
+        Assert.Equal(100, item.Bits);
+        Assert.Equal("game analysis", item.Title);
+        Assert.Equal("", item.Prompt);
+        Assert.False(item.IsUserInputRequired);
+        Assert.False(item.MaxPerStreamSetting.IsEnabled);
+        Assert.Equal(0, item.MaxPerStreamSetting.MaxPerStream);
+        Assert.False(item.MaxPerUserPerStreamSetting.IsEnabled);
+        Assert.Equal(0, item.MaxPerUserPerStreamSetting.MaxPerUserPerStream);
+        Assert.False(item.GlobalCooldownSetting.IsEnabled);
+        Assert.Equal(0, item.GlobalCooldownSetting.GlobalCooldownSeconds);
+        Assert.False(item.IsPaused);
+        Assert.True(item.IsInStock);
+        Assert.NotNull(item.DefaultImage);
+        Assert.Equal("https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-28x28.png", item.DefaultImage.Url1x);
+        Assert.Equal("https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-56x56.png", item.DefaultImage.Url2x);
+        Assert.Equal("https://static-cdn.jtvnw.net/twilight-static-assets/Default-Power-up-Line-Lightshade-112x112.png", item.DefaultImage.Url4x);
+        Assert.Null(item.RedemptionsRedeemedCurrentStream);
+        Assert.Null(item.CooldownExpiresAt);
+    }
 }
