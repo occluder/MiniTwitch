@@ -34,6 +34,12 @@ internal static class Endpoints
         Route = "/bits/cheermotes",
     };
 
+    public static readonly HelixEndpoint GetCustomPowerUp = new()
+    {
+        Method = HttpMethod.Get,
+        Route = "/bits/custom_power_ups",
+    };
+
     public static readonly HelixEndpoint GetExtensionTransactions = new()
     {
         Method = HttpMethod.Get,
