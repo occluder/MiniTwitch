@@ -1,5 +1,15 @@
 # MiniTwitch.Helix Changelog
 
+## 2.1.0
+### Minor Changes
+- Added `Get Custom Power-up` endpoint (#223)
+- Added `for_source_only` parameter to `SendChatAnnouncement` (#221)
+- Added `conduit_id` parameter to `GetEventSubSubscriptions` (#220)
+- Added pinned message endpoints (#217)
+- Added `Add Suspicious Status` and `Remove Suspicious Status` endpoints (#205)
+- Updated `CreateClip` and added `CreateClipFromVOD` (#203)
+***
+
 ## 2.0.0
 - Target frameworks updated to include .NET 10
 ***
