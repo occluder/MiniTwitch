@@ -137,6 +137,7 @@ public class HelixWrapper
 
     ///<summary>
     ///<see href="https://dev.twitch.tv/docs/api/reference/#get-custom-power-up">API Reference</see>
+    ///<para>Note: <see cref="UserId"/> is automatically supplied as broadcaster_id</para>
     ///</summary>
     public Task<HelixResult<CustomPowerUp>> GetCustomPowerUp(
         string? id = null,
@@ -152,6 +153,7 @@ public class HelixWrapper
 
     ///<summary>
     ///<see href="https://dev.twitch.tv/docs/api/reference/#get-custom-power-up">API Reference</see>
+    ///<para>Note: <see cref="UserId"/> is automatically supplied as broadcaster_id</para>
     ///</summary>
     public Task<HelixResult<CustomPowerUp>> GetCustomPowerUp(
         IEnumerable<string>? ids = null,
