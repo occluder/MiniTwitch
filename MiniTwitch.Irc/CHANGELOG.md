@@ -1,5 +1,14 @@
 # MiniTwitch.Irc changelog
 
+## [Unversioned]
+### Minor changes
+- Added modiversary usernotice support (#222)
+- Added `Privmsg.IsLeadMod` (#201)
+- Added `MessageAuthor.IsBot` (#212)
+- Added message interception support to `IrcClient` (#198)
+- Added viewer milestone usernotice events (#196)
+***
+
 ## 3.0.0
 - Target frameworks updated to include .NET 10
 ### Minor changes

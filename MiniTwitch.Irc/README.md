@@ -51,3 +51,33 @@ public class Program
     }
 }
 ```
+
+## Message Interception
+
+The `IrcClient.Interceptor` property allows you to inspect or filter IRC messages before they are parsed or dispatched as events. Derive from `IrcMessageInterceptor` and override `BeforeParse` and/or `AfterParse`:
+
+```c#
+using MiniTwitch.Irc;
+using MiniTwitch.Irc.Models;
+
+public class LoggingInterceptor : IrcMessageInterceptor
+{
+    public override bool BeforeParse(IrcClient source, ReadOnlySpan<byte> message)
+    {
+        Console.WriteLine($"RAW: {System.Text.Encoding.UTF8.GetString(message)}");
+        return true; // false to skip parsing this message entirely
+    }
+
+    public override bool AfterParse<T>(IrcClient source, T result, ReadOnlySpan<byte> message)
+    {
+        if (result is Privmsg privmsg && privmsg.Author.Name == "someuser")
+        {
+            return false; // suppress messages from this user
+        }
+        return true;
+    }
+}
+
+// Assign it to the client
+client.Interceptor = new LoggingInterceptor();
+```
