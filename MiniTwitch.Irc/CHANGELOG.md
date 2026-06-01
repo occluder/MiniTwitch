@@ -1,6 +1,6 @@
 # MiniTwitch.Irc changelog
 
-## [Unversioned]
+## 3.1.0
 ### Minor changes
 - Added modiversary usernotice support (#222)
 - Added `Privmsg.IsLeadMod` (#201)
