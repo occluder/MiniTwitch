@@ -250,6 +250,12 @@ dotnet_diagnostic.S1450.severity = suggestion
 csharp_style_prefer_primary_constructors = true:suggestion
 csharp_style_prefer_readonly_struct_member = true:suggestion
 
+# RS1041: Compiler extensions should be implemented in assemblies targeting netstandard2.0
+dotnet_diagnostic.RS1041.severity = none
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
 [*.{cs,vb}]
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.33502.453
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11822.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwitch.Common", "MiniTwitch.Common\MiniTwitch.Common.csproj", "{E9F2F809-CE3C-4DA1-A16F-FE0A1F24D42B}"
 EndProject
@@ -31,6 +31,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwitch.Irc.Benchmarks", "MiniTwitch.Irc.Benchmarks\MiniTwitch.Irc.Benchmarks.csproj", "{E6F90853-811D-4E89-A911-14325A52ECE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwitch.Helix.Test", "MiniTwitch.Helix.Test\MiniTwitch.Helix.Test.csproj", "{665EADF9-D1AE-432A-A801-F9EC827D8F38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwitch.EventSub", "MiniTwitch.EventSub\MiniTwitch.EventSub.csproj", "{D158E603-51A6-41C0-BFCE-A6094712D7A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwitch.EventSub.CodeGen", "MiniTwitch.EventSub.CodeGen\MiniTwitch.EventSub.CodeGen.csproj", "{D777351A-F4AB-4A49-A657-94C078754CC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +74,14 @@ Global
 		{665EADF9-D1AE-432A-A801-F9EC827D8F38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{665EADF9-D1AE-432A-A801-F9EC827D8F38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{665EADF9-D1AE-432A-A801-F9EC827D8F38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D158E603-51A6-41C0-BFCE-A6094712D7A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D158E603-51A6-41C0-BFCE-A6094712D7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D158E603-51A6-41C0-BFCE-A6094712D7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D158E603-51A6-41C0-BFCE-A6094712D7A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D777351A-F4AB-4A49-A657-94C078754CC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D777351A-F4AB-4A49-A657-94C078754CC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D777351A-F4AB-4A49-A657-94C078754CC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D777351A-F4AB-4A49-A657-94C078754CC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +95,8 @@ Global
 		{F7E72622-6545-46D4-92A4-493849E0DFCD} = {1AE9EDC5-22F2-4EEB-9B8A-46B264597907}
 		{E6F90853-811D-4E89-A911-14325A52ECE8} = {3AB3F64E-4D4B-4E24-862F-54E734F5A401}
 		{665EADF9-D1AE-432A-A801-F9EC827D8F38} = {1AE9EDC5-22F2-4EEB-9B8A-46B264597907}
+		{D158E603-51A6-41C0-BFCE-A6094712D7A7} = {C1BCE870-D158-438A-91C6-387B2F7677B4}
+		{D777351A-F4AB-4A49-A657-94C078754CC3} = {C1BCE870-D158-438A-91C6-387B2F7677B4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2698C4F9-D2CF-447D-945B-6382FF15EA63}

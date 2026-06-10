@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+	<LangVersion>14</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniTwitch.EventSub.CodeGen\MiniTwitch.EventSub.CodeGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+	<PropertyGroup>
+		<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackGenerator</TargetsForTfmSpecificContentInPackage>
+	</PropertyGroup>
+
+	<Target Name="PackGenerator">
+		<ItemGroup>
+			<TfmSpecificPackageFile Include="$(MSBuildThisFileDirectory)..\MiniTwitch.EventSub.CodeGen\bin\$(Configuration)\netstandard2.0\*.dll">
+				<PackagePath>analyzers/dotnet/cs</PackagePath>
+			</TfmSpecificPackageFile>
+		</ItemGroup>
+	</Target>
+
+	<ItemGroup Condition="'$(CI)' != 'true'">
+		<ProjectReference Include="..\MiniTwitch.Common\MiniTwitch.Common.csproj" />
+	</ItemGroup>
+
+</Project>
