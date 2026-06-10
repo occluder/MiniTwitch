@@ -25,7 +25,7 @@ public partial struct ChannelChatMessage
     public partial struct ChatMessage
     {
         public partial string Text { get; }
-        public partial Fragment[] Fragments { get; }
+        public partial MessageFragment[] Fragments { get; }
         public partial string MessageType { get; }
         public partial Badge[] Badges { get; }
         public partial Cheer? Cheer { get; }
@@ -41,16 +41,6 @@ public partial struct ChannelChatMessage
         public partial Guid? SourceMessageId { get; }
         public partial Badge[]? SourceBadges { get; }
         public partial bool? IsSourceOnly { get; }
-
-        [EventProperty]
-        public partial struct Fragment
-        {
-            public partial string Type { get; }
-            public partial string Text { get; }
-            public partial Cheermote Cheermote { get; }
-            public partial Emote Emote { get; }
-            public partial Mention Mention { get; }
-        }
     }
 
     [EventProperty]
