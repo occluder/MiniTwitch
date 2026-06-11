@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwitch.EventSub", "Mini
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwitch.EventSub.CodeGen", "MiniTwitch.EventSub.CodeGen\MiniTwitch.EventSub.CodeGen.csproj", "{D777351A-F4AB-4A49-A657-94C078754CC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwitch.EventSub.Test", "MiniTwitch.EventSub.Test\MiniTwitch.EventSub.Test.csproj", "{7AD3519F-DAD8-4653-9267-5067D1CFE999}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{D777351A-F4AB-4A49-A657-94C078754CC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D777351A-F4AB-4A49-A657-94C078754CC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D777351A-F4AB-4A49-A657-94C078754CC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AD3519F-DAD8-4653-9267-5067D1CFE999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AD3519F-DAD8-4653-9267-5067D1CFE999}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AD3519F-DAD8-4653-9267-5067D1CFE999}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AD3519F-DAD8-4653-9267-5067D1CFE999}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{665EADF9-D1AE-432A-A801-F9EC827D8F38} = {1AE9EDC5-22F2-4EEB-9B8A-46B264597907}
 		{D158E603-51A6-41C0-BFCE-A6094712D7A7} = {C1BCE870-D158-438A-91C6-387B2F7677B4}
 		{D777351A-F4AB-4A49-A657-94C078754CC3} = {C1BCE870-D158-438A-91C6-387B2F7677B4}
+		{7AD3519F-DAD8-4653-9267-5067D1CFE999} = {1AE9EDC5-22F2-4EEB-9B8A-46B264597907}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2698C4F9-D2CF-447D-945B-6382FF15EA63}
