@@ -1,10 +1,12 @@
-﻿using MiniTwitch.EventSub.Internal.Parsing;
+﻿using System.Text.Json.Serialization;
+using MiniTwitch.EventSub.Internal;
 
 namespace MiniTwitch.EventSub.Models;
 
-public struct SubscriptionCondition(ReadOnlyMemory<byte> slice)
+[EventProperty]
+public partial struct SubscriptionCondition
 {
-    internal readonly bool IsInitialized => !slice.IsEmpty;
-    public long BroadcasterId => field == default ? field = slice.GetLong("broadcaster_user_id"u8).GetValueOrDefault() : field;
-    public long UserId => field == default ? field = slice.GetLong("user_id"u8).GetValueOrDefault() : field;
+    [JsonPropertyName("broadcaster_user_id")]
+    public partial long BroadcasterId { get; }
+    public partial long UserId { get; }
 }

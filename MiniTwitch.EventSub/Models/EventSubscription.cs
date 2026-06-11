@@ -1,15 +1,16 @@
-﻿using MiniTwitch.EventSub.Internal.Parsing;
+﻿using MiniTwitch.EventSub.Internal;
 
 namespace MiniTwitch.EventSub.Models;
 
-public struct EventSubscription(ReadOnlyMemory<byte> slice)
+[EventProperty]
+public partial struct EventSubscription
 {
-    public Guid Id => field == default ? field = slice.GetGuid("id"u8).GetValueOrDefault() : field;
-    public string Status => field ??= slice.GetString("status"u8, intern: true)!;
-    public string Type { get; } = slice.GetString("type"u8, intern: true)!;
-    public string Version { get; } = slice.GetString("version"u8, intern: true)!;
-    public SubscriptionCondition Condition => field.IsInitialized ? field = new(slice.GetChild("condition"u8)) : field;
-    public DateTimeOffset CreatedAt => field == default ? field = slice.GetTime("created_at"u8).GetValueOrDefault() : field;
-    public int Cost => field == default ? field = slice.GetInt("cost"u8).GetValueOrDefault() : field;
+    public partial Guid Id { get; }
+    public partial string Status { get; }
+    public partial string Type { get; }
+    public partial string Version { get; }
+    public partial SubscriptionCondition Condition { get; }
+    public partial DateTimeOffset CreatedAt { get; }
+    public partial int Cost { get; }
 }
 
