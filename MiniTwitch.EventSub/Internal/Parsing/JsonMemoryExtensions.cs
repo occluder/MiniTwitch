@@ -38,6 +38,11 @@ public static class JsonMemoryExtensions
             return Array.Empty<byte>();
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return Array.Empty<byte>();
+        }
+
         Debug.Assert(reader.TokenType == JsonTokenType.StartObject);
         int outerDepth = reader.CurrentDepth;
         var startIdx = reader.TokenStartIndex;
@@ -61,6 +66,11 @@ public static class JsonMemoryExtensions
             return null;
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
+
         Debug.Assert(reader.TokenType == JsonTokenType.String);
         var s = Encoding.UTF8.GetString(reader.ValueSpan);
         return intern ? string.Intern(s) : s;
@@ -70,6 +80,11 @@ public static class JsonMemoryExtensions
     {
         Utf8JsonReader reader = default;
         if (!TryFindProperty(mem.Span, property, ref reader))
+        {
+            return null;
+        }
+
+        if (reader.TokenType == JsonTokenType.Null)
         {
             return null;
         }
@@ -88,6 +103,11 @@ public static class JsonMemoryExtensions
             return null;
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
+
         Debug.Assert(reader.TokenType == JsonTokenType.String);
         Span<char> chars = stackalloc char[Encoding.UTF8.GetCharCount(reader.ValueSpan)];
         int written = Encoding.UTF8.GetChars(reader.ValueSpan, chars);
@@ -98,6 +118,11 @@ public static class JsonMemoryExtensions
     {
         Utf8JsonReader reader = default;
         if (!TryFindProperty(mem.Span, property, ref reader))
+        {
+            return null;
+        }
+
+        if (reader.TokenType == JsonTokenType.Null)
         {
             return null;
         }
@@ -114,6 +139,10 @@ public static class JsonMemoryExtensions
             return null;
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
 
         Debug.Assert(reader.TokenType is JsonTokenType.Number or JsonTokenType.String);
         return ParseInt(reader.ValueSpan);
@@ -127,6 +156,10 @@ public static class JsonMemoryExtensions
             return null;
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
 
         Debug.Assert(reader.TokenType is JsonTokenType.Number or JsonTokenType.String);
         return ParseLong(reader.ValueSpan);
@@ -136,6 +169,11 @@ public static class JsonMemoryExtensions
     {
         Utf8JsonReader reader = default;
         if (!TryFindProperty(mem.Span, property, ref reader))
+        {
+            return null;
+        }
+
+        if (reader.TokenType == JsonTokenType.Null)
         {
             return null;
         }
@@ -162,6 +200,11 @@ public static class JsonMemoryExtensions
             return null;
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
+
         Debug.Assert(reader.TokenType == JsonTokenType.StartArray);
         var list = new List<int>();
         while (reader.Read())
@@ -183,6 +226,11 @@ public static class JsonMemoryExtensions
             return null;
         }
 
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
+
         Debug.Assert(reader.TokenType == JsonTokenType.StartArray);
         var list = new List<long>();
         while (reader.Read())
@@ -200,6 +248,11 @@ public static class JsonMemoryExtensions
     {
         Utf8JsonReader reader = default;
         if (!TryFindProperty(mem.Span, property, ref reader))
+        {
+            return null;
+        }
+
+        if (reader.TokenType == JsonTokenType.Null)
         {
             return null;
         }
