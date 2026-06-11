@@ -36,7 +36,7 @@ internal class EventSubRouterGenerator : IIncrementalGenerator
 
                 internal static partial class EventSubGeneratedRouter
                 {
-                    public static bool TryDispatch(ReadOnlyMemory<byte> message, object handlerState, out Exception? error)
+                    public static bool TryDispatch(ReadOnlyMemory<byte> message, Dictionary<string, object> handlers, out Exception? error)
                     {
                         error = null;
                         EventSubscription sub = new(message.GetChild("subscription"u8));
@@ -61,14 +61,14 @@ internal class EventSubRouterGenerator : IIncrementalGenerator
                             {
                                 try
                                 {
-                                    var {{structName}}_Handler = (Func<EventSubMessage<{{structName}}>, ValueTask>)handlerState;
+                                    var {{structName}}_Handler = (IEventHandler<{{structName}}>)handlers[nameof({{structName}})];
                                     EventSubMessage<{{structName}}> {{structName}}_Message = new()
                                     {
                                         Subscription = sub,
                                         Event = new {{structName}}(message.GetChild("event"u8))
                                     };
 
-                                    {{structName}}_Handler({{structName}}_Message).StepOver();
+                                    {{structName}}_Handler.HandleAsync({{structName}}_Message).StepOver();
                                     return true;
                                 }
                                 catch (Exception e)
