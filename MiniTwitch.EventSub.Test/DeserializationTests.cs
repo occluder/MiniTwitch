@@ -282,4 +282,133 @@ public class DeserializationTests
         Assert.Equal(11, term.Boundary.StartPos);
         Assert.Equal(23, term.Boundary.EndPos);
     }
+
+    [Fact]
+    public void AutomodMessageUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodMessageUpdateV1Json);
+        var msg = new AutomodMessageUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("testbroadcaster", msg.BroadcasterUsername);
+        Assert.Equal("TestBroadcaster", msg.BroadcasterDisplayName);
+        Assert.Equal(456, msg.UserId);
+        Assert.Equal("baduser", msg.Username);
+        Assert.Equal("BadUser", msg.UserDisplayName);
+        Assert.Equal(9001, msg.ModeratorId);
+        Assert.Equal("the_mod", msg.ModeratorUsername);
+        Assert.Equal("The_Mod", msg.ModeratorDisplayName);
+        Assert.Equal(Guid.Parse("550e8400-e29b-41d4-a716-446655440000"), msg.MessageId);
+        Assert.Equal("This is a bad message", msg.Message.Text);
+        Assert.Equal(3, msg.Level);
+        Assert.Equal("aggressive", msg.Category);
+        Assert.Equal("approved", msg.Status);
+        Assert.Equal(DateTimeOffset.Parse("2022-12-02T15:00:00.00Z"), msg.HeldAt);
+
+        var fragments = msg.Message.Fragments;
+        Assert.Single(fragments);
+        Assert.Equal("This is a bad message", fragments[0].Text);
+    }
+
+    [Fact]
+    public void AutomodMessageUpdate_V1_WithCheermote()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodMessageUpdateV1WithEmoteAndCheermoteJson);
+        var msg = new AutomodMessageUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal(789, msg.UserId);
+        Assert.Equal("cheeruser", msg.Username);
+        Assert.Equal("CheerUser", msg.UserDisplayName);
+        Assert.Equal("Bad message Cheer100", msg.Message.Text);
+
+        var fragments = msg.Message.Fragments;
+        Assert.Equal(2, fragments.Length);
+        Assert.Equal("Bad message ", fragments[0].Text);
+
+        var cheermote = fragments[1].Cheermote;
+        Assert.NotNull(cheermote);
+        Assert.Equal("Cheer", cheermote.Value.Prefix);
+        Assert.Equal(100, cheermote.Value.Bits);
+        Assert.Equal(1, cheermote.Value.Tier);
+
+        Assert.Equal("bullying", msg.Category);
+        Assert.Equal(2, msg.Level);
+        Assert.Equal("denied", msg.Status);
+    }
+
+    [Fact]
+    public void AutomodMessageUpdateV2_AutomodReason()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodMessageUpdateV2AutomodJson);
+        var msg = new AutomodMessageUpdateV2(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("testbroadcaster", msg.BroadcasterUsername);
+        Assert.Equal("TestBroadcaster", msg.BroadcasterDisplayName);
+        Assert.Equal(4242, msg.UserId);
+        Assert.Equal("baduser", msg.Username);
+        Assert.Equal("BadUserDisplay", msg.UserDisplayName);
+        Assert.Equal(9001, msg.ModeratorId);
+        Assert.Equal("the_mod", msg.ModeratorUsername);
+        Assert.Equal("The_Mod", msg.ModeratorDisplayName);
+        Assert.Equal("bad-message-id-1", msg.MessageId);
+        Assert.Equal("This is a bad message pogchamp", msg.Message.Text);
+        Assert.Equal("approved", msg.Status);
+        Assert.Equal("automod", msg.Reason);
+        Assert.Equal(DateTimeOffset.Parse("2022-12-02T15:00:00.00Z"), msg.HeldAt);
+
+        var automod = msg.Automod;
+        Assert.NotNull(automod);
+        Assert.Equal("aggressive", automod.Value.Category);
+        Assert.Equal(1, automod.Value.Level);
+
+        var boundaries = automod.Value.Boundaries;
+        Assert.Equal(2, boundaries.Length);
+        Assert.Equal(0, boundaries[0].StartPos);
+        Assert.Equal(10, boundaries[0].EndPos);
+        Assert.Equal(20, boundaries[1].StartPos);
+        Assert.Equal(30, boundaries[1].EndPos);
+
+        var fragments = msg.Message.Fragments;
+        Assert.Equal(2, fragments.Length);
+        Assert.Equal("text", fragments[0].Type);
+        Assert.Equal("cheermote", fragments[1].Type);
+        Assert.Equal("pogchamp", fragments[1].Text);
+        Assert.Equal(1000, fragments[1].Cheermote.Bits);
+    }
+
+    [Fact]
+    public void AutomodMessageUpdateV2_BlockedTermReason()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodMessageUpdateV2BlockedTermJson);
+        var msg = new AutomodMessageUpdateV2(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("broadcaster", msg.BroadcasterUsername);
+        Assert.Equal("Broadcaster", msg.BroadcasterDisplayName);
+        Assert.Equal(789, msg.UserId);
+        Assert.Equal("baduser2", msg.Username);
+        Assert.Equal("BadUser2", msg.UserDisplayName);
+        Assert.Equal(9001, msg.ModeratorId);
+        Assert.Equal("the_mod", msg.ModeratorUsername);
+        Assert.Equal("The_Mod", msg.ModeratorDisplayName);
+        Assert.Equal("bad-message-id-2", msg.MessageId);
+        Assert.Equal("Message with blocked term", msg.Message.Text);
+        Assert.Equal("denied", msg.Status);
+        Assert.Equal("blocked_term", msg.Reason);
+        Assert.Equal(DateTimeOffset.Parse("2022-12-02T15:00:00.00Z"), msg.HeldAt);
+
+        var blockedTerm = msg.BlockedTerm;
+        Assert.NotNull(blockedTerm);
+        Assert.Single(blockedTerm.Value.TermsFound);
+
+        var term = blockedTerm.Value.TermsFound[0];
+        Assert.Equal("term123", term.TermId);
+        Assert.Equal(1337, term.OwnerBroadcasterId);
+        Assert.Equal("broadcaster", term.OwnerBroadcasterUsername);
+        Assert.Equal("Broadcaster", term.OwnerBroadcasterDisplayName);
+        Assert.Equal(11, term.Boundary.StartPos);
+        Assert.Equal(23, term.Boundary.EndPos);
+    }
 }

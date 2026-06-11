@@ -371,4 +371,165 @@ public static class Payloads
         "held_at": "2023-04-11T10:11:12.123Z"
     }
     """;
+
+    [EventPayload(typeof(AutomodMessageUpdate))]
+    public const string AutomodMessageUpdateV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "testbroadcaster",
+        "broadcaster_user_name": "TestBroadcaster",
+        "user_id": "456",
+        "user_login": "baduser",
+        "user_name": "BadUser",
+        "moderator_user_id": "9001",
+        "moderator_user_login": "the_mod",
+        "moderator_user_name": "The_Mod",
+        "message_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message": {
+            "text": "This is a bad message",
+            "fragments": [
+                {
+                    "text": "This is a bad message",
+                    "emote": null,
+                    "cheermote": null
+                }
+            ]
+        },
+        "level": 3,
+        "category": "aggressive",
+        "status": "approved",
+        "held_at": "2022-12-02T15:00:00.00Z"
+    }
+    """;
+
+    [EventPayload(typeof(AutomodMessageUpdate))]
+    public const string AutomodMessageUpdateV1WithEmoteAndCheermoteJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "broadcaster",
+        "broadcaster_user_name": "Broadcaster",
+        "user_id": "789",
+        "user_login": "cheeruser",
+        "user_name": "CheerUser",
+        "moderator_user_id": "9001",
+        "moderator_user_login": "the_mod",
+        "moderator_user_name": "The_Mod",
+        "message_id": "660e8400-e29b-41d4-a716-446655440001",
+        "message": {
+            "text": "Bad message Cheer100",
+            "fragments": [
+                {
+                    "text": "Bad message ",
+                    "emote": null,
+                    "cheermote": null
+                },
+                {
+                    "text": "Cheer100",
+                    "emote": null,
+                    "cheermote": {
+                        "prefix": "Cheer",
+                        "bits": 100,
+                        "tier": 1
+                    }
+                }
+            ]
+        },
+        "level": 2,
+        "category": "bullying",
+        "status": "denied",
+        "held_at": "2023-04-11T10:11:12.123Z"
+    }
+    """;
+
+    [EventPayload(typeof(AutomodMessageUpdateV2))]
+    public const string AutomodMessageUpdateV2AutomodJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "testbroadcaster",
+        "broadcaster_user_name": "TestBroadcaster",
+        "user_id": "4242",
+        "user_login": "baduser",
+        "user_name": "BadUserDisplay",
+        "moderator_user_id": "9001",
+        "moderator_user_login": "the_mod",
+        "moderator_user_name": "The_Mod",
+        "message_id": "bad-message-id-1",
+        "message": {
+            "text": "This is a bad message pogchamp",
+            "fragments": [
+                {
+                    "type": "text",
+                    "text": "This is a bad message ",
+                    "cheermote": null,
+                    "emote": null
+                },
+                {
+                    "type": "cheermote",
+                    "text": "pogchamp",
+                    "cheermote": {
+                        "prefix": "pogchamp",
+                        "bits": 1000,
+                        "tier": 1
+                    },
+                    "emote": null
+                }
+            ]
+        },
+        "reason": "automod",
+        "status": "approved",
+        "automod": {
+            "category": "aggressive",
+            "level": 1,
+            "boundaries": [
+                {"start_pos": 0, "end_pos": 10},
+                {"start_pos": 20, "end_pos": 30}
+            ]
+        },
+        "held_at": "2022-12-02T15:00:00.00Z"
+    }
+    """;
+
+    [EventPayload(typeof(AutomodMessageUpdateV2))]
+    public const string AutomodMessageUpdateV2BlockedTermJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "broadcaster",
+        "broadcaster_user_name": "Broadcaster",
+        "user_id": "789",
+        "user_login": "baduser2",
+        "user_name": "BadUser2",
+        "moderator_user_id": "9001",
+        "moderator_user_login": "the_mod",
+        "moderator_user_name": "The_Mod",
+        "message_id": "bad-message-id-2",
+        "message": {
+            "text": "Message with blocked term",
+            "fragments": [
+                {
+                    "type": "text",
+                    "text": "Message with blocked term",
+                    "cheermote": null,
+                    "emote": null
+                }
+            ]
+        },
+        "reason": "blocked_term",
+        "status": "denied",
+        "blocked_term": {
+            "terms_found": [
+                {
+                    "term_id": "term123",
+                    "owner_broadcaster_user_id": "1337",
+                    "owner_broadcaster_user_login": "broadcaster",
+                    "owner_broadcaster_user_name": "Broadcaster",
+                    "boundary": {
+                        "start_pos": 11,
+                        "end_pos": 23
+                    }
+                }
+            ]
+        },
+        "held_at": "2022-12-02T15:00:00.00Z"
+    }
+    """;
 }

@@ -10,6 +10,7 @@ public partial struct MessageFragment
     /// The type of message fragment. Possible values:
     /// <c>text</c>, <c>cheermote</c>, <c>emote</c>, <c>mention</c>
     /// </summary>
+    [Intern]
     public partial string Type { get; }
     /// <summary>Message text in fragment</summary>
     public partial string Text { get; }
