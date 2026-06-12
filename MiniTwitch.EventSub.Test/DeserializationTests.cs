@@ -513,6 +513,49 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelBan_V1_Timeout()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelBanV1TimeoutJson);
+        var msg = new ChannelBan(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1339, msg.ModeratorId);
+        Assert.Equal("mod_user", msg.ModeratorUsername);
+        Assert.Equal("Mod_User", msg.ModeratorDisplayName);
+        Assert.Equal("Offensive language", msg.Reason);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T18:15:11.17106713Z"), msg.BannedAt);
+        Assert.NotNull(msg.EndsAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T18:16:11.17106713Z"), msg.EndsAt.Value);
+        Assert.False(msg.IsPermanent);
+    }
+
+    [Fact]
+    public void ChannelBan_V1_Permanent()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelBanV1PermanentJson);
+        var msg = new ChannelBan(json.AsMemory());
+
+        Assert.Equal(5678, msg.UserId);
+        Assert.Equal("bad_actor", msg.Username);
+        Assert.Equal("Bad_Actor", msg.UserDisplayName);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(99, msg.ModeratorId);
+        Assert.Equal("mod", msg.ModeratorUsername);
+        Assert.Equal("Mod", msg.ModeratorDisplayName);
+        Assert.Equal("Repeated harassment", msg.Reason);
+        Assert.Equal(DateTimeOffset.Parse("2020-08-01T12:00:00Z"), msg.BannedAt);
+        Assert.Null(msg.EndsAt);
+        Assert.True(msg.IsPermanent);
+    }
+
+    [Fact]
     public void ChannelAdBreakBegin_V1_Automatic()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelAdBreakBeginV1AutomaticJson);

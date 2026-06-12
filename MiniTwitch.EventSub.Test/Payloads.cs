@@ -620,6 +620,44 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelBan))]
+    public const string ChannelBanV1TimeoutJson = """
+    {
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "moderator_user_id": "1339",
+        "moderator_user_login": "mod_user",
+        "moderator_user_name": "Mod_User",
+        "reason": "Offensive language",
+        "banned_at": "2020-07-15T18:15:11.17106713Z",
+        "ends_at": "2020-07-15T18:16:11.17106713Z",
+        "is_permanent": false
+    }
+    """;
+
+    [EventPayload(typeof(ChannelBan))]
+    public const string ChannelBanV1PermanentJson = """
+    {
+        "user_id": "5678",
+        "user_login": "bad_actor",
+        "user_name": "Bad_Actor",
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "moderator_user_id": "99",
+        "moderator_user_login": "mod",
+        "moderator_user_name": "Mod",
+        "reason": "Repeated harassment",
+        "banned_at": "2020-08-01T12:00:00Z",
+        "ends_at": null,
+        "is_permanent": true
+    }
+    """;
+
     [EventPayload(typeof(ChannelAdBreakBegin))]
     public const string ChannelAdBreakBeginV1AutomaticJson = """
     {
