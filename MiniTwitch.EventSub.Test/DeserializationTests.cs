@@ -494,4 +494,38 @@ public class DeserializationTests
         Assert.Single(msg.Terms);
         Assert.Equal("allowedword", msg.Terms[0]);
     }
+
+    [Fact]
+    public void ChannelAdBreakBegin_V1_Manual()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelAdBreakBeginV1ManualJson);
+        var msg = new ChannelAdBreakBegin(json.AsMemory());
+
+        Assert.Equal(60, msg.DurationSeconds);
+        Assert.Equal(DateTimeOffset.Parse("2019-11-16T10:11:12.634234626Z"), msg.StartedAt);
+        Assert.False(msg.IsAutomatic);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1337, msg.RequesterId);
+        Assert.Equal("cool_user", msg.RequesterUsername);
+        Assert.Equal("Cool_User", msg.RequesterDisplayName);
+    }
+
+    [Fact]
+    public void ChannelAdBreakBegin_V1_Automatic()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelAdBreakBeginV1AutomaticJson);
+        var msg = new ChannelAdBreakBegin(json.AsMemory());
+
+        Assert.Equal(30, msg.DurationSeconds);
+        Assert.Equal(DateTimeOffset.Parse("2020-01-15T08:30:00Z"), msg.StartedAt);
+        Assert.True(msg.IsAutomatic);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(42, msg.RequesterId);
+        Assert.Equal("streamer", msg.RequesterUsername);
+        Assert.Equal("Streamer", msg.RequesterDisplayName);
+    }
 }

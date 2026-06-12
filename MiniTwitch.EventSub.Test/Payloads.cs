@@ -604,4 +604,34 @@ public static class Payloads
         "terms": ["allowedword"]
     }
     """;
+
+    [EventPayload(typeof(ChannelAdBreakBegin))]
+    public const string ChannelAdBreakBeginV1ManualJson = """
+    {
+        "duration_seconds": 60,
+        "started_at": "2019-11-16T10:11:12.634234626Z",
+        "is_automatic": false,
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "requester_user_id": "1337",
+        "requester_user_login": "cool_user",
+        "requester_user_name": "Cool_User"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelAdBreakBegin))]
+    public const string ChannelAdBreakBeginV1AutomaticJson = """
+    {
+        "duration_seconds": 30,
+        "started_at": "2020-01-15T08:30:00Z",
+        "is_automatic": true,
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "requester_user_id": "42",
+        "requester_user_login": "streamer",
+        "requester_user_name": "Streamer"
+    }
+    """;
 }
