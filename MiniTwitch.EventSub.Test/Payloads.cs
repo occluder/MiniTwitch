@@ -727,6 +727,15 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelChatClear))]
+    public const string ChannelChatClearV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_name": "Cool_User",
+        "broadcaster_user_login": "cool_user"
+    }
+    """;
+
     [EventPayload(typeof(ChannelBitsUse))]
     public const string ChannelBitsUseV1CustomPowerUpJson = """
     {

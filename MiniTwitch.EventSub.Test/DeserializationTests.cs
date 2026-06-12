@@ -573,6 +573,17 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelChatClear_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatClearV1Json);
+        var msg = new ChannelChatClear(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
