@@ -574,4 +574,34 @@ public static class Payloads
         "held_at": "2022-12-02T15:00:00.00Z"
     }
     """;
+
+    [EventPayload(typeof(AutomodTermsUpdate))]
+    public const string AutomodTermsUpdateV1AddBlockedJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_name": "TestBroadcaster",
+        "broadcaster_user_login": "testbroadcaster",
+        "moderator_user_id": "9001",
+        "moderator_user_login": "the_mod",
+        "moderator_user_name": "The_Mod",
+        "action": "add_blocked",
+        "from_automod": false,
+        "terms": ["badword1", "badword2"]
+    }
+    """;
+
+    [EventPayload(typeof(AutomodTermsUpdate))]
+    public const string AutomodTermsUpdateV1RemovePermittedJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_name": "Simple",
+        "broadcaster_user_login": "simple",
+        "moderator_user_id": "99",
+        "moderator_user_login": "mod",
+        "moderator_user_name": "Mod",
+        "action": "remove_permitted",
+        "from_automod": true,
+        "terms": ["allowedword"]
+    }
+    """;
 }

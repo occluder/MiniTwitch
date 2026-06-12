@@ -457,4 +457,41 @@ public class DeserializationTests
         Assert.Equal(11, term.Boundary.StartPos);
         Assert.Equal(23, term.Boundary.EndPos);
     }
+
+    [Fact]
+    public void AutomodTermsUpdate_V1_AddBlocked()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodTermsUpdateV1AddBlockedJson);
+        var msg = new AutomodTermsUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("testbroadcaster", msg.BroadcasterUsername);
+        Assert.Equal("TestBroadcaster", msg.BroadcasterDisplayName);
+        Assert.Equal(9001, msg.ModeratorId);
+        Assert.Equal("the_mod", msg.ModeratorUsername);
+        Assert.Equal("The_Mod", msg.ModeratorDisplayName);
+        Assert.Equal("add_blocked", msg.Action);
+        Assert.False(msg.FromAutomod);
+        Assert.Equal(2, msg.Terms.Length);
+        Assert.Equal("badword1", msg.Terms[0]);
+        Assert.Equal("badword2", msg.Terms[1]);
+    }
+
+    [Fact]
+    public void AutomodTermsUpdate_V1_RemovePermitted()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodTermsUpdateV1RemovePermittedJson);
+        var msg = new AutomodTermsUpdate(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("simple", msg.BroadcasterUsername);
+        Assert.Equal("Simple", msg.BroadcasterDisplayName);
+        Assert.Equal(99, msg.ModeratorId);
+        Assert.Equal("mod", msg.ModeratorUsername);
+        Assert.Equal("Mod", msg.ModeratorDisplayName);
+        Assert.Equal("remove_permitted", msg.Action);
+        Assert.True(msg.FromAutomod);
+        Assert.Single(msg.Terms);
+        Assert.Equal("allowedword", msg.Terms[0]);
+    }
 }
