@@ -672,4 +672,76 @@ public static class Payloads
         "requester_user_name": "Streamer"
     }
     """;
+
+    [EventPayload(typeof(ChannelBitsUse))]
+    public const string ChannelBitsUseV1CheerJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "bits": 100,
+        "type": "cheer",
+        "message": {
+            "text": "Cheer100 Hello!",
+            "fragments": [
+                {
+                    "type": "cheermote",
+                    "text": "Cheer100",
+                    "cheermote": {
+                        "prefix": "Cheer",
+                        "bits": 100,
+                        "tier": 1
+                    },
+                    "emote": null
+                },
+                {
+                    "type": "text",
+                    "text": " Hello!",
+                    "cheermote": null,
+                    "emote": null
+                }
+            ]
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelBitsUse))]
+    public const string ChannelBitsUseV1PowerUpJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "user_id": "99",
+        "user_login": "poweruser",
+        "user_name": "PowerUser",
+        "bits": 0,
+        "type": "power_up",
+        "power_up": {
+            "type": "message_effect",
+            "emote": null,
+            "message_effect_id": "effect_123"
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelBitsUse))]
+    public const string ChannelBitsUseV1CustomPowerUpJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "user_id": "55",
+        "user_login": "customuser",
+        "user_name": "CustomUser",
+        "bits": 500,
+        "type": "custom_power_up",
+        "custom_power_up": {
+            "title": "Super Reward",
+            "reward_id": "reward-001"
+        }
+    }
+    """;
 }

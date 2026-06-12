@@ -571,4 +571,70 @@ public class DeserializationTests
         Assert.Equal("streamer", msg.RequesterUsername);
         Assert.Equal("Streamer", msg.RequesterDisplayName);
     }
+
+    [Fact]
+    public void ChannelBitsUse_V1_Cheer()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
+        var msg = new ChannelBitsUse(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(100, msg.Bits);
+        Assert.Equal("cheer", msg.Type);
+
+        var m = msg.Message;
+        Assert.NotNull(m);
+        Assert.Equal("Cheer100 Hello!", m.Value.Text);
+        Assert.Equal(2, m.Value.Fragments.Length);
+        Assert.Equal("cheermote", m.Value.Fragments[0].Type);
+        Assert.Equal("Cheer100", m.Value.Fragments[0].Text);
+        Assert.Equal("Cheer", m.Value.Fragments[0].Cheermote.Prefix);
+        Assert.Equal(100, m.Value.Fragments[0].Cheermote.Bits);
+        Assert.Equal(1, m.Value.Fragments[0].Cheermote.Tier);
+        Assert.Equal("text", m.Value.Fragments[1].Type);
+        Assert.Equal(" Hello!", m.Value.Fragments[1].Text);
+    }
+
+    [Fact]
+    public void ChannelBitsUse_V1_PowerUp()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1PowerUpJson);
+        var msg = new ChannelBitsUse(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal(99, msg.UserId);
+        Assert.Equal("poweruser", msg.Username);
+        Assert.Equal("PowerUser", msg.UserDisplayName);
+        Assert.Equal(0, msg.Bits);
+        Assert.Equal("power_up", msg.Type);
+
+        var pu = msg.PowerUp;
+        Assert.NotNull(pu);
+        Assert.Equal("message_effect", pu.Value.Type);
+        Assert.Equal("effect_123", pu.Value.MessageEffectId);
+    }
+
+    [Fact]
+    public void ChannelBitsUse_V1_CustomPowerUp()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CustomPowerUpJson);
+        var msg = new ChannelBitsUse(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal(55, msg.UserId);
+        Assert.Equal("customuser", msg.Username);
+        Assert.Equal("CustomUser", msg.UserDisplayName);
+        Assert.Equal(500, msg.Bits);
+        Assert.Equal("custom_power_up", msg.Type);
+
+        var cpu = msg.CustomPowerUp;
+        Assert.NotNull(cpu);
+        Assert.Equal("Super Reward", cpu.Value.Title);
+        Assert.Equal("reward-001", cpu.Value.RewardId);
+    }
 }
