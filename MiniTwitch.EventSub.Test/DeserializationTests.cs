@@ -598,6 +598,21 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelChatMessageDelete_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatMessageDeleteV1Json);
+        var msg = new ChannelChatMessageDelete(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(7734, msg.TargetId);
+        Assert.Equal("uncool_viewer", msg.TargetUsername);
+        Assert.Equal("Uncool_viewer", msg.TargetDisplayName);
+        Assert.Equal(Guid.Parse("ab24e0b0-2260-4bac-94e4-05eedd4ecd0e"), msg.MessageId);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
