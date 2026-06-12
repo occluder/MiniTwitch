@@ -379,6 +379,52 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void AutomodSettingsUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodSettingsUpdateV1Json);
+        var msg = new AutomodSettingsUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooluser", msg.BroadcasterUsername);
+        Assert.Equal("CoolUser", msg.BroadcasterDisplayName);
+        Assert.Equal(9001, msg.ModeratorId);
+        Assert.Equal("coolmod", msg.ModeratorUsername);
+        Assert.Equal("CoolMod", msg.ModeratorDisplayName);
+        Assert.Null(msg.OverallLevel);
+        Assert.Equal(3, msg.Disability);
+        Assert.Equal(3, msg.Aggression);
+        Assert.Equal(3, msg.SexualitySexOrGender);
+        Assert.Equal(3, msg.Misogyny);
+        Assert.Equal(3, msg.Bullying);
+        Assert.Equal(0, msg.Swearing);
+        Assert.Equal(3, msg.RaceEthnicityOrReligion);
+        Assert.Equal(30, msg.SexBasedTerms);
+    }
+
+    [Fact]
+    public void AutomodSettingsUpdate_V1_WithOverallLevel()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.AutomodSettingsUpdateV1WithOverallLevelJson);
+        var msg = new AutomodSettingsUpdate(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("simple", msg.BroadcasterUsername);
+        Assert.Equal("Simple", msg.BroadcasterDisplayName);
+        Assert.Equal(99, msg.ModeratorId);
+        Assert.Equal("mod", msg.ModeratorUsername);
+        Assert.Equal("Mod", msg.ModeratorDisplayName);
+        Assert.Equal(2, msg.OverallLevel);
+        Assert.Equal(2, msg.Disability);
+        Assert.Equal(2, msg.Aggression);
+        Assert.Equal(2, msg.SexualitySexOrGender);
+        Assert.Equal(2, msg.Misogyny);
+        Assert.Equal(2, msg.Bullying);
+        Assert.Equal(2, msg.Swearing);
+        Assert.Equal(2, msg.RaceEthnicityOrReligion);
+        Assert.Equal(2, msg.SexBasedTerms);
+    }
+
+    [Fact]
     public void AutomodMessageUpdateV2_BlockedTermReason()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.AutomodMessageUpdateV2BlockedTermJson);

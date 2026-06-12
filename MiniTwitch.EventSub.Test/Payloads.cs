@@ -489,6 +489,48 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(AutomodSettingsUpdate))]
+    public const string AutomodSettingsUpdateV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_name": "CoolUser",
+        "broadcaster_user_login": "cooluser",
+        "moderator_user_id": "9001",
+        "moderator_user_name": "CoolMod",
+        "moderator_user_login": "coolmod",
+        "overall_level": null,
+        "disability": 3,
+        "aggression": 3,
+        "sexuality_sex_or_gender": 3,
+        "misogyny": 3,
+        "bullying": 3,
+        "swearing": 0,
+        "race_ethnicity_or_religion": 3,
+        "sex_based_terms": 30
+    }
+    """;
+
+    [EventPayload(typeof(AutomodSettingsUpdate))]
+    public const string AutomodSettingsUpdateV1WithOverallLevelJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_name": "Simple",
+        "broadcaster_user_login": "simple",
+        "moderator_user_id": "99",
+        "moderator_user_name": "Mod",
+        "moderator_user_login": "mod",
+        "overall_level": 2,
+        "disability": 2,
+        "aggression": 2,
+        "sexuality_sex_or_gender": 2,
+        "misogyny": 2,
+        "bullying": 2,
+        "swearing": 2,
+        "race_ethnicity_or_religion": 2,
+        "sex_based_terms": 2
+    }
+    """;
+
     [EventPayload(typeof(AutomodMessageUpdateV2))]
     public const string AutomodMessageUpdateV2BlockedTermJson = """
     {
