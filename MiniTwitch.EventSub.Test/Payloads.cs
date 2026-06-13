@@ -727,6 +727,34 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelUpdate))]
+    public const string ChannelUpdateV2Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "title": "Best Stream Ever",
+        "language": "en",
+        "category_id": "12453",
+        "category_name": "Grand Theft Auto",
+        "content_classification_labels": ["MatureGame"]
+    }
+    """;
+
+    [EventPayload(typeof(ChannelUpdate))]
+    public const string ChannelUpdateV2NoLabelsJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "simple",
+        "broadcaster_user_name": "Simple",
+        "title": "Just Chatting",
+        "language": "fr",
+        "category_id": "509658",
+        "category_name": "Just Chatting",
+        "content_classification_labels": []
+    }
+    """;
+
     [EventPayload(typeof(ChannelChatMessageDelete))]
     public const string ChannelChatMessageDeleteV1Json = """
     {

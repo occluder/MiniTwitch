@@ -613,6 +613,39 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelUpdate_V2()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelUpdateV2Json);
+        var msg = new ChannelUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal("Best Stream Ever", msg.Title);
+        Assert.Equal("en", msg.Language);
+        Assert.Equal("12453", msg.CategoryId);
+        Assert.Equal("Grand Theft Auto", msg.CategoryName);
+        Assert.Single(msg.ContentClassificationLabels);
+        Assert.Equal("MatureGame", msg.ContentClassificationLabels[0]);
+    }
+
+    [Fact]
+    public void ChannelUpdate_V2_NoLabels()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelUpdateV2NoLabelsJson);
+        var msg = new ChannelUpdate(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("simple", msg.BroadcasterUsername);
+        Assert.Equal("Simple", msg.BroadcasterDisplayName);
+        Assert.Equal("Just Chatting", msg.Title);
+        Assert.Equal("fr", msg.Language);
+        Assert.Equal("509658", msg.CategoryId);
+        Assert.Equal("Just Chatting", msg.CategoryName);
+        Assert.Empty(msg.ContentClassificationLabels);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
