@@ -646,6 +646,21 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelFollow_V2()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelFollowV2Json);
+        var msg = new ChannelFollow(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T18:16:11.17106713Z"), msg.FollowedAt);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
