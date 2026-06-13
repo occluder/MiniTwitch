@@ -757,6 +757,34 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelSubscribe))]
+    public const string ChannelSubscribeV1Json = """
+    {
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "tier": "1000",
+        "is_gift": false
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSubscribe))]
+    public const string ChannelSubscribeV1GiftJson = """
+    {
+        "user_id": "5678",
+        "user_login": "gifter",
+        "user_name": "Gifter",
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "tier": "3000",
+        "is_gift": true
+    }
+    """;
+
     [EventPayload(typeof(ChannelSharedChatEnd))]
     public const string ChannelSharedChatEndV1Json = """
     {

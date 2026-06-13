@@ -813,6 +813,38 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelSubscribe_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscribeV1Json);
+        var msg = new ChannelSubscribe(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal("1000", msg.Tier);
+        Assert.False(msg.IsGift);
+    }
+
+    [Fact]
+    public void ChannelSubscribe_V1_Gift()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscribeV1GiftJson);
+        var msg = new ChannelSubscribe(json.AsMemory());
+
+        Assert.Equal(5678, msg.UserId);
+        Assert.Equal("gifter", msg.Username);
+        Assert.Equal("Gifter", msg.UserDisplayName);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal("3000", msg.Tier);
+        Assert.True(msg.IsGift);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
