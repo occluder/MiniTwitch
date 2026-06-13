@@ -748,6 +748,71 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelSharedChatBegin_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSharedChatBeginV1Json);
+        var msg = new ChannelSharedChatBegin(json.AsMemory());
+
+        Assert.Equal("2b64a92a-dbb8-424e-b1c3-304423ba1b6f", msg.SessionId);
+        Assert.Equal(1971641, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(1971641, msg.HostBroadcasterId);
+        Assert.Equal("streamer", msg.HostBroadcasterUsername);
+        Assert.Equal("streamer", msg.HostBroadcasterDisplayName);
+
+        var participants = msg.Participants;
+        Assert.Equal(2, participants.Length);
+
+        Assert.Equal(1971641, participants[0].BroadcasterId);
+        Assert.Equal("streamer", participants[0].BroadcasterUsername);
+        Assert.Equal("streamer", participants[0].BroadcasterDisplayName);
+
+        Assert.Equal(112233, participants[1].BroadcasterId);
+        Assert.Equal("streamer33", participants[1].BroadcasterUsername);
+        Assert.Equal("streamer33", participants[1].BroadcasterDisplayName);
+    }
+
+    [Fact]
+    public void ChannelSharedChatUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSharedChatUpdateV1Json);
+        var msg = new ChannelSharedChatUpdate(json.AsMemory());
+
+        Assert.Equal("3c75a92a-dbb8-424e-b1c3-304423ba1b6f", msg.SessionId);
+        Assert.Equal(1971641, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(1971641, msg.HostBroadcasterId);
+        Assert.Equal("streamer", msg.HostBroadcasterUsername);
+        Assert.Equal("streamer", msg.HostBroadcasterDisplayName);
+
+        var participants = msg.Participants;
+        Assert.Equal(2, participants.Length);
+        Assert.Equal(1971641, participants[0].BroadcasterId);
+        Assert.Equal("streamer", participants[0].BroadcasterUsername);
+        Assert.Equal("streamer", participants[0].BroadcasterDisplayName);
+        Assert.Equal(332211, participants[1].BroadcasterId);
+        Assert.Equal("streamer11", participants[1].BroadcasterUsername);
+        Assert.Equal("streamer11", participants[1].BroadcasterDisplayName);
+    }
+
+    [Fact]
+    public void ChannelSharedChatEnd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSharedChatEndV1Json);
+        var msg = new ChannelSharedChatEnd(json.AsMemory());
+
+        Assert.Equal("2b64a92a-dbb8-424e-b1c3-304423ba1b6f", msg.SessionId);
+        Assert.Equal(1971641, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(1971641, msg.HostBroadcasterId);
+        Assert.Equal("streamer", msg.HostBroadcasterUsername);
+        Assert.Equal("streamer", msg.HostBroadcasterDisplayName);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);

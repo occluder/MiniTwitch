@@ -757,6 +757,69 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelSharedChatEnd))]
+    public const string ChannelSharedChatEndV1Json = """
+    {
+        "session_id": "2b64a92a-dbb8-424e-b1c3-304423ba1b6f",
+        "broadcaster_user_id": "1971641",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "streamer",
+        "host_broadcaster_user_id": "1971641",
+        "host_broadcaster_user_login": "streamer",
+        "host_broadcaster_user_name": "streamer"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSharedChatUpdate))]
+    public const string ChannelSharedChatUpdateV1Json = """
+    {
+        "session_id": "3c75a92a-dbb8-424e-b1c3-304423ba1b6f",
+        "broadcaster_user_id": "1971641",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "streamer",
+        "host_broadcaster_user_id": "1971641",
+        "host_broadcaster_user_login": "streamer",
+        "host_broadcaster_user_name": "streamer",
+        "participants": [
+            {
+                "broadcaster_user_id": "1971641",
+                "broadcaster_user_name": "streamer",
+                "broadcaster_user_login": "streamer"
+            },
+            {
+                "broadcaster_user_id": "332211",
+                "broadcaster_user_name": "streamer11",
+                "broadcaster_user_login": "streamer11"
+            }
+        ]
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSharedChatBegin))]
+    public const string ChannelSharedChatBeginV1Json = """
+    {
+        "session_id": "2b64a92a-dbb8-424e-b1c3-304423ba1b6f",
+        "broadcaster_user_id": "1971641",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "streamer",
+        "host_broadcaster_user_id": "1971641",
+        "host_broadcaster_user_login": "streamer",
+        "host_broadcaster_user_name": "streamer",
+        "participants": [
+            {
+                "broadcaster_user_id": "1971641",
+                "broadcaster_user_name": "streamer",
+                "broadcaster_user_login": "streamer"
+            },
+            {
+                "broadcaster_user_id": "112233",
+                "broadcaster_user_name": "streamer33",
+                "broadcaster_user_login": "streamer33"
+            }
+        ]
+    }
+    """;
+
     [EventPayload(typeof(ChannelChatUserMessageUpdate))]
     public const string ChannelChatUserMessageUpdateV1Json = """
     {
