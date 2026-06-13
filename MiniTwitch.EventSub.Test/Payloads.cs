@@ -741,6 +741,38 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelChatSettingsUpdate))]
+    public const string ChannelChatSettingsUpdateV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "emote_mode": true,
+        "follower_mode": false,
+        "follower_mode_duration_minutes": null,
+        "slow_mode": true,
+        "slow_mode_wait_time_seconds": 10,
+        "subscriber_mode": false,
+        "unique_chat_mode": false
+    }
+    """;
+
+    [EventPayload(typeof(ChannelChatSettingsUpdate))]
+    public const string ChannelChatSettingsUpdateV1AllDisabledJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "simple",
+        "broadcaster_user_name": "Simple",
+        "emote_mode": false,
+        "follower_mode": true,
+        "follower_mode_duration_minutes": 30,
+        "slow_mode": false,
+        "slow_mode_wait_time_seconds": null,
+        "subscriber_mode": true,
+        "unique_chat_mode": true
+    }
+    """;
+
     [EventPayload(typeof(ChannelFollow))]
     public const string ChannelFollowV2Json = """
     {

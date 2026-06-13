@@ -661,6 +661,42 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelChatSettingsUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatSettingsUpdateV1Json);
+        var msg = new ChannelChatSettingsUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.True(msg.EmoteMode);
+        Assert.False(msg.FollowerMode);
+        Assert.Null(msg.FollowerModeDurationMinutes);
+        Assert.True(msg.SlowMode);
+        Assert.Equal(10, msg.SlowModeWaitTimeSeconds);
+        Assert.False(msg.SubscriberMode);
+        Assert.False(msg.UniqueChatMode);
+    }
+
+    [Fact]
+    public void ChannelChatSettingsUpdate_V1_AllDisabled()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatSettingsUpdateV1AllDisabledJson);
+        var msg = new ChannelChatSettingsUpdate(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("simple", msg.BroadcasterUsername);
+        Assert.Equal("Simple", msg.BroadcasterDisplayName);
+        Assert.False(msg.EmoteMode);
+        Assert.True(msg.FollowerMode);
+        Assert.Equal(30, msg.FollowerModeDurationMinutes);
+        Assert.False(msg.SlowMode);
+        Assert.Null(msg.SlowModeWaitTimeSeconds);
+        Assert.True(msg.SubscriberMode);
+        Assert.True(msg.UniqueChatMode);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
