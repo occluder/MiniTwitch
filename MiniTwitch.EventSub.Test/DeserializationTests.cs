@@ -697,6 +697,38 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelChatUserMessageHold_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatUserMessageHoldV1Json);
+        var msg = new ChannelChatUserMessageHold(json.AsMemory());
+
+        Assert.Equal(123, msg.BroadcasterId);
+        Assert.Equal("bob", msg.BroadcasterUsername);
+        Assert.Equal("Bob", msg.BroadcasterDisplayName);
+        Assert.Equal(456, msg.UserId);
+        Assert.Equal("tom", msg.Username);
+        Assert.Equal("Tommy", msg.UserDisplayName);
+        Assert.Equal("789", msg.MessageId);
+        Assert.Equal("hey world", msg.Message.Text);
+
+        var fragments = msg.Message.Fragments;
+        Assert.Equal(3, fragments.Length);
+
+        Assert.Equal("emote", fragments[0].Type);
+        Assert.Equal("hey world", fragments[0].Text);
+        Assert.Equal("foo", fragments[0].Emote.Id);
+
+        Assert.Equal("cheermote", fragments[1].Type);
+        Assert.Equal("bye world", fragments[1].Text);
+        Assert.Equal("prefix", fragments[1].Cheermote.Prefix);
+        Assert.Equal(100, fragments[1].Cheermote.Bits);
+        Assert.Equal(1, fragments[1].Cheermote.Tier);
+
+        Assert.Equal("text", fragments[2].Type);
+        Assert.Equal("surprise", fragments[2].Text);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);

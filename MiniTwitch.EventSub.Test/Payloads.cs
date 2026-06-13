@@ -757,6 +757,49 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelChatUserMessageHold))]
+    public const string ChannelChatUserMessageHoldV1Json = """
+    {
+        "broadcaster_user_id": "123",
+        "broadcaster_user_login": "bob",
+        "broadcaster_user_name": "Bob",
+        "user_id": "456",
+        "user_login": "tom",
+        "user_name": "Tommy",
+        "message_id": "789",
+        "message": {
+            "text": "hey world",
+            "fragments": [
+                {
+                    "type": "emote",
+                    "text": "hey world",
+                    "cheermote": null,
+                    "emote": {
+                        "id": "foo",
+                        "emote_set_id": "7"
+                    }
+                },
+                {
+                    "type": "cheermote",
+                    "text": "bye world",
+                    "cheermote": {
+                        "prefix": "prefix",
+                        "bits": 100,
+                        "tier": 1
+                    },
+                    "emote": null
+                },
+                {
+                    "type": "text",
+                    "text": "surprise",
+                    "cheermote": null,
+                    "emote": null
+                }
+            ]
+        }
+    }
+    """;
+
     [EventPayload(typeof(ChannelChatSettingsUpdate))]
     public const string ChannelChatSettingsUpdateV1AllDisabledJson = """
     {
