@@ -757,6 +757,31 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelChatUserMessageUpdate))]
+    public const string ChannelChatUserMessageUpdateV1Json = """
+    {
+        "broadcaster_user_id": "123",
+        "broadcaster_user_login": "bob",
+        "broadcaster_user_name": "Bob",
+        "user_id": "456",
+        "user_login": "tom",
+        "user_name": "Tommy",
+        "status": "approved",
+        "message_id": "789",
+        "message": {
+            "text": "hey world",
+            "fragments": [
+                {
+                    "type": "text",
+                    "text": "hey world",
+                    "cheermote": null,
+                    "emote": null
+                }
+            ]
+        }
+    }
+    """;
+
     [EventPayload(typeof(ChannelChatUserMessageHold))]
     public const string ChannelChatUserMessageHoldV1Json = """
     {

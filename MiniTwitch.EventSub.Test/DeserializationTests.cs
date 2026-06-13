@@ -729,6 +729,25 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelChatUserMessageUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatUserMessageUpdateV1Json);
+        var msg = new ChannelChatUserMessageUpdate(json.AsMemory());
+
+        Assert.Equal(123, msg.BroadcasterId);
+        Assert.Equal("bob", msg.BroadcasterUsername);
+        Assert.Equal("Bob", msg.BroadcasterDisplayName);
+        Assert.Equal(456, msg.UserId);
+        Assert.Equal("tom", msg.Username);
+        Assert.Equal("Tommy", msg.UserDisplayName);
+        Assert.Equal("approved", msg.Status);
+        Assert.Equal("789", msg.MessageId);
+        Assert.Equal("hey world", msg.Message.Text);
+        Assert.Single(msg.Message.Fragments);
+        Assert.Equal("text", msg.Message.Fragments[0].Type);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
