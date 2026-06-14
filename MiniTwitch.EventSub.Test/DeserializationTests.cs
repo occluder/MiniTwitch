@@ -1323,6 +1323,48 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelPointsCustomRewardRedemptionAdd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsCustomRewardRedemptionAddV1Json);
+        var msg = new ChannelPointsCustomRewardRedemptionAdd(json.AsMemory());
+
+        Assert.Equal("17fa2df1-ad76-4804-bfa5-a40ef63efe63", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(9001, msg.UserId);
+        Assert.Equal("cooler_user", msg.Username);
+        Assert.Equal("Cooler_User", msg.UserDisplayName);
+        Assert.Equal("pogchamp", msg.UserInput);
+        Assert.Equal("unfulfilled", msg.Status);
+
+        var reward = msg.Reward;
+        Assert.Equal("92af127c-7326-4483-a52b-b0da0be61c01", reward.Id);
+        Assert.Equal("title", reward.Title);
+        Assert.Equal(100, reward.Cost);
+        Assert.Equal("reward prompt", reward.Prompt);
+
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.RedeemedAt);
+    }
+
+    [Fact]
+    public void ChannelPointsCustomRewardRedemptionUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsCustomRewardRedemptionUpdateV1Json);
+        var msg = new ChannelPointsCustomRewardRedemptionUpdate(json.AsMemory());
+
+        Assert.Equal("17fa2df1-ad76-4804-bfa5-a40ef63efe63", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(9001, msg.UserId);
+        Assert.Equal("cooler_user", msg.Username);
+        Assert.Equal("Cooler_User", msg.UserDisplayName);
+        Assert.Equal("", msg.UserInput);
+        Assert.Equal("fulfilled", msg.Status);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
