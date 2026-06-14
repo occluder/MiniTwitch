@@ -845,6 +845,117 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelSubscriptionEnd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscriptionEndV1Json);
+        var msg = new ChannelSubscriptionEnd(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal("1000", msg.Tier);
+        Assert.False(msg.IsGift);
+    }
+
+    [Fact]
+    public void ChannelSubscriptionEnd_V1_Gift()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscriptionEndV1GiftJson);
+        var msg = new ChannelSubscriptionEnd(json.AsMemory());
+
+        Assert.Equal(5678, msg.UserId);
+        Assert.Equal("gifter", msg.Username);
+        Assert.Equal("Gifter", msg.UserDisplayName);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal("2000", msg.Tier);
+        Assert.True(msg.IsGift);
+    }
+
+    [Fact]
+    public void ChannelSubscriptionGift_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscriptionGiftV1Json);
+        var msg = new ChannelSubscriptionGift(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(2, msg.Total);
+        Assert.Equal("1000", msg.Tier);
+        Assert.Equal(284, msg.CumulativeTotal);
+        Assert.False(msg.IsAnonymous);
+    }
+
+    [Fact]
+    public void ChannelSubscriptionGift_V1_Anonymous()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscriptionGiftV1AnonymousJson);
+        var msg = new ChannelSubscriptionGift(json.AsMemory());
+
+        Assert.Null(msg.UserId);
+        Assert.Null(msg.Username);
+        Assert.Null(msg.UserDisplayName);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(5, msg.Total);
+        Assert.Equal("3000", msg.Tier);
+        Assert.Null(msg.CumulativeTotal);
+        Assert.True(msg.IsAnonymous);
+    }
+
+    [Fact]
+    public void ChannelSubscriptionMessage_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscriptionMessageV1Json);
+        var msg = new ChannelSubscriptionMessage(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal("1000", msg.Tier);
+        Assert.Equal("Love the stream!", msg.Message.Text);
+        Assert.Single(msg.Message.Emotes);
+        Assert.Equal(23, msg.Message.Emotes[0].Begin);
+        Assert.Equal(30, msg.Message.Emotes[0].End);
+        Assert.Equal("302976485", msg.Message.Emotes[0].Id);
+        Assert.Equal(15, msg.CumulativeMonths);
+        Assert.Equal(1, msg.StreakMonths);
+        Assert.Equal(6, msg.DurationMonths);
+    }
+
+    [Fact]
+    public void ChannelSubscriptionMessage_V1_NoStreak()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSubscriptionMessageV1NoStreakJson);
+        var msg = new ChannelSubscriptionMessage(json.AsMemory());
+
+        Assert.Equal(5678, msg.UserId);
+        Assert.Equal("subscriber", msg.Username);
+        Assert.Equal("Subscriber", msg.UserDisplayName);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal("2000", msg.Tier);
+        Assert.Equal("Great streams!", msg.Message.Text);
+        Assert.Empty(msg.Message.Emotes);
+        Assert.Equal(3, msg.CumulativeMonths);
+        Assert.Null(msg.StreakMonths);
+        Assert.Equal(1, msg.DurationMonths);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);

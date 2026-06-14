@@ -771,6 +771,112 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelSubscriptionEnd))]
+    public const string ChannelSubscriptionEndV1Json = """
+    {
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "tier": "1000",
+        "is_gift": false
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSubscriptionGift))]
+    public const string ChannelSubscriptionGiftV1Json = """
+    {
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "total": 2,
+        "tier": "1000",
+        "cumulative_total": 284,
+        "is_anonymous": false
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSubscriptionMessage))]
+    public const string ChannelSubscriptionMessageV1Json = """
+    {
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "tier": "1000",
+        "message": {
+            "text": "Love the stream!",
+            "emotes": [
+                {
+                    "begin": 23,
+                    "end": 30,
+                    "id": "302976485"
+                }
+            ]
+        },
+        "cumulative_months": 15,
+        "streak_months": 1,
+        "duration_months": 6
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSubscriptionMessage))]
+    public const string ChannelSubscriptionMessageV1NoStreakJson = """
+    {
+        "user_id": "5678",
+        "user_login": "subscriber",
+        "user_name": "Subscriber",
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "tier": "2000",
+        "message": {
+            "text": "Great streams!",
+            "emotes": []
+        },
+        "cumulative_months": 3,
+        "streak_months": null,
+        "duration_months": 1
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSubscriptionGift))]
+    public const string ChannelSubscriptionGiftV1AnonymousJson = """
+    {
+        "user_id": null,
+        "user_login": null,
+        "user_name": null,
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "total": 5,
+        "tier": "3000",
+        "cumulative_total": null,
+        "is_anonymous": true
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSubscriptionEnd))]
+    public const string ChannelSubscriptionEndV1GiftJson = """
+    {
+        "user_id": "5678",
+        "user_login": "gifter",
+        "user_name": "Gifter",
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "tier": "2000",
+        "is_gift": true
+    }
+    """;
+
     [EventPayload(typeof(ChannelSubscribe))]
     public const string ChannelSubscribeV1GiftJson = """
     {
