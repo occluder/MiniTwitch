@@ -842,6 +842,199 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelModerate))]
+    public const string ChannelModerateV1ModJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "moderator_user_id": "424596340",
+        "moderator_user_login": "quotrok",
+        "moderator_user_name": "quotrok",
+        "action": "mod",
+        "followers": null,
+        "slow": null,
+        "vip": null,
+        "unvip": null,
+        "mod": {
+            "user_id": "141981764",
+            "user_login": "twitchdev",
+            "user_name": "TwitchDev"
+        },
+        "unmod": null,
+        "ban": null,
+        "unban": null,
+        "timeout": null,
+        "untimeout": null,
+        "raid": null,
+        "unraid": null,
+        "delete": null,
+        "automod_terms": null,
+        "unban_request": null,
+        "shared_chat_ban": null,
+        "shared_chat_unban": null,
+        "shared_chat_timeout": null,
+        "shared_chat_untimeout": null,
+        "shared_chat_delete": null
+    }
+    """;
+
+    [EventPayload(typeof(ChannelModerate))]
+    public const string ChannelModerateV1SharedChatTimeoutJson = """
+    {
+        "broadcaster_user_id": "423374343",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "source_broadcaster_user_id": "41292030",
+        "source_broadcaster_user_login": "adflynn404",
+        "source_broadcaster_user_name": "adflynn404",
+        "moderator_user_id": "424596340",
+        "moderator_user_login": "quotrok",
+        "moderator_user_name": "quotrok",
+        "action": "shared_chat_timeout",
+        "followers": null,
+        "slow": null,
+        "vip": null,
+        "unvip": null,
+        "mod": null,
+        "unmod": null,
+        "ban": null,
+        "unban": null,
+        "timeout": null,
+        "untimeout": null,
+        "raid": null,
+        "unraid": null,
+        "delete": null,
+        "automod_terms": null,
+        "unban_request": null,
+        "shared_chat_ban": null,
+        "shared_chat_unban": null,
+        "shared_chat_timeout": {
+            "user_id": "141981764",
+            "user_login": "twitchdev",
+            "user_name": "TwitchDev",
+            "reason": "Does not like pineapple on pizza.",
+            "expires_at": "2022-03-15T02:00:28Z"
+        },
+        "shared_chat_untimeout": null,
+        "shared_chat_delete": null
+    }
+    """;
+
+    [EventPayload(typeof(ChannelModerateV2))]
+    public const string ChannelModerateV2WarnJson = """
+    {
+        "broadcaster_user_id": "423374343",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "source_broadcaster_user_id": "41292030",
+        "source_broadcaster_user_login": "adflynn404",
+        "source_broadcaster_user_name": "adflynn404",
+        "moderator_user_id": "424596340",
+        "moderator_user_login": "quotrok",
+        "moderator_user_name": "quotrok",
+        "action": "warn",
+        "followers": null,
+        "slow": null,
+        "vip": null,
+        "unvip": null,
+        "warn": {
+            "user_id": "141981764",
+            "user_login": "twitchdev",
+            "user_name": "TwitchDev",
+            "reason": "cut it out",
+            "chat_rules_cited": null
+        },
+        "mod": null,
+        "unmod": null,
+        "ban": null,
+        "unban": null,
+        "timeout": null,
+        "untimeout": null,
+        "raid": null,
+        "unraid": null,
+        "delete": null,
+        "automod_terms": null,
+        "unban_request": null,
+        "shared_chat_ban": null,
+        "shared_chat_unban": null,
+        "shared_chat_timeout": null,
+        "shared_chat_untimeout": null,
+        "shared_chat_delete": null
+    }
+    """;
+
+    [EventPayload(typeof(ChannelModerateV2))]
+    public const string ChannelModerateV2ModJson = """
+    {
+        "broadcaster_user_id": "423374343",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "moderator_user_id": "424596340",
+        "moderator_user_login": "quotrok",
+        "moderator_user_name": "quotrok",
+        "action": "mod",
+        "followers": null,
+        "slow": null,
+        "vip": null,
+        "unvip": null,
+        "warn": null,
+        "mod": {
+            "user_id": "141981764",
+            "user_login": "twitchdev",
+            "user_name": "TwitchDev"
+        },
+        "unmod": null,
+        "ban": null,
+        "unban": null,
+        "timeout": null,
+        "untimeout": null,
+        "raid": null,
+        "unraid": null,
+        "delete": null,
+        "automod_terms": null,
+        "unban_request": null,
+        "shared_chat_ban": null,
+        "shared_chat_unban": null,
+        "shared_chat_timeout": null,
+        "shared_chat_untimeout": null,
+        "shared_chat_delete": null
+    }
+    """;
+
+    [EventPayload(typeof(ChannelModerate))]
+    public const string ChannelModerateV1EmoteOnlyJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "moderator_user_id": "424596340",
+        "moderator_user_login": "quotrok",
+        "moderator_user_name": "quotrok",
+        "action": "emoteonly",
+        "followers": null,
+        "slow": null,
+        "vip": null,
+        "unvip": null,
+        "mod": null,
+        "unmod": null,
+        "ban": null,
+        "unban": null,
+        "timeout": null,
+        "untimeout": null,
+        "raid": null,
+        "unraid": null,
+        "delete": null,
+        "automod_terms": null,
+        "unban_request": null,
+        "shared_chat_ban": null,
+        "shared_chat_unban": null,
+        "shared_chat_timeout": null,
+        "shared_chat_untimeout": null,
+        "shared_chat_delete": null
+    }
+    """;
+
     [EventPayload(typeof(ChannelUnbanRequestResolve))]
     public const string ChannelUnbanRequestResolveV1Json = """
     {

@@ -1059,6 +1059,96 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelModerate_V1_Mod()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModerateV1ModJson);
+        var msg = new ChannelModerate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("glowillig", msg.BroadcasterUsername);
+        Assert.Equal("glowillig", msg.BroadcasterDisplayName);
+        Assert.Equal(424596340, msg.ModeratorId);
+        Assert.Equal("quotrok", msg.ModeratorUsername);
+        Assert.Equal("quotrok", msg.ModeratorDisplayName);
+        Assert.Equal("mod", msg.Action);
+
+        var mod = msg.Mod;
+        Assert.NotNull(mod);
+        Assert.Equal(141981764, mod.Value.UserId);
+        Assert.Equal("twitchdev", mod.Value.Username);
+        Assert.Equal("TwitchDev", mod.Value.UserDisplayName);
+    }
+
+    [Fact]
+    public void ChannelModerate_V1_SharedChatTimeout()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModerateV1SharedChatTimeoutJson);
+        var msg = new ChannelModerate(json.AsMemory());
+
+        Assert.Equal(423374343, msg.BroadcasterId);
+        Assert.Equal(41292030, msg.SourceBroadcasterId);
+        Assert.Equal("adflynn404", msg.SourceBroadcasterUsername);
+        Assert.Equal("adflynn404", msg.SourceBroadcasterDisplayName);
+        Assert.Equal(424596340, msg.ModeratorId);
+        Assert.Equal("shared_chat_timeout", msg.Action);
+
+        var timeout = msg.SharedChatTimeout;
+        Assert.NotNull(timeout);
+        Assert.Equal(141981764, timeout.Value.UserId);
+        Assert.Equal("twitchdev", timeout.Value.Username);
+        Assert.Equal("TwitchDev", timeout.Value.UserDisplayName);
+        Assert.Equal("Does not like pineapple on pizza.", timeout.Value.Reason);
+        Assert.Equal(DateTimeOffset.Parse("2022-03-15T02:00:28Z"), timeout.Value.ExpiresAt);
+    }
+
+    [Fact]
+    public void ChannelModerate_V1_EmoteOnly()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModerateV1EmoteOnlyJson);
+        var msg = new ChannelModerate(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("glowillig", msg.BroadcasterUsername);
+        Assert.Equal("glowillig", msg.BroadcasterDisplayName);
+        Assert.Equal(424596340, msg.ModeratorId);
+        Assert.Equal("emoteonly", msg.Action);
+    }
+
+    [Fact]
+    public void ChannelModerateV2_Warn()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModerateV2WarnJson);
+        var msg = new ChannelModerateV2(json.AsMemory());
+
+        Assert.Equal(423374343, msg.BroadcasterId);
+        Assert.Equal(41292030, msg.SourceBroadcasterId);
+        Assert.Equal("warn", msg.Action);
+
+        var warn = msg.Warn;
+        Assert.NotNull(warn);
+        Assert.Equal(141981764, warn.Value.UserId);
+        Assert.Equal("twitchdev", warn.Value.Username);
+        Assert.Equal("TwitchDev", warn.Value.UserDisplayName);
+        Assert.Equal("cut it out", warn.Value.Reason);
+    }
+
+    [Fact]
+    public void ChannelModerateV2_Mod()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModerateV2ModJson);
+        var msg = new ChannelModerateV2(json.AsMemory());
+
+        Assert.Equal(423374343, msg.BroadcasterId);
+        Assert.Equal("mod", msg.Action);
+
+        var mod = msg.Mod;
+        Assert.NotNull(mod);
+        Assert.Equal(141981764, mod.Value.UserId);
+        Assert.Equal("twitchdev", mod.Value.Username);
+        Assert.Equal("TwitchDev", mod.Value.UserDisplayName);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
