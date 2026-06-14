@@ -1005,6 +1005,23 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelUnban_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelUnbanV1Json);
+        var msg = new ChannelUnban(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1339, msg.ModeratorId);
+        Assert.Equal("mod_user", msg.ModeratorUsername);
+        Assert.Equal("Mod_User", msg.ModeratorDisplayName);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
