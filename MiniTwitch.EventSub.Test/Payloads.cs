@@ -964,6 +964,28 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelCustomPowerUpRedemptionAdd))]
+    public const string ChannelCustomPowerUpRedemptionAddV1Json = """
+    {
+        "id": "17fa2df1-ad76-4804-bfa5-a40ef63efe63",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "user_id": "9001",
+        "user_login": "cooler_user",
+        "user_name": "Cooler_User",
+        "user_input": "pogchamp",
+        "status": "unfulfilled",
+        "custom_power_up": {
+            "id": "92af127c-7326-4483-a52b-b0da0be61c01",
+            "title": "title",
+            "bits": 100,
+            "prompt": "Power-up prompt"
+        },
+        "redeemed_at": "2026-05-01T17:16:03.17106713Z"
+    }
+    """;
+
     [EventPayload(typeof(ChannelPointsCustomRewardRedemptionUpdate))]
     public const string ChannelPointsCustomRewardRedemptionUpdateV1Json = """
     {

@@ -1365,6 +1365,31 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelCustomPowerUpRedemptionAdd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCustomPowerUpRedemptionAddV1Json);
+        var msg = new ChannelCustomPowerUpRedemptionAdd(json.AsMemory());
+
+        Assert.Equal("17fa2df1-ad76-4804-bfa5-a40ef63efe63", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(9001, msg.UserId);
+        Assert.Equal("cooler_user", msg.Username);
+        Assert.Equal("Cooler_User", msg.UserDisplayName);
+        Assert.Equal("pogchamp", msg.UserInput);
+        Assert.Equal("unfulfilled", msg.Status);
+
+        var pu = msg.CustomPowerUp;
+        Assert.Equal("92af127c-7326-4483-a52b-b0da0be61c01", pu.Id);
+        Assert.Equal("title", pu.Title);
+        Assert.Equal(100, pu.Bits);
+        Assert.Equal("Power-up prompt", pu.Prompt);
+
+        Assert.Equal(DateTimeOffset.Parse("2026-05-01T17:16:03.17106713Z"), msg.RedeemedAt);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
