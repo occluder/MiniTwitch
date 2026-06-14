@@ -842,6 +842,19 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelRaid))]
+    public const string ChannelRaidV1Json = """
+    {
+        "from_broadcaster_user_id": "1234",
+        "from_broadcaster_user_login": "cool_user",
+        "from_broadcaster_user_name": "Cool_User",
+        "to_broadcaster_user_id": "1337",
+        "to_broadcaster_user_login": "cooler_user",
+        "to_broadcaster_user_name": "Cooler_User",
+        "viewers": 9001
+    }
+    """;
+
     [EventPayload(typeof(ChannelCheer))]
     public const string ChannelCheerV1AnonymousJson = """
     {

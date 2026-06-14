@@ -990,6 +990,21 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelRaid_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelRaidV1Json);
+        var msg = new ChannelRaid(json.AsMemory());
+
+        Assert.Equal(1234, msg.FromBroadcasterId);
+        Assert.Equal("cool_user", msg.FromBroadcasterUsername);
+        Assert.Equal("Cool_User", msg.FromBroadcasterDisplayName);
+        Assert.Equal(1337, msg.ToBroadcasterId);
+        Assert.Equal("cooler_user", msg.ToBroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.ToBroadcasterDisplayName);
+        Assert.Equal(9001, msg.Viewers);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
