@@ -1466,6 +1466,101 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelPredictionBegin_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPredictionBeginV1Json);
+        var msg = new ChannelPredictionBegin(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal("Aren't shoes just really hard socks?", msg.Title);
+
+        Assert.Equal(2, msg.Outcomes.Length);
+        Assert.Equal("1243456", msg.Outcomes[0].Id);
+        Assert.Equal("Yeah!", msg.Outcomes[0].Title);
+        Assert.Equal("blue", msg.Outcomes[0].Color);
+        Assert.Equal("2243456", msg.Outcomes[1].Id);
+        Assert.Equal("No!", msg.Outcomes[1].Title);
+        Assert.Equal("pink", msg.Outcomes[1].Color);
+
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:21:03.17106713Z"), msg.LocksAt);
+    }
+
+    [Fact]
+    public void ChannelPredictionProgress_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPredictionProgressV1Json);
+        var msg = new ChannelPredictionProgress(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("Aren't shoes just really hard socks?", msg.Title);
+
+        var outcomes = msg.Outcomes;
+        Assert.Equal(2, outcomes.Length);
+
+        Assert.Equal("1243456", outcomes[0].Id);
+        Assert.Equal("Yeah!", outcomes[0].Title);
+        Assert.Equal("blue", outcomes[0].Color);
+        Assert.Equal(10, outcomes[0].Users);
+        Assert.Equal(15000, outcomes[0].ChannelPoints);
+
+        var predictors = outcomes[0].TopPredictors;
+        Assert.Equal(2, predictors.Length);
+        Assert.Equal(1234, predictors[0].UserId);
+        Assert.Equal("cool_user", predictors[0].Username);
+        Assert.Equal("Cool_User", predictors[0].UserDisplayName);
+        Assert.Equal(500, predictors[0].ChannelPointsUsed);
+
+        Assert.Equal(1236, predictors[1].UserId);
+        Assert.Equal(200, predictors[1].ChannelPointsUsed);
+
+        Assert.Equal(5, outcomes[1].Users);
+        Assert.Equal(5000, outcomes[1].ChannelPoints);
+        Assert.Single(outcomes[1].TopPredictors);
+        Assert.Equal(12345, outcomes[1].TopPredictors[0].UserId);
+        Assert.Equal(5000, outcomes[1].TopPredictors[0].ChannelPointsUsed);
+    }
+
+    [Fact]
+    public void ChannelPredictionLock_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPredictionLockV1Json);
+        var msg = new ChannelPredictionLock(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("Aren't shoes just really hard socks?", msg.Title);
+
+        Assert.Single(msg.Outcomes);
+        Assert.Equal(10, msg.Outcomes[0].Users);
+        Assert.Equal(15000, msg.Outcomes[0].ChannelPoints);
+        Assert.Single(msg.Outcomes[0].TopPredictors);
+        Assert.Equal(1234, msg.Outcomes[0].TopPredictors[0].UserId);
+    }
+
+    [Fact]
+    public void ChannelPredictionEnd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPredictionEndV1Json);
+        var msg = new ChannelPredictionEnd(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("1243456", msg.WinningOutcomeId);
+
+        Assert.Equal(2, msg.Outcomes.Length);
+        Assert.Equal(15000, msg.Outcomes[0].ChannelPoints);
+        Assert.Equal(500, msg.Outcomes[0].TopPredictors[0].ChannelPointsWon);
+        Assert.Empty(msg.Outcomes[1].TopPredictors);
+
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:26:03.17106713Z"), msg.EndedAt);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
