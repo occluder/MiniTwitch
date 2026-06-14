@@ -1022,6 +1022,43 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelUnbanRequestCreate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelUnbanRequestCreateV1Json);
+        var msg = new ChannelUnbanRequestCreate(json.AsMemory());
+
+        Assert.Equal("60", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1339, msg.UserId);
+        Assert.Equal("not_cool_user", msg.Username);
+        Assert.Equal("Not_Cool_User", msg.UserDisplayName);
+        Assert.Equal("unban me", msg.Text);
+        Assert.Equal(DateTimeOffset.Parse("2023-11-16T10:11:12.634234626Z"), msg.CreatedAt);
+    }
+
+    [Fact]
+    public void ChannelUnbanRequestResolve_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelUnbanRequestResolveV1Json);
+        var msg = new ChannelUnbanRequestResolve(json.AsMemory());
+
+        Assert.Equal("60", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1337, msg.ModeratorId);
+        Assert.Equal("cool_user", msg.ModeratorUsername);
+        Assert.Equal("Cool_User", msg.ModeratorDisplayName);
+        Assert.Equal(1339, msg.UserId);
+        Assert.Equal("not_cool_user", msg.Username);
+        Assert.Equal("Not_Cool_User", msg.UserDisplayName);
+        Assert.Equal("no", msg.ResolutionText);
+        Assert.Equal("denied", msg.Status);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);

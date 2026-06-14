@@ -842,6 +842,39 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelUnbanRequestResolve))]
+    public const string ChannelUnbanRequestResolveV1Json = """
+    {
+        "id": "60",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "moderator_user_id": "1337",
+        "moderator_user_login": "cool_user",
+        "moderator_user_name": "Cool_User",
+        "user_id": "1339",
+        "user_login": "not_cool_user",
+        "user_name": "Not_Cool_User",
+        "resolution_text": "no",
+        "status": "denied"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelUnbanRequestCreate))]
+    public const string ChannelUnbanRequestCreateV1Json = """
+    {
+        "id": "60",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "user_id": "1339",
+        "user_login": "not_cool_user",
+        "user_name": "Not_Cool_User",
+        "text": "unban me",
+        "created_at": "2023-11-16T10:11:12.634234626Z"
+    }
+    """;
+
     [EventPayload(typeof(ChannelUnban))]
     public const string ChannelUnbanV1Json = """
     {
