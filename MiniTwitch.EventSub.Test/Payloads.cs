@@ -964,6 +964,30 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelModeratorRemove))]
+    public const string ChannelModeratorRemoveV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "user_id": "5678",
+        "user_login": "old_mod",
+        "user_name": "Old_Mod"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelModeratorAdd))]
+    public const string ChannelModeratorAddV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "user_id": "1234",
+        "user_login": "mod_user",
+        "user_name": "Mod_User"
+    }
+    """;
+
     [EventPayload(typeof(ChannelModerateV2))]
     public const string ChannelModerateV2ModJson = """
     {

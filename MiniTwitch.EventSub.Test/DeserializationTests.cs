@@ -1149,6 +1149,34 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelModeratorAdd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModeratorAddV1Json);
+        var msg = new ChannelModeratorAdd(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("mod_user", msg.Username);
+        Assert.Equal("Mod_User", msg.UserDisplayName);
+    }
+
+    [Fact]
+    public void ChannelModeratorRemove_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelModeratorRemoveV1Json);
+        var msg = new ChannelModeratorRemove(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal(5678, msg.UserId);
+        Assert.Equal("old_mod", msg.Username);
+        Assert.Equal("Old_Mod", msg.UserDisplayName);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
