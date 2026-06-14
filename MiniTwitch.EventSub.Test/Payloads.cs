@@ -964,6 +964,97 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelPointsCustomRewardRemove))]
+    public const string ChannelPointsCustomRewardRemoveV1Json = """
+    {
+        "id": "9003",
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "simple",
+        "broadcaster_user_name": "Simple",
+        "is_enabled": true,
+        "is_paused": false,
+        "is_in_stock": true,
+        "title": "Removed Reward",
+        "cost": 50,
+        "prompt": "A reward that was removed",
+        "is_user_input_required": false,
+        "should_redemptions_skip_request_queue": false,
+        "background_color": "#FFFFFF",
+        "default_image": {
+            "url_1x": "https://default-1.png",
+            "url_2x": "https://default-2.png",
+            "url_4x": "https://default-4.png"
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelPointsCustomRewardUpdate))]
+    public const string ChannelPointsCustomRewardUpdateV1Json = """
+    {
+        "id": "9002",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "is_enabled": false,
+        "is_paused": true,
+        "is_in_stock": true,
+        "title": "Updated Reward",
+        "cost": 200,
+        "prompt": "updated prompt",
+        "is_user_input_required": false,
+        "should_redemptions_skip_request_queue": true,
+        "background_color": "#000000",
+        "default_image": {
+            "url_1x": "https://default-1.png",
+            "url_2x": "https://default-2.png",
+            "url_4x": "https://default-4.png"
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelPointsCustomRewardAdd))]
+    public const string ChannelPointsCustomRewardAddV1Json = """
+    {
+        "id": "9001",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "is_enabled": true,
+        "is_paused": false,
+        "is_in_stock": true,
+        "title": "Cool Reward",
+        "cost": 100,
+        "prompt": "reward prompt",
+        "is_user_input_required": true,
+        "should_redemptions_skip_request_queue": false,
+        "max_per_stream": {
+            "is_enabled": true,
+            "value": 1000
+        },
+        "max_per_user_per_stream": {
+            "is_enabled": true,
+            "value": 1000
+        },
+        "background_color": "#FA1ED2",
+        "image": {
+            "url_1x": "https://static-cdn.jtvnw.net/image-1.png",
+            "url_2x": "https://static-cdn.jtvnw.net/image-2.png",
+            "url_4x": "https://static-cdn.jtvnw.net/image-4.png"
+        },
+        "default_image": {
+            "url_1x": "https://static-cdn.jtvnw.net/default-1.png",
+            "url_2x": "https://static-cdn.jtvnw.net/default-2.png",
+            "url_4x": "https://static-cdn.jtvnw.net/default-4.png"
+        },
+        "global_cooldown": {
+            "is_enabled": true,
+            "seconds": 1000
+        },
+        "cooldown_expires_at": null,
+        "redemptions_redeemed_current_stream": null
+    }
+    """;
+
     [EventPayload(typeof(ChannelPointsAutomaticRewardRedemptionAddV2))]
     public const string ChannelPointsAutomaticRewardRedemptionAddV2Json = """
     {

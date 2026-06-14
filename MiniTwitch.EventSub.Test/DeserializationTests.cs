@@ -1236,6 +1236,93 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelPointsCustomRewardAdd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsCustomRewardAddV1Json);
+        var msg = new ChannelPointsCustomRewardAdd(json.AsMemory());
+
+        Assert.Equal("9001", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.True(msg.IsEnabled);
+        Assert.False(msg.IsPaused);
+        Assert.True(msg.IsInStock);
+        Assert.Equal("Cool Reward", msg.Title);
+        Assert.Equal(100, msg.Cost);
+        Assert.Equal("reward prompt", msg.Prompt);
+        Assert.True(msg.IsUserInputRequired);
+        Assert.False(msg.ShouldRedemptionsSkipRequestQueue);
+        Assert.Equal("#FA1ED2", msg.BackgroundColor);
+
+        var maxPerStream = msg.MaxPerStream;
+        Assert.NotNull(maxPerStream);
+        Assert.True(maxPerStream.Value.IsEnabled);
+        Assert.Equal(1000, maxPerStream.Value.Value);
+
+        var maxPerUser = msg.MaxPerUserPerStream;
+        Assert.NotNull(maxPerUser);
+        Assert.True(maxPerUser.Value.IsEnabled);
+        Assert.Equal(1000, maxPerUser.Value.Value);
+
+        var image = msg.Image;
+        Assert.NotNull(image);
+        Assert.Equal("https://static-cdn.jtvnw.net/image-1.png", image.Value.Url1x);
+        Assert.Equal("https://static-cdn.jtvnw.net/image-2.png", image.Value.Url2x);
+        Assert.Equal("https://static-cdn.jtvnw.net/image-4.png", image.Value.Url4x);
+
+        var defaultImage = msg.DefaultImage;
+        Assert.Equal("https://static-cdn.jtvnw.net/default-1.png", defaultImage.Url1x);
+        Assert.Equal("https://static-cdn.jtvnw.net/default-2.png", defaultImage.Url2x);
+        Assert.Equal("https://static-cdn.jtvnw.net/default-4.png", defaultImage.Url4x);
+
+        var cooldown = msg.GlobalCooldown;
+        Assert.NotNull(cooldown);
+        Assert.True(cooldown.Value.IsEnabled);
+        Assert.Equal(1000, cooldown.Value.Seconds);
+    }
+
+    [Fact]
+    public void ChannelPointsCustomRewardUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsCustomRewardUpdateV1Json);
+        var msg = new ChannelPointsCustomRewardUpdate(json.AsMemory());
+
+        Assert.Equal("9002", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.False(msg.IsEnabled);
+        Assert.True(msg.IsPaused);
+        Assert.True(msg.IsInStock);
+        Assert.Equal("Updated Reward", msg.Title);
+        Assert.Equal(200, msg.Cost);
+        Assert.Equal("updated prompt", msg.Prompt);
+        Assert.False(msg.IsUserInputRequired);
+        Assert.True(msg.ShouldRedemptionsSkipRequestQueue);
+        Assert.Equal("#000000", msg.BackgroundColor);
+
+        var defaultImage = msg.DefaultImage;
+        Assert.Equal("https://default-1.png", defaultImage.Url1x);
+        Assert.Equal("https://default-2.png", defaultImage.Url2x);
+        Assert.Equal("https://default-4.png", defaultImage.Url4x);
+    }
+
+    [Fact]
+    public void ChannelPointsCustomRewardRemove_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsCustomRewardRemoveV1Json);
+        var msg = new ChannelPointsCustomRewardRemove(json.AsMemory());
+
+        Assert.Equal("9003", msg.Id);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("simple", msg.BroadcasterUsername);
+        Assert.Equal("Simple", msg.BroadcasterDisplayName);
+        Assert.Equal("Removed Reward", msg.Title);
+        Assert.Equal(50, msg.Cost);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
