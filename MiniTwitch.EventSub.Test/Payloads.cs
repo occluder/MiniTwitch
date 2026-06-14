@@ -964,6 +964,84 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelPollEnd))]
+    public const string ChannelPollEndV1Json = """
+    {
+        "id": "1243456",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "title": "Aren't shoes just really hard socks?",
+        "choices": [
+            {"id": "123", "title": "Yeah!", "bits_votes": 5, "channel_points_votes": 7, "votes": 12},
+            {"id": "124", "title": "No!", "bits_votes": 10, "channel_points_votes": 4, "votes": 14}
+        ],
+        "bits_voting": {
+            "is_enabled": true,
+            "amount_per_vote": 10
+        },
+        "channel_points_voting": {
+            "is_enabled": true,
+            "amount_per_vote": 10
+        },
+        "status": "completed",
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "ended_at": "2020-07-15T17:16:08.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelPollProgress))]
+    public const string ChannelPollProgressV1Json = """
+    {
+        "id": "1243456",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "title": "Aren't shoes just really hard socks?",
+        "choices": [
+            {"id": "123", "title": "Yeah!", "bits_votes": 5, "channel_points_votes": 7, "votes": 12},
+            {"id": "124", "title": "No!", "bits_votes": 10, "channel_points_votes": 4, "votes": 14},
+            {"id": "125", "title": "Maybe!", "bits_votes": 0, "channel_points_votes": 7, "votes": 7}
+        ],
+        "bits_voting": {
+            "is_enabled": true,
+            "amount_per_vote": 10
+        },
+        "channel_points_voting": {
+            "is_enabled": true,
+            "amount_per_vote": 10
+        },
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "ends_at": "2020-07-15T17:16:08.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelPollBegin))]
+    public const string ChannelPollBeginV1Json = """
+    {
+        "id": "1243456",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "title": "Aren't shoes just really hard socks?",
+        "choices": [
+            {"id": "123", "title": "Yeah!"},
+            {"id": "124", "title": "No!"},
+            {"id": "125", "title": "Maybe!"}
+        ],
+        "bits_voting": {
+            "is_enabled": true,
+            "amount_per_vote": 10
+        },
+        "channel_points_voting": {
+            "is_enabled": true,
+            "amount_per_vote": 10
+        },
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "ends_at": "2020-07-15T17:16:08.17106713Z"
+    }
+    """;
+
     [EventPayload(typeof(ChannelCustomPowerUpRedemptionAdd))]
     public const string ChannelCustomPowerUpRedemptionAddV1Json = """
     {

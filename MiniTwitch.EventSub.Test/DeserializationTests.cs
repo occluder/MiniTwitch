@@ -1390,6 +1390,82 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelPollBegin_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPollBeginV1Json);
+        var msg = new ChannelPollBegin(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal("Aren't shoes just really hard socks?", msg.Title);
+
+        Assert.Equal(3, msg.Choices.Length);
+        Assert.Equal("123", msg.Choices[0].Id);
+        Assert.Equal("Yeah!", msg.Choices[0].Title);
+        Assert.Equal("124", msg.Choices[1].Id);
+        Assert.Equal("No!", msg.Choices[1].Title);
+        Assert.Equal("125", msg.Choices[2].Id);
+        Assert.Equal("Maybe!", msg.Choices[2].Title);
+
+        Assert.True(msg.BitsVoting.IsEnabled);
+        Assert.Equal(10, msg.BitsVoting.AmountPerVote);
+
+        Assert.True(msg.ChannelPointsVoting.IsEnabled);
+        Assert.Equal(10, msg.ChannelPointsVoting.AmountPerVote);
+
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:08.17106713Z"), msg.EndsAt);
+    }
+
+    [Fact]
+    public void ChannelPollProgress_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPollProgressV1Json);
+        var msg = new ChannelPollProgress(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("Aren't shoes just really hard socks?", msg.Title);
+
+        Assert.Equal(3, msg.Choices.Length);
+        Assert.Equal("123", msg.Choices[0].Id);
+        Assert.Equal("Yeah!", msg.Choices[0].Title);
+        Assert.Equal(5, msg.Choices[0].BitsVotes);
+        Assert.Equal(7, msg.Choices[0].ChannelPointsVotes);
+        Assert.Equal(12, msg.Choices[0].Votes);
+
+        Assert.Equal(10, msg.Choices[1].BitsVotes);
+        Assert.Equal(4, msg.Choices[1].ChannelPointsVotes);
+        Assert.Equal(14, msg.Choices[1].Votes);
+
+        Assert.Equal(0, msg.Choices[2].BitsVotes);
+        Assert.Equal(7, msg.Choices[2].ChannelPointsVotes);
+        Assert.Equal(7, msg.Choices[2].Votes);
+    }
+
+    [Fact]
+    public void ChannelPollEnd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPollEndV1Json);
+        var msg = new ChannelPollEnd(json.AsMemory());
+
+        Assert.Equal("1243456", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal("Aren't shoes just really hard socks?", msg.Title);
+        Assert.Equal("completed", msg.Status);
+
+        Assert.Equal(2, msg.Choices.Length);
+        Assert.Equal(12, msg.Choices[0].Votes);
+        Assert.Equal(14, msg.Choices[1].Votes);
+
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:08.17106713Z"), msg.EndedAt);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);
