@@ -956,6 +956,40 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelCheer_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCheerV1Json);
+        var msg = new ChannelCheer(json.AsMemory());
+
+        Assert.False(msg.IsAnonymous);
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+        Assert.Equal("pogchamp", msg.Message);
+        Assert.Equal(1000, msg.Bits);
+    }
+
+    [Fact]
+    public void ChannelCheer_V1_Anonymous()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCheerV1AnonymousJson);
+        var msg = new ChannelCheer(json.AsMemory());
+
+        Assert.True(msg.IsAnonymous);
+        Assert.Null(msg.UserId);
+        Assert.Null(msg.Username);
+        Assert.Null(msg.UserDisplayName);
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal("AnonCheer", msg.Message);
+        Assert.Equal(500, msg.Bits);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);

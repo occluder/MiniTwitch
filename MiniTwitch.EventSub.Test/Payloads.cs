@@ -827,6 +827,36 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelCheer))]
+    public const string ChannelCheerV1Json = """
+    {
+        "is_anonymous": false,
+        "user_id": "1234",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User",
+        "message": "pogchamp",
+        "bits": 1000
+    }
+    """;
+
+    [EventPayload(typeof(ChannelCheer))]
+    public const string ChannelCheerV1AnonymousJson = """
+    {
+        "is_anonymous": true,
+        "user_id": null,
+        "user_login": null,
+        "user_name": null,
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "message": "AnonCheer",
+        "bits": 500
+    }
+    """;
+
     [EventPayload(typeof(ChannelSubscriptionMessage))]
     public const string ChannelSubscriptionMessageV1NoStreakJson = """
     {
