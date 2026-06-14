@@ -1177,6 +1177,65 @@ public class DeserializationTests
     }
 
     [Fact]
+    public void ChannelPointsAutomaticRewardRedemptionAdd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsAutomaticRewardRedemptionAddV1Json);
+        var msg = new ChannelPointsAutomaticRewardRedemptionAdd(json.AsMemory());
+
+        Assert.Equal(12826, msg.BroadcasterId);
+        Assert.Equal("twitch", msg.BroadcasterUsername);
+        Assert.Equal("Twitch", msg.BroadcasterDisplayName);
+        Assert.Equal(141981764, msg.UserId);
+        Assert.Equal("twitchdev", msg.Username);
+        Assert.Equal("TwitchDev", msg.UserDisplayName);
+        Assert.Equal("f024099a-e0fe-4339-9a0a-a706fb59f353", msg.Id);
+
+        var reward = msg.Reward;
+        Assert.Equal("send_highlighted_message", reward.Type);
+        Assert.Equal(100, reward.Cost);
+
+        var message = msg.Message;
+        Assert.Equal("Hello world!", message.Text);
+        Assert.Single(message.Emotes);
+        Assert.Equal("81274", message.Emotes[0].Id);
+        Assert.Equal(13, message.Emotes[0].Begin);
+        Assert.Equal(18, message.Emotes[0].End);
+
+        Assert.Equal("Hello world!", msg.UserInput);
+        Assert.Equal(DateTimeOffset.Parse("2024-02-23T21:14:34.260398045Z"), msg.RedeemedAt);
+    }
+
+    [Fact]
+    public void ChannelPointsAutomaticRewardRedemptionAddV2_Basic()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelPointsAutomaticRewardRedemptionAddV2Json);
+        var msg = new ChannelPointsAutomaticRewardRedemptionAddV2(json.AsMemory());
+
+        Assert.Equal(12826, msg.BroadcasterId);
+        Assert.Equal("twitch", msg.BroadcasterUsername);
+        Assert.Equal("Twitch", msg.BroadcasterDisplayName);
+        Assert.Equal(141981764, msg.UserId);
+        Assert.Equal("twitchdev", msg.Username);
+        Assert.Equal("TwitchDev", msg.UserDisplayName);
+        Assert.Equal("f024099a-e0fe-4339-9a0a-a706fb59f353", msg.Id);
+
+        var reward = msg.Reward;
+        Assert.Equal("send_highlighted_message", reward.Type);
+        Assert.Equal(100, reward.ChannelPoints);
+
+        var message = msg.Message;
+        Assert.Equal("Hello world! VoHiYo", message.Text);
+        Assert.Equal(2, message.Fragments.Length);
+        Assert.Equal("text", message.Fragments[0].Type);
+        Assert.Equal("Hello world! ", message.Fragments[0].Text);
+        Assert.Equal("emote", message.Fragments[1].Type);
+        Assert.Equal("VoHiYo", message.Fragments[1].Text);
+        Assert.Equal("81274", message.Fragments[1].Emote.Value.Id);
+
+        Assert.Equal(DateTimeOffset.Parse("2024-08-12T21:14:34.260398045Z"), msg.RedeemedAt);
+    }
+
+    [Fact]
     public void ChannelBitsUse_V1_Cheer()
     {
         var json = Encoding.UTF8.GetBytes(Payloads.ChannelBitsUseV1CheerJson);

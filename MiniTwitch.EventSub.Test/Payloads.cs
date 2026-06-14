@@ -964,6 +964,72 @@ public static class Payloads
     }
     """;
 
+    [EventPayload(typeof(ChannelPointsAutomaticRewardRedemptionAddV2))]
+    public const string ChannelPointsAutomaticRewardRedemptionAddV2Json = """
+    {
+        "broadcaster_user_id": "12826",
+        "broadcaster_user_name": "Twitch",
+        "broadcaster_user_login": "twitch",
+        "user_id": "141981764",
+        "user_name": "TwitchDev",
+        "user_login": "twitchdev",
+        "id": "f024099a-e0fe-4339-9a0a-a706fb59f353",
+        "reward": {
+            "type": "send_highlighted_message",
+            "channel_points": 100,
+            "emote": null
+        },
+        "message": {
+            "text": "Hello world! VoHiYo",
+            "fragments": [
+                {
+                    "type": "text",
+                    "text": "Hello world! ",
+                    "emote": null
+                },
+                {
+                    "type": "emote",
+                    "text": "VoHiYo",
+                    "emote": {
+                        "id": "81274"
+                    }
+                }
+            ]
+        },
+        "redeemed_at": "2024-08-12T21:14:34.260398045Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelPointsAutomaticRewardRedemptionAdd))]
+    public const string ChannelPointsAutomaticRewardRedemptionAddV1Json = """
+    {
+        "broadcaster_user_id": "12826",
+        "broadcaster_user_name": "Twitch",
+        "broadcaster_user_login": "twitch",
+        "user_id": "141981764",
+        "user_name": "TwitchDev",
+        "user_login": "twitchdev",
+        "id": "f024099a-e0fe-4339-9a0a-a706fb59f353",
+        "reward": {
+            "type": "send_highlighted_message",
+            "cost": 100,
+            "unlocked_emote": null
+        },
+        "message": {
+            "text": "Hello world!",
+            "emotes": [
+                {
+                    "id": "81274",
+                    "begin": 13,
+                    "end": 18
+                }
+            ]
+        },
+        "user_input": "Hello world!",
+        "redeemed_at": "2024-02-23T21:14:34.260398045Z"
+    }
+    """;
+
     [EventPayload(typeof(ChannelModeratorRemove))]
     public const string ChannelModeratorRemoveV1Json = """
     {
