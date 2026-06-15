@@ -47,40 +47,6 @@ public partial struct AutomodMessageHoldV2
     [JsonPropertyName("held_at")]
     public partial DateTimeOffset HeldAt { get; }
 
-    /// <summary>The body of the message</summary>
-    [EventProperty]
-    public partial struct HeldMessage
-    {
-        /// <summary>The contents of the message caught by automod</summary>
-        public partial string Text { get; }
-        /// <summary>Metadata surrounding the potential inappropriate fragments of the message</summary>
-        public partial MessageFragment[] Fragments { get; }
-    }
-
-    /// <summary>If the message was caught by automod, this will be populated</summary>
-    [EventProperty]
-    public partial struct AutomodInfo
-    {
-        /// <summary>The category of the caught message</summary>
-        public partial string Category { get; }
-        /// <summary>The level of severity (1-4)</summary>
-        public partial int Level { get; }
-        /// <summary>The bounds of the text that caused the message to be caught</summary>
-        public partial Boundary[] Boundaries { get; }
-    }
-
-    /// <summary>The bounds of the text that caused the message to be caught</summary>
-    [EventProperty]
-    public partial struct Boundary
-    {
-        /// <summary>Index in the message for the start of the problem (0 indexed, inclusive)</summary>
-        [JsonPropertyName("start_pos")]
-        public partial int StartPos { get; }
-        /// <summary>Index in the message for the end of the problem (0 indexed, inclusive)</summary>
-        [JsonPropertyName("end_pos")]
-        public partial int EndPos { get; }
-    }
-
     /// <summary>If the message was caught due to a blocked term, this will be populated</summary>
     [EventProperty]
     public partial struct BlockedTermInfo

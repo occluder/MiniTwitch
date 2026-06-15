@@ -36,13 +36,4 @@ public partial struct ChannelChatUserMessageUpdate
     /// <summary>The body of the message</summary>
     public partial HeldMessage Message { get; }
 
-    /// <summary>The body of the message</summary>
-    [EventProperty]
-    public partial struct HeldMessage
-    {
-        /// <summary>The contents of the message caught by automod</summary>
-        public partial string Text { get; }
-        /// <summary>Ordered list of chat message fragments</summary>
-        public partial MessageFragment[] Fragments { get; }
-    }
 }

@@ -43,23 +43,4 @@ public partial struct ChannelPollBegin
         public partial string Title { get; }
     }
 
-    /// <summary>Bits voting settings</summary>
-    [EventProperty]
-    public partial struct BitsVotingInfo
-    {
-        /// <summary>Indicates if Bits can be used for voting</summary>
-        public partial bool IsEnabled { get; }
-        /// <summary>Number of Bits required to vote once</summary>
-        public partial int AmountPerVote { get; }
-    }
-
-    /// <summary>Channel Points voting settings</summary>
-    [EventProperty]
-    public partial struct ChannelPointsVotingInfo
-    {
-        /// <summary>Indicates if Channel Points can be used for voting</summary>
-        public partial bool IsEnabled { get; }
-        /// <summary>Number of Channel Points required to vote once</summary>
-        public partial int AmountPerVote { get; }
-    }
 }
