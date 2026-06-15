@@ -2140,4 +2140,36 @@ public static class Payloads
         "stopped_at": "2022-07-26T22:00:03.17106713Z"
     }
     """;
+
+    [EventPayload(typeof(ConduitShardDisabled))]
+    public const string ConduitShardDisabledV1WebSocketJson = """
+    {
+        "conduit_id": "bfcfc993-26b1-b876-44d9-afe75a379dac",
+        "shard_id": "4",
+        "status": "websocket_disconnected",
+        "transport": {
+            "method": "websocket",
+            "callback": null,
+            "session_id": "ad1c9fc3-0d99-4eb7-8a04-8608e8ff9ec9",
+            "connected_at": "2020-11-10T14:32:18.730260295Z",
+            "disconnected_at": "2020-11-11T14:32:18.730260295Z"
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ConduitShardDisabled))]
+    public const string ConduitShardDisabledV1WebhookJson = """
+    {
+        "conduit_id": "bfcfc993-26b1-b876-44d9-afe75a379dac",
+        "shard_id": "7",
+        "status": "webhook_callback_none",
+        "transport": {
+            "method": "webhook",
+            "callback": "https://example.com/webhooks/callback",
+            "session_id": null,
+            "connected_at": null,
+            "disconnected_at": null
+        }
+    }
+    """;
 }

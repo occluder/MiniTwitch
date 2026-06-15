@@ -1904,4 +1904,40 @@ public class DeserializationTests
 
         Assert.Equal(DateTimeOffset.Parse("2022-07-26T22:00:03.17106713Z"), msg.StoppedAt);
     }
+
+    [Fact]
+    public void ConduitShardDisabled_V1_WebSocket()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ConduitShardDisabledV1WebSocketJson);
+        var msg = new ConduitShardDisabled(json.AsMemory());
+
+        Assert.Equal("bfcfc993-26b1-b876-44d9-afe75a379dac", msg.ConduitId);
+        Assert.Equal("4", msg.ShardId);
+        Assert.Equal("websocket_disconnected", msg.Status);
+
+        var t = msg.Transport;
+        Assert.Equal("websocket", t.Method);
+        Assert.Null(t.Callback);
+        Assert.Equal("ad1c9fc3-0d99-4eb7-8a04-8608e8ff9ec9", t.SessionId);
+        Assert.Equal(DateTimeOffset.Parse("2020-11-10T14:32:18.730260295Z"), t.ConnectedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-11-11T14:32:18.730260295Z"), t.DisconnectedAt);
+    }
+
+    [Fact]
+    public void ConduitShardDisabled_V1_Webhook()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ConduitShardDisabledV1WebhookJson);
+        var msg = new ConduitShardDisabled(json.AsMemory());
+
+        Assert.Equal("bfcfc993-26b1-b876-44d9-afe75a379dac", msg.ConduitId);
+        Assert.Equal("7", msg.ShardId);
+        Assert.Equal("webhook_callback_none", msg.Status);
+
+        var t = msg.Transport;
+        Assert.Equal("webhook", t.Method);
+        Assert.Equal("https://example.com/webhooks/callback", t.Callback);
+        Assert.Null(t.SessionId);
+        Assert.Null(t.ConnectedAt);
+        Assert.Null(t.DisconnectedAt);
+    }
 }
