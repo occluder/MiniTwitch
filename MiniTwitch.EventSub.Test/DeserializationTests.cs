@@ -2241,4 +2241,40 @@ public class DeserializationTests
         Assert.Equal("cool_user", msg.BroadcasterUsername);
         Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
     }
+
+    [Fact]
+    public void UserAuthorizationGrant_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.UserAuthorizationGrantV1Json);
+        var msg = new UserAuthorizationGrant(json.AsMemory());
+
+        Assert.Equal("crq72vsaoijkc83xx42hz6i37", msg.ClientId);
+        Assert.Equal(1337, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+    }
+
+    [Fact]
+    public void UserAuthorizationRevoke_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.UserAuthorizationRevokeV1Json);
+        var msg = new UserAuthorizationRevoke(json.AsMemory());
+
+        Assert.Equal("crq72vsaoijkc83xx42hz6i37", msg.ClientId);
+        Assert.Equal(1337, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+    }
+
+    [Fact]
+    public void UserAuthorizationRevoke_V1_NullUser()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.UserAuthorizationRevokeV1NullUserJson);
+        var msg = new UserAuthorizationRevoke(json.AsMemory());
+
+        Assert.Equal("crq72vsaoijkc83xx42hz6i37", msg.ClientId);
+        Assert.Equal(9999, msg.UserId);
+        Assert.Null(msg.Username);
+        Assert.Null(msg.UserDisplayName);
+    }
 }

@@ -2458,4 +2458,34 @@ public static class Payloads
         "broadcaster_user_name": "Cool_User"
     }
     """;
+
+    [EventPayload(typeof(UserAuthorizationGrant))]
+    public const string UserAuthorizationGrantV1Json = """
+    {
+        "client_id": "crq72vsaoijkc83xx42hz6i37",
+        "user_id": "1337",
+        "user_login": "cool_user",
+        "user_name": "Cool_User"
+    }
+    """;
+
+    [EventPayload(typeof(UserAuthorizationRevoke))]
+    public const string UserAuthorizationRevokeV1Json = """
+    {
+        "client_id": "crq72vsaoijkc83xx42hz6i37",
+        "user_id": "1337",
+        "user_login": "cool_user",
+        "user_name": "Cool_User"
+    }
+    """;
+
+    [EventPayload(typeof(UserAuthorizationRevoke))]
+    public const string UserAuthorizationRevokeV1NullUserJson = """
+    {
+        "client_id": "crq72vsaoijkc83xx42hz6i37",
+        "user_id": "9999",
+        "user_login": null,
+        "user_name": null
+    }
+    """;
 }
