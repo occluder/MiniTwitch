@@ -1940,4 +1940,25 @@ public class DeserializationTests
         Assert.Null(t.ConnectedAt);
         Assert.Null(t.DisconnectedAt);
     }
+
+    [Fact]
+    public void DropEntitlementGrant_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.DropEntitlementGrantV1Json);
+        var msg = new DropEntitlementGrant(json.AsMemory());
+
+        Assert.Equal("bf7c8577-e3e3-4881-a78a-e9446641d45d", msg.Id);
+
+        var d = msg.Data;
+        Assert.Equal("9001", d.OrganizationId);
+        Assert.Equal("9002", d.CategoryId);
+        Assert.Equal("Fortnite", d.CategoryName);
+        Assert.Equal("9003", d.CampaignId);
+        Assert.Equal(1234, d.UserId);
+        Assert.Equal("cool_user", d.Username);
+        Assert.Equal("Cool_User", d.UserDisplayName);
+        Assert.Equal("fb78259e-fb81-4d1b-8333-34a06ffc24c0", d.EntitlementId);
+        Assert.Equal("74c52265-e214-48a6-91b9-23b6014e8041", d.BenefitId);
+        Assert.Equal(DateTimeOffset.Parse("2019-01-28T04:17:53.325Z"), d.CreatedAt);
+    }
 }
