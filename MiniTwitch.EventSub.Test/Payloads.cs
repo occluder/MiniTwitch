@@ -1867,4 +1867,110 @@ public static class Payloads
         }
     }
     """;
+
+    [EventPayload(typeof(ChannelSuspiciousUserMessage))]
+    public const string ChannelSuspiciousUserMessageV1Json = """
+    {
+        "broadcaster_user_id": "1050263432",
+        "broadcaster_user_login": "dcf9dd9336034d23b65",
+        "broadcaster_user_name": "dcf9dd9336034d23b65",
+        "user_id": "1050263434",
+        "user_login": "4a46e2cf2e2f4d6a9e6",
+        "user_name": "4a46e2cf2e2f4d6a9e6",
+        "low_trust_status": "active_monitoring",
+        "shared_ban_channel_ids": [
+            "100",
+            "200"
+        ],
+        "types": [
+            "ban_evader"
+        ],
+        "ban_evasion_evaluation": "likely",
+        "message": {
+            "message_id": "101010",
+            "text": "bad stuff pogchamp",
+            "fragments": [
+                {
+                    "type": "text",
+                    "text": "bad stuff",
+                    "cheermote": null,
+                    "emote": null
+                },
+                {
+                    "type": "cheermote",
+                    "text": "pogchamp",
+                    "cheermote": {
+                        "prefix": "pogchamp",
+                        "bits": 100,
+                        "tier": 1
+                    },
+                    "emote": null
+                }
+            ]
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSuspiciousUserMessage))]
+    public const string ChannelSuspiciousUserMessageV1RestrictedJson = """
+    {
+        "broadcaster_user_id": "1050263432",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "user_id": "1050263434",
+        "user_login": "suspicioususer",
+        "user_name": "SuspiciousUser",
+        "low_trust_status": "restricted",
+        "shared_ban_channel_ids": [],
+        "types": [
+            "manually_added",
+            "banned_in_shared_channel"
+        ],
+        "ban_evasion_evaluation": null,
+        "message": {
+            "message_id": "42",
+            "text": "hello",
+            "fragments": [
+                {
+                    "type": "text",
+                    "text": "hello",
+                    "cheermote": null,
+                    "emote": null
+                }
+            ]
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSuspiciousUserUpdate))]
+    public const string ChannelSuspiciousUserUpdateV1Json = """
+    {
+        "broadcaster_user_id": "1050263435",
+        "broadcaster_user_login": "77f111cbb75341449f5",
+        "broadcaster_user_name": "77f111cbb75341449f5",
+        "moderator_user_id": "1050263436",
+        "moderator_user_login": "29087e59dfc441968f6",
+        "moderator_user_name": "29087e59dfc441968f6",
+        "user_id": "1050263437",
+        "user_login": "06fbcc75952245c5a87",
+        "user_name": "06fbcc75952245c5a87",
+        "low_trust_status": "restricted"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelSuspiciousUserUpdate))]
+    public const string ChannelSuspiciousUserUpdateV1NoneJson = """
+    {
+        "broadcaster_user_id": "42",
+        "broadcaster_user_login": "broadcaster",
+        "broadcaster_user_name": "Broadcaster",
+        "moderator_user_id": "43",
+        "moderator_user_login": "mod",
+        "moderator_user_name": "Mod",
+        "user_id": "44",
+        "user_login": "suspicioususer",
+        "user_name": "SuspiciousUser",
+        "low_trust_status": "none"
+    }
+    """;
 }

@@ -1625,4 +1625,95 @@ public class DeserializationTests
         Assert.Equal("Super Reward", cpu.Value.Title);
         Assert.Equal("reward-001", cpu.Value.RewardId);
     }
+
+    [Fact]
+    public void ChannelSuspiciousUserMessage_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSuspiciousUserMessageV1Json);
+        var msg = new ChannelSuspiciousUserMessage(json.AsMemory());
+
+        Assert.Equal(1050263432, msg.BroadcasterId);
+        Assert.Equal("dcf9dd9336034d23b65", msg.BroadcasterUsername);
+        Assert.Equal("dcf9dd9336034d23b65", msg.BroadcasterDisplayName);
+        Assert.Equal(1050263434, msg.UserId);
+        Assert.Equal("4a46e2cf2e2f4d6a9e6", msg.Username);
+        Assert.Equal("4a46e2cf2e2f4d6a9e6", msg.UserDisplayName);
+        Assert.Equal("active_monitoring", msg.LowTrustStatus);
+        Assert.Equal([100L, 200L], msg.SharedBanChannelIds);
+        Assert.Equal(["ban_evader"], msg.Types);
+        Assert.Equal("likely", msg.BanEvasionEvaluation);
+
+        var m = msg.Message;
+        Assert.Equal("101010", m.MessageId);
+        Assert.Equal("bad stuff pogchamp", m.Text);
+        Assert.Equal(2, m.Fragments.Length);
+
+        Assert.Equal("text", m.Fragments[0].Type);
+        Assert.Equal("bad stuff", m.Fragments[0].Text);
+
+        Assert.Equal("cheermote", m.Fragments[1].Type);
+        Assert.Equal("pogchamp", m.Fragments[1].Text);
+        Assert.Equal("pogchamp", m.Fragments[1].Cheermote.Prefix);
+        Assert.Equal(100, m.Fragments[1].Cheermote.Bits);
+        Assert.Equal(1, m.Fragments[1].Cheermote.Tier);
+    }
+
+    [Fact]
+    public void ChannelSuspiciousUserMessage_V1_Restricted()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSuspiciousUserMessageV1RestrictedJson);
+        var msg = new ChannelSuspiciousUserMessage(json.AsMemory());
+
+        Assert.Equal(1050263432, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(1050263434, msg.UserId);
+        Assert.Equal("suspicioususer", msg.Username);
+        Assert.Equal("SuspiciousUser", msg.UserDisplayName);
+        Assert.Equal("restricted", msg.LowTrustStatus);
+        Assert.Empty(msg.SharedBanChannelIds);
+        Assert.Equal(["manually_added", "banned_in_shared_channel"], msg.Types);
+        Assert.Null(msg.BanEvasionEvaluation);
+
+        var m = msg.Message;
+        Assert.Equal("42", m.MessageId);
+        Assert.Equal("hello", m.Text);
+        Assert.Single(m.Fragments);
+    }
+
+    [Fact]
+    public void ChannelSuspiciousUserUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSuspiciousUserUpdateV1Json);
+        var msg = new ChannelSuspiciousUserUpdate(json.AsMemory());
+
+        Assert.Equal(1050263435, msg.BroadcasterId);
+        Assert.Equal("77f111cbb75341449f5", msg.BroadcasterUsername);
+        Assert.Equal("77f111cbb75341449f5", msg.BroadcasterDisplayName);
+        Assert.Equal(1050263436, msg.ModeratorId);
+        Assert.Equal("29087e59dfc441968f6", msg.ModeratorUsername);
+        Assert.Equal("29087e59dfc441968f6", msg.ModeratorDisplayName);
+        Assert.Equal(1050263437, msg.UserId);
+        Assert.Equal("06fbcc75952245c5a87", msg.Username);
+        Assert.Equal("06fbcc75952245c5a87", msg.UserDisplayName);
+        Assert.Equal("restricted", msg.LowTrustStatus);
+    }
+
+    [Fact]
+    public void ChannelSuspiciousUserUpdate_V1_None()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelSuspiciousUserUpdateV1NoneJson);
+        var msg = new ChannelSuspiciousUserUpdate(json.AsMemory());
+
+        Assert.Equal(42, msg.BroadcasterId);
+        Assert.Equal("broadcaster", msg.BroadcasterUsername);
+        Assert.Equal("Broadcaster", msg.BroadcasterDisplayName);
+        Assert.Equal(43, msg.ModeratorId);
+        Assert.Equal("mod", msg.ModeratorUsername);
+        Assert.Equal("Mod", msg.ModeratorDisplayName);
+        Assert.Equal(44, msg.UserId);
+        Assert.Equal("suspicioususer", msg.Username);
+        Assert.Equal("SuspiciousUser", msg.UserDisplayName);
+        Assert.Equal("none", msg.LowTrustStatus);
+    }
 }
