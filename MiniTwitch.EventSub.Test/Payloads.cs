@@ -2516,4 +2516,33 @@ public static class Payloads
         }
     }
     """;
+
+    [EventPayload(typeof(ChannelChatNotification))]
+    public const string ChannelChatNotificationV1ResubJson = """
+    {
+        "broadcaster_user_id": "1971641",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "streamer",
+        "chatter_user_id": "49912639",
+        "chatter_user_login": "viewer23",
+        "chatter_user_name": "viewer23",
+        "chatter_is_anonymous": false,
+        "color": "",
+        "badges": [],
+        "system_message": "viewer23 subscribed at Tier 1. They've subscribed for 10 months!",
+        "message_id": "d62235c8-47ff-a4f4--84e8-5a29a65a9c03",
+        "message": {
+            "text": "",
+            "fragments": []
+        },
+        "notice_type": "resub",
+        "resub": {
+            "cumulative_months": 10,
+            "duration_months": 0,
+            "sub_tier": "1000",
+            "is_prime": false,
+            "is_gift": false
+        }
+    }
+    """;
 }

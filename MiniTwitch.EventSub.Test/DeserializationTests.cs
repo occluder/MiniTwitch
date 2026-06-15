@@ -2309,4 +2309,36 @@ public class DeserializationTests
         var w = msg.Whisper;
         Assert.Equal("a secret", w.Text);
     }
+
+    [Fact]
+    public void ChannelChatNotification_V1_Resub()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelChatNotificationV1ResubJson);
+        var msg = new ChannelChatNotification(json.AsMemory());
+
+        Assert.Equal(1971641, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(49912639, msg.ChatterId);
+        Assert.Equal("viewer23", msg.ChatterUsername);
+        Assert.Equal("viewer23", msg.ChatterDisplayName);
+        Assert.False(msg.ChatterIsAnonymous);
+        Assert.Equal("", msg.Color);
+        Assert.Empty(msg.Badges);
+        Assert.Equal("viewer23 subscribed at Tier 1. They've subscribed for 10 months!", msg.SystemMessage);
+        Assert.Equal("d62235c8-47ff-a4f4--84e8-5a29a65a9c03", msg.MessageId);
+        Assert.Equal("resub", msg.NoticeType);
+
+        var m = msg.Message;
+        Assert.Equal("", m.Text);
+        Assert.Empty(m.Fragments);
+
+        var r = msg.Resub;
+        Assert.NotNull(r);
+        Assert.Equal(10, r.Value.CumulativeMonths);
+        Assert.Equal(0, r.Value.DurationMonths);
+        Assert.Equal("1000", r.Value.SubTier);
+        Assert.False(r.Value.IsPrime);
+        Assert.False(r.Value.IsGift);
+    }
 }
