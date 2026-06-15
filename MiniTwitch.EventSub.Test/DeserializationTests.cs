@@ -1744,4 +1744,57 @@ public class DeserializationTests
         Assert.Equal("cooler_user", msg.BroadcasterUsername);
         Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
     }
+
+    [Fact]
+    public void ChannelWarningAcknowledge_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelWarningAcknowledgeV1Json);
+        var msg = new ChannelWarningAcknowledge(json.AsMemory());
+
+        Assert.Equal(423374343, msg.BroadcasterId);
+        Assert.Equal("glowillig", msg.BroadcasterUsername);
+        Assert.Equal("glowillig", msg.BroadcasterDisplayName);
+        Assert.Equal(141981764, msg.UserId);
+        Assert.Equal("twitchdev", msg.Username);
+        Assert.Equal("TwitchDev", msg.UserDisplayName);
+    }
+
+    [Fact]
+    public void ChannelWarningSend_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelWarningSendV1Json);
+        var msg = new ChannelWarningSend(json.AsMemory());
+
+        Assert.Equal(423374343, msg.BroadcasterId);
+        Assert.Equal("glowillig", msg.BroadcasterUsername);
+        Assert.Equal("glowillig", msg.BroadcasterDisplayName);
+        Assert.Equal(424596340, msg.ModeratorId);
+        Assert.Equal("quotrok", msg.ModeratorUsername);
+        Assert.Equal("quotrok", msg.ModeratorDisplayName);
+        Assert.Equal(141981764, msg.UserId);
+        Assert.Equal("twitchdev", msg.Username);
+        Assert.Equal("TwitchDev", msg.UserDisplayName);
+        Assert.Equal("cut it out", msg.Reason);
+        Assert.Null(msg.ChatRulesCited);
+    }
+
+    [Fact]
+    public void ChannelWarningSend_V1_NoReason()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelWarningSendV1NoReasonJson);
+        var msg = new ChannelWarningSend(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("streamer", msg.BroadcasterUsername);
+        Assert.Equal("Streamer", msg.BroadcasterDisplayName);
+        Assert.Equal(43, msg.ModeratorId);
+        Assert.Equal("mod", msg.ModeratorUsername);
+        Assert.Equal("Mod", msg.ModeratorDisplayName);
+        Assert.Equal(44, msg.UserId);
+        Assert.Equal("user", msg.Username);
+        Assert.Equal("User", msg.UserDisplayName);
+        Assert.Null(msg.Reason);
+        Assert.NotNull(msg.ChatRulesCited);
+        Assert.Equal(["1", "3", "5"], msg.ChatRulesCited);
+    }
 }

@@ -1997,4 +1997,50 @@ public static class Payloads
         "broadcaster_user_name": "Cooler_User"
     }
     """;
+
+    [EventPayload(typeof(ChannelWarningAcknowledge))]
+    public const string ChannelWarningAcknowledgeV1Json = """
+    {
+        "broadcaster_user_id": "423374343",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "user_id": "141981764",
+        "user_login": "twitchdev",
+        "user_name": "TwitchDev"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelWarningSend))]
+    public const string ChannelWarningSendV1Json = """
+    {
+        "broadcaster_user_id": "423374343",
+        "broadcaster_user_login": "glowillig",
+        "broadcaster_user_name": "glowillig",
+        "moderator_user_id": "424596340",
+        "moderator_user_login": "quotrok",
+        "moderator_user_name": "quotrok",
+        "user_id": "141981764",
+        "user_login": "twitchdev",
+        "user_name": "TwitchDev",
+        "reason": "cut it out",
+        "chat_rules_cited": null
+    }
+    """;
+
+    [EventPayload(typeof(ChannelWarningSend))]
+    public const string ChannelWarningSendV1NoReasonJson = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "streamer",
+        "broadcaster_user_name": "Streamer",
+        "moderator_user_id": "43",
+        "moderator_user_login": "mod",
+        "moderator_user_name": "Mod",
+        "user_id": "44",
+        "user_login": "user",
+        "user_name": "User",
+        "reason": null,
+        "chat_rules_cited": ["1", "3", "5"]
+    }
+    """;
 }
