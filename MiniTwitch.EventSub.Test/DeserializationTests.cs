@@ -1797,4 +1797,111 @@ public class DeserializationTests
         Assert.NotNull(msg.ChatRulesCited);
         Assert.Equal(["1", "3", "5"], msg.ChatRulesCited);
     }
+
+    [Fact]
+    public void ChannelCharityCampaignDonate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCharityCampaignDonateV1Json);
+        var msg = new ChannelCharityCampaignDonate(json.AsMemory());
+
+        Assert.Equal("a1b2c3-aabb-4455-d1e2f3", msg.Id);
+        Assert.Equal("123-abc-456-def", msg.CampaignId);
+        Assert.Equal(123456, msg.BroadcasterId);
+        Assert.Equal("sunnysideup", msg.BroadcasterUsername);
+        Assert.Equal("SunnySideUp", msg.BroadcasterDisplayName);
+        Assert.Equal(654321, msg.UserId);
+        Assert.Equal("generoususer1", msg.Username);
+        Assert.Equal("GenerousUser1", msg.UserDisplayName);
+        Assert.Equal("Example name", msg.CharityName);
+        Assert.Equal("Example description", msg.CharityDescription);
+        Assert.Equal("https://abc.cloudfront.net/ppgf/1000/100.png", msg.CharityLogo);
+        Assert.Equal("https://www.example.com", msg.CharityWebsite);
+
+        var a = msg.Amount;
+        Assert.Equal(10000, a.Value);
+        Assert.Equal(2, a.DecimalPlaces);
+        Assert.Equal("USD", a.Currency);
+    }
+
+    [Fact]
+    public void ChannelCharityCampaignStart_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCharityCampaignStartV1Json);
+        var msg = new ChannelCharityCampaignStart(json.AsMemory());
+
+        Assert.Equal("123-abc-456-def", msg.Id);
+        Assert.Equal(123456, msg.BroadcasterId);
+        Assert.Equal("sunnysideup", msg.BroadcasterUsername);
+        Assert.Equal("SunnySideUp", msg.BroadcasterDisplayName);
+        Assert.Equal("Example name", msg.CharityName);
+        Assert.Equal("Example description", msg.CharityDescription);
+        Assert.Equal("https://abc.cloudfront.net/ppgf/1000/100.png", msg.CharityLogo);
+        Assert.Equal("https://www.example.com", msg.CharityWebsite);
+
+        var cur = msg.CurrentAmount;
+        Assert.Equal(0, cur.Value);
+        Assert.Equal(2, cur.DecimalPlaces);
+        Assert.Equal("USD", cur.Currency);
+
+        var tgt = msg.TargetAmount;
+        Assert.Equal(1500000, tgt.Value);
+        Assert.Equal(2, tgt.DecimalPlaces);
+        Assert.Equal("USD", tgt.Currency);
+
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T17:00:03.17106713Z"), msg.StartedAt);
+    }
+
+    [Fact]
+    public void ChannelCharityCampaignProgress_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCharityCampaignProgressV1Json);
+        var msg = new ChannelCharityCampaignProgress(json.AsMemory());
+
+        Assert.Equal("123-abc-456-def", msg.Id);
+        Assert.Equal(123456, msg.BroadcasterId);
+        Assert.Equal("sunnysideup", msg.BroadcasterUsername);
+        Assert.Equal("SunnySideUp", msg.BroadcasterDisplayName);
+        Assert.Equal("Example name", msg.CharityName);
+        Assert.Equal("Example description", msg.CharityDescription);
+        Assert.Equal("https://abc.cloudfront.net/ppgf/1000/100.png", msg.CharityLogo);
+        Assert.Equal("https://www.example.com", msg.CharityWebsite);
+
+        var cur = msg.CurrentAmount;
+        Assert.Equal(260000, cur.Value);
+        Assert.Equal(2, cur.DecimalPlaces);
+        Assert.Equal("USD", cur.Currency);
+
+        var tgt = msg.TargetAmount;
+        Assert.Equal(1500000, tgt.Value);
+        Assert.Equal(2, tgt.DecimalPlaces);
+        Assert.Equal("USD", tgt.Currency);
+    }
+
+    [Fact]
+    public void ChannelCharityCampaignStop_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelCharityCampaignStopV1Json);
+        var msg = new ChannelCharityCampaignStop(json.AsMemory());
+
+        Assert.Equal("123-abc-456-def", msg.Id);
+        Assert.Equal(123456, msg.BroadcasterId);
+        Assert.Equal("sunnysideup", msg.BroadcasterUsername);
+        Assert.Equal("SunnySideUp", msg.BroadcasterDisplayName);
+        Assert.Equal("Example name", msg.CharityName);
+        Assert.Equal("Example description", msg.CharityDescription);
+        Assert.Equal("https://abc.cloudfront.net/ppgf/1000/100.png", msg.CharityLogo);
+        Assert.Equal("https://www.example.com", msg.CharityWebsite);
+
+        var cur = msg.CurrentAmount;
+        Assert.Equal(1450000, cur.Value);
+        Assert.Equal(2, cur.DecimalPlaces);
+        Assert.Equal("USD", cur.Currency);
+
+        var tgt = msg.TargetAmount;
+        Assert.Equal(1500000, tgt.Value);
+        Assert.Equal(2, tgt.DecimalPlaces);
+        Assert.Equal("USD", tgt.Currency);
+
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T22:00:03.17106713Z"), msg.StoppedAt);
+    }
 }

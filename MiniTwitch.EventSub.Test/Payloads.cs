@@ -2043,4 +2043,101 @@ public static class Payloads
         "chat_rules_cited": ["1", "3", "5"]
     }
     """;
+
+    [EventPayload(typeof(ChannelCharityCampaignDonate))]
+    public const string ChannelCharityCampaignDonateV1Json = """
+    {
+        "id": "a1b2c3-aabb-4455-d1e2f3",
+        "campaign_id": "123-abc-456-def",
+        "broadcaster_user_id": "123456",
+        "broadcaster_user_name": "SunnySideUp",
+        "broadcaster_user_login": "sunnysideup",
+        "user_id": "654321",
+        "user_login": "generoususer1",
+        "user_name": "GenerousUser1",
+        "charity_name": "Example name",
+        "charity_description": "Example description",
+        "charity_logo": "https://abc.cloudfront.net/ppgf/1000/100.png",
+        "charity_website": "https://www.example.com",
+        "amount": {
+            "value": 10000,
+            "decimal_places": 2,
+            "currency": "USD"
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelCharityCampaignStart))]
+    public const string ChannelCharityCampaignStartV1Json = """
+    {
+        "id": "123-abc-456-def",
+        "broadcaster_id": "123456",
+        "broadcaster_name": "SunnySideUp",
+        "broadcaster_login": "sunnysideup",
+        "charity_name": "Example name",
+        "charity_description": "Example description",
+        "charity_logo": "https://abc.cloudfront.net/ppgf/1000/100.png",
+        "charity_website": "https://www.example.com",
+        "current_amount": {
+            "value": 0,
+            "decimal_places": 2,
+            "currency": "USD"
+        },
+        "target_amount": {
+            "value": 1500000,
+            "decimal_places": 2,
+            "currency": "USD"
+        },
+        "started_at": "2022-07-26T17:00:03.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelCharityCampaignProgress))]
+    public const string ChannelCharityCampaignProgressV1Json = """
+    {
+        "id": "123-abc-456-def",
+        "broadcaster_id": "123456",
+        "broadcaster_name": "SunnySideUp",
+        "broadcaster_login": "sunnysideup",
+        "charity_name": "Example name",
+        "charity_description": "Example description",
+        "charity_logo": "https://abc.cloudfront.net/ppgf/1000/100.png",
+        "charity_website": "https://www.example.com",
+        "current_amount": {
+            "value": 260000,
+            "decimal_places": 2,
+            "currency": "USD"
+        },
+        "target_amount": {
+            "value": 1500000,
+            "decimal_places": 2,
+            "currency": "USD"
+        }
+    }
+    """;
+
+    [EventPayload(typeof(ChannelCharityCampaignStop))]
+    public const string ChannelCharityCampaignStopV1Json = """
+    {
+        "id": "123-abc-456-def",
+        "broadcaster_id": "123456",
+        "broadcaster_name": "SunnySideUp",
+        "broadcaster_login": "sunnysideup",
+        "charity_name": "Example name",
+        "charity_description": "Example description",
+        "charity_logo": "https://abc.cloudfront.net/ppgf/1000/100.png",
+        "charity_website": "https://www.example.com",
+        "current_amount": {
+            "value": 1450000,
+            "decimal_places": 2,
+            "currency": "USD"
+        },
+        "target_amount": {
+            "value": 1500000,
+            "decimal_places": 2,
+            "currency": "USD"
+        },
+        "stopped_at": "2022-07-26T22:00:03.17106713Z"
+    }
+    """;
 }
