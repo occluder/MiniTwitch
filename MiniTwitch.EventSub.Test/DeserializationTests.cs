@@ -2149,4 +2149,34 @@ public class DeserializationTests
         Assert.Equal("bits", c.Type);
         Assert.Equal(50, c.Total);
     }
+
+    [Fact]
+    public void ChannelShieldModeBegin_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelShieldModeBeginV1Json);
+        var msg = new ChannelShieldModeBegin(json.AsMemory());
+
+        Assert.Equal(12345, msg.BroadcasterId);
+        Assert.Equal("simplysimple", msg.BroadcasterUsername);
+        Assert.Equal("SimplySimple", msg.BroadcasterDisplayName);
+        Assert.Equal(98765, msg.ModeratorId);
+        Assert.Equal("particularlyparticular123", msg.ModeratorUsername);
+        Assert.Equal("ParticularlyParticular123", msg.ModeratorDisplayName);
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T17:00:03.17106713Z"), msg.StartedAt);
+    }
+
+    [Fact]
+    public void ChannelShieldModeEnd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelShieldModeEndV1Json);
+        var msg = new ChannelShieldModeEnd(json.AsMemory());
+
+        Assert.Equal(12345, msg.BroadcasterId);
+        Assert.Equal("simplysimple", msg.BroadcasterUsername);
+        Assert.Equal("SimplySimple", msg.BroadcasterDisplayName);
+        Assert.Equal(98765, msg.ModeratorId);
+        Assert.Equal("particularlyparticular123", msg.ModeratorUsername);
+        Assert.Equal("ParticularlyParticular123", msg.ModeratorDisplayName);
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T18:00:03.17106713Z"), msg.EndedAt);
+    }
 }

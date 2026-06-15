@@ -2378,4 +2378,30 @@ public static class Payloads
         "type": "regular"
     }
     """;
+
+    [EventPayload(typeof(ChannelShieldModeBegin))]
+    public const string ChannelShieldModeBeginV1Json = """
+    {
+        "broadcaster_user_id": "12345",
+        "broadcaster_user_name": "SimplySimple",
+        "broadcaster_user_login": "simplysimple",
+        "moderator_user_id": "98765",
+        "moderator_user_name": "ParticularlyParticular123",
+        "moderator_user_login": "particularlyparticular123",
+        "started_at": "2022-07-26T17:00:03.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelShieldModeEnd))]
+    public const string ChannelShieldModeEndV1Json = """
+    {
+        "broadcaster_user_id": "12345",
+        "broadcaster_user_name": "SimplySimple",
+        "broadcaster_user_login": "simplysimple",
+        "moderator_user_id": "98765",
+        "moderator_user_name": "ParticularlyParticular123",
+        "moderator_user_login": "particularlyparticular123",
+        "ended_at": "2022-07-26T18:00:03.17106713Z"
+    }
+    """;
 }
