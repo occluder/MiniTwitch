@@ -2404,4 +2404,37 @@ public static class Payloads
         "ended_at": "2022-07-26T18:00:03.17106713Z"
     }
     """;
+
+    [EventPayload(typeof(ChannelShoutoutCreate))]
+    public const string ChannelShoutoutCreateV1Json = """
+    {
+        "broadcaster_user_id": "12345",
+        "broadcaster_user_name": "SimplySimple",
+        "broadcaster_user_login": "simplysimple",
+        "moderator_user_id": "98765",
+        "moderator_user_name": "ParticularlyParticular123",
+        "moderator_user_login": "particularlyparticular123",
+        "to_broadcaster_user_id": "626262",
+        "to_broadcaster_user_name": "SandySanderman",
+        "to_broadcaster_user_login": "sandysanderman",
+        "started_at": "2022-07-26T17:00:03.17106713Z",
+        "viewer_count": 860,
+        "cooldown_ends_at": "2022-07-26T17:02:03.17106713Z",
+        "target_cooldown_ends_at": "2022-07-26T18:00:03.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelShoutoutReceive))]
+    public const string ChannelShoutoutReceiveV1Json = """
+    {
+        "broadcaster_user_id": "626262",
+        "broadcaster_user_name": "SandySanderman",
+        "broadcaster_user_login": "sandysanderman",
+        "from_broadcaster_user_id": "12345",
+        "from_broadcaster_user_name": "SimplySimple",
+        "from_broadcaster_user_login": "simplysimple",
+        "viewer_count": 860,
+        "started_at": "2022-07-26T17:00:03.17106713Z"
+    }
+    """;
 }

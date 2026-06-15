@@ -2179,4 +2179,41 @@ public class DeserializationTests
         Assert.Equal("ParticularlyParticular123", msg.ModeratorDisplayName);
         Assert.Equal(DateTimeOffset.Parse("2022-07-26T18:00:03.17106713Z"), msg.EndedAt);
     }
+
+    [Fact]
+    public void ChannelShoutoutCreate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelShoutoutCreateV1Json);
+        var msg = new ChannelShoutoutCreate(json.AsMemory());
+
+        Assert.Equal(12345, msg.BroadcasterId);
+        Assert.Equal("simplysimple", msg.BroadcasterUsername);
+        Assert.Equal("SimplySimple", msg.BroadcasterDisplayName);
+        Assert.Equal(98765, msg.ModeratorId);
+        Assert.Equal("particularlyparticular123", msg.ModeratorUsername);
+        Assert.Equal("ParticularlyParticular123", msg.ModeratorDisplayName);
+        Assert.Equal(626262, msg.ToBroadcasterId);
+        Assert.Equal("sandysanderman", msg.ToBroadcasterUsername);
+        Assert.Equal("SandySanderman", msg.ToBroadcasterDisplayName);
+        Assert.Equal(860, msg.ViewerCount);
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T17:00:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T17:02:03.17106713Z"), msg.CooldownEndsAt);
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T18:00:03.17106713Z"), msg.TargetCooldownEndsAt);
+    }
+
+    [Fact]
+    public void ChannelShoutoutReceive_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelShoutoutReceiveV1Json);
+        var msg = new ChannelShoutoutReceive(json.AsMemory());
+
+        Assert.Equal(626262, msg.BroadcasterId);
+        Assert.Equal("sandysanderman", msg.BroadcasterUsername);
+        Assert.Equal("SandySanderman", msg.BroadcasterDisplayName);
+        Assert.Equal(12345, msg.FromBroadcasterId);
+        Assert.Equal("simplysimple", msg.FromBroadcasterUsername);
+        Assert.Equal("SimplySimple", msg.FromBroadcasterDisplayName);
+        Assert.Equal(860, msg.ViewerCount);
+        Assert.Equal(DateTimeOffset.Parse("2022-07-26T17:00:03.17106713Z"), msg.StartedAt);
+    }
 }
