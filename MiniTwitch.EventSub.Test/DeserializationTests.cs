@@ -2277,4 +2277,18 @@ public class DeserializationTests
         Assert.Null(msg.Username);
         Assert.Null(msg.UserDisplayName);
     }
+
+    [Fact]
+    public void UserUpdate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.UserUpdateV1Json);
+        var msg = new UserUpdate(json.AsMemory());
+
+        Assert.Equal(1337, msg.UserId);
+        Assert.Equal("cool_user", msg.Username);
+        Assert.Equal("Cool_User", msg.UserDisplayName);
+        Assert.Equal("user@email.com", msg.Email);
+        Assert.True(msg.EmailVerified);
+        Assert.Equal("cool description", msg.Description);
+    }
 }

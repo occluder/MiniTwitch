@@ -2488,4 +2488,16 @@ public static class Payloads
         "user_name": null
     }
     """;
+
+    [EventPayload(typeof(UserUpdate))]
+    public const string UserUpdateV1Json = """
+    {
+        "user_id": "1337",
+        "user_login": "cool_user",
+        "user_name": "Cool_User",
+        "email": "user@email.com",
+        "email_verified": true,
+        "description": "cool description"
+    }
+    """;
 }
