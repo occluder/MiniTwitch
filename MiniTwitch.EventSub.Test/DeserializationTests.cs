@@ -1961,4 +1961,26 @@ public class DeserializationTests
         Assert.Equal("74c52265-e214-48a6-91b9-23b6014e8041", d.BenefitId);
         Assert.Equal(DateTimeOffset.Parse("2019-01-28T04:17:53.325Z"), d.CreatedAt);
     }
+
+    [Fact]
+    public void ExtensionBitsTransactionCreate_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ExtensionBitsTransactionCreateV1Json);
+        var msg = new ExtensionBitsTransactionCreate(json.AsMemory());
+
+        Assert.Equal("bits-tx-id", msg.Id);
+        Assert.Equal("deadbeef", msg.ExtensionClientId);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(1236, msg.UserId);
+        Assert.Equal("coolest_user", msg.Username);
+        Assert.Equal("Coolest_User", msg.UserDisplayName);
+
+        var p = msg.Product;
+        Assert.Equal("great_product", p.Name);
+        Assert.Equal("skuskusku", p.Sku);
+        Assert.Equal(1234, p.Bits);
+        Assert.False(p.InDevelopment);
+    }
 }

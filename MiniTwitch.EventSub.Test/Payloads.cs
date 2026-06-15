@@ -2191,4 +2191,24 @@ public static class Payloads
         }
     }
     """;
+
+    [EventPayload(typeof(ExtensionBitsTransactionCreate))]
+    public const string ExtensionBitsTransactionCreateV1Json = """
+    {
+        "id": "bits-tx-id",
+        "extension_client_id": "deadbeef",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "user_name": "Coolest_User",
+        "user_login": "coolest_user",
+        "user_id": "1236",
+        "product": {
+            "name": "great_product",
+            "sku": "skuskusku",
+            "bits": 1234,
+            "in_development": false
+        }
+    }
+    """;
 }
