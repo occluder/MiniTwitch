@@ -2291,4 +2291,22 @@ public class DeserializationTests
         Assert.True(msg.EmailVerified);
         Assert.Equal("cool description", msg.Description);
     }
+
+    [Fact]
+    public void UserWhisperMessage_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.UserWhisperMessageV1Json);
+        var msg = new UserWhisperMessage(json.AsMemory());
+
+        Assert.Equal(423374343, msg.FromUserId);
+        Assert.Equal("glowillig", msg.FromUsername);
+        Assert.Equal("glowillig", msg.FromUserDisplayName);
+        Assert.Equal(424596340, msg.ToUserId);
+        Assert.Equal("quotrok", msg.ToUsername);
+        Assert.Equal("quotrok", msg.ToUserDisplayName);
+        Assert.Equal("some-whisper-id", msg.WhisperId);
+
+        var w = msg.Whisper;
+        Assert.Equal("a secret", w.Text);
+    }
 }

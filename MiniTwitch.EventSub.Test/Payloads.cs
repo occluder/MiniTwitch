@@ -2500,4 +2500,20 @@ public static class Payloads
         "description": "cool description"
     }
     """;
+
+    [EventPayload(typeof(UserWhisperMessage))]
+    public const string UserWhisperMessageV1Json = """
+    {
+        "from_user_id": "423374343",
+        "from_user_login": "glowillig",
+        "from_user_name": "glowillig",
+        "to_user_id": "424596340",
+        "to_user_login": "quotrok",
+        "to_user_name": "quotrok",
+        "whisper_id": "some-whisper-id",
+        "whisper": {
+            "text": "a secret"
+        }
+    }
+    """;
 }
