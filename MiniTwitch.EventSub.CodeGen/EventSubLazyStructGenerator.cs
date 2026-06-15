@@ -220,7 +220,7 @@ public class EventSubLazyStructGenerator : IIncrementalGenerator
         }
 
         sb.AppendLine(isNullable
-            ? $"field ??= new(slice.GetChild(\"{jsonName}\"u8));"
+            ? $"field ??= slice.GetChild(\"{jsonName}\"u8) is {{ IsEmpty: false }} child_{jsonName} ? new(child_{jsonName}) : null;"
             : $"!field.IsInitialized ? new(slice.GetChild(\"{jsonName}\"u8)) : field;");
     }
 
