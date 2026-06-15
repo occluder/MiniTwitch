@@ -1716,4 +1716,32 @@ public class DeserializationTests
         Assert.Equal("SuspiciousUser", msg.UserDisplayName);
         Assert.Equal("none", msg.LowTrustStatus);
     }
+
+    [Fact]
+    public void ChannelVipAdd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelVipAddV1Json);
+        var msg = new ChannelVipAdd(json.AsMemory());
+
+        Assert.Equal(1234, msg.UserId);
+        Assert.Equal("mod_user", msg.Username);
+        Assert.Equal("Mod_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+    }
+
+    [Fact]
+    public void ChannelVipRemove_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelVipRemoveV1Json);
+        var msg = new ChannelVipRemove(json.AsMemory());
+
+        Assert.Equal(5678, msg.UserId);
+        Assert.Equal("removed_user", msg.Username);
+        Assert.Equal("Removed_User", msg.UserDisplayName);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cooler_user", msg.BroadcasterUsername);
+        Assert.Equal("Cooler_User", msg.BroadcasterDisplayName);
+    }
 }

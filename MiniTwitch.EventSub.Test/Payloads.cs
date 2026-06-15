@@ -1973,4 +1973,28 @@ public static class Payloads
         "low_trust_status": "none"
     }
     """;
+
+    [EventPayload(typeof(ChannelVipAdd))]
+    public const string ChannelVipAddV1Json = """
+    {
+        "user_id": "1234",
+        "user_login": "mod_user",
+        "user_name": "Mod_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelVipRemove))]
+    public const string ChannelVipRemoveV1Json = """
+    {
+        "user_id": "5678",
+        "user_login": "removed_user",
+        "user_name": "Removed_User",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cooler_user",
+        "broadcaster_user_name": "Cooler_User"
+    }
+    """;
 }
