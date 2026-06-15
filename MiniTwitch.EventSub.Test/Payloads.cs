@@ -2211,4 +2211,51 @@ public static class Payloads
         }
     }
     """;
+
+    [EventPayload(typeof(ChannelGoalBegin))]
+    public const string ChannelGoalBeginV1Json = """
+    {
+        "id": "12345-cool-event",
+        "broadcaster_user_id": "141981764",
+        "broadcaster_user_name": "TwitchDev",
+        "broadcaster_user_login": "twitchdev",
+        "type": "subscription",
+        "description": "Help me get partner!",
+        "current_amount": 100,
+        "target_amount": 220,
+        "started_at": "2021-07-15T17:16:03.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelGoalProgress))]
+    public const string ChannelGoalProgressV1Json = """
+    {
+        "id": "12345-cool-event",
+        "broadcaster_user_id": "141981764",
+        "broadcaster_user_name": "TwitchDev",
+        "broadcaster_user_login": "twitchdev",
+        "type": "subscription",
+        "description": "Help me get partner!",
+        "current_amount": 120,
+        "target_amount": 220,
+        "started_at": "2021-07-15T17:16:03.17106713Z"
+    }
+    """;
+
+    [EventPayload(typeof(ChannelGoalEnd))]
+    public const string ChannelGoalEndV1Json = """
+    {
+        "id": "12345-abc-678-defgh",
+        "broadcaster_user_id": "141981764",
+        "broadcaster_user_name": "TwitchDev",
+        "broadcaster_user_login": "twitchdev",
+        "type": "subscription",
+        "description": "Help me get partner!",
+        "is_achieved": false,
+        "current_amount": 180,
+        "target_amount": 220,
+        "started_at": "2021-07-15T17:16:03.17106713Z",
+        "ended_at": "2020-07-16T17:16:03.17106713Z"
+    }
+    """;
 }

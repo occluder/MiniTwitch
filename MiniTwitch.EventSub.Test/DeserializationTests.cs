@@ -1983,4 +1983,57 @@ public class DeserializationTests
         Assert.Equal(1234, p.Bits);
         Assert.False(p.InDevelopment);
     }
+
+    [Fact]
+    public void ChannelGoalBegin_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelGoalBeginV1Json);
+        var msg = new ChannelGoalBegin(json.AsMemory());
+
+        Assert.Equal("12345-cool-event", msg.Id);
+        Assert.Equal(141981764, msg.BroadcasterId);
+        Assert.Equal("twitchdev", msg.BroadcasterUsername);
+        Assert.Equal("TwitchDev", msg.BroadcasterDisplayName);
+        Assert.Equal("subscription", msg.Type);
+        Assert.Equal("Help me get partner!", msg.Description);
+        Assert.Equal(100, msg.CurrentAmount);
+        Assert.Equal(220, msg.TargetAmount);
+        Assert.Equal(DateTimeOffset.Parse("2021-07-15T17:16:03.17106713Z"), msg.StartedAt);
+    }
+
+    [Fact]
+    public void ChannelGoalProgress_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelGoalProgressV1Json);
+        var msg = new ChannelGoalProgress(json.AsMemory());
+
+        Assert.Equal("12345-cool-event", msg.Id);
+        Assert.Equal(141981764, msg.BroadcasterId);
+        Assert.Equal("twitchdev", msg.BroadcasterUsername);
+        Assert.Equal("TwitchDev", msg.BroadcasterDisplayName);
+        Assert.Equal("subscription", msg.Type);
+        Assert.Equal("Help me get partner!", msg.Description);
+        Assert.Equal(120, msg.CurrentAmount);
+        Assert.Equal(220, msg.TargetAmount);
+        Assert.Equal(DateTimeOffset.Parse("2021-07-15T17:16:03.17106713Z"), msg.StartedAt);
+    }
+
+    [Fact]
+    public void ChannelGoalEnd_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelGoalEndV1Json);
+        var msg = new ChannelGoalEnd(json.AsMemory());
+
+        Assert.Equal("12345-abc-678-defgh", msg.Id);
+        Assert.Equal(141981764, msg.BroadcasterId);
+        Assert.Equal("twitchdev", msg.BroadcasterUsername);
+        Assert.Equal("TwitchDev", msg.BroadcasterDisplayName);
+        Assert.Equal("subscription", msg.Type);
+        Assert.Equal("Help me get partner!", msg.Description);
+        Assert.False(msg.IsAchieved);
+        Assert.Equal(180, msg.CurrentAmount);
+        Assert.Equal(220, msg.TargetAmount);
+        Assert.Equal(DateTimeOffset.Parse("2021-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-16T17:16:03.17106713Z"), msg.EndedAt);
+    }
 }
