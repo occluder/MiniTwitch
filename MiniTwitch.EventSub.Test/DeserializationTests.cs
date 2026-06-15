@@ -2036,4 +2036,117 @@ public class DeserializationTests
         Assert.Equal(DateTimeOffset.Parse("2021-07-15T17:16:03.17106713Z"), msg.StartedAt);
         Assert.Equal(DateTimeOffset.Parse("2020-07-16T17:16:03.17106713Z"), msg.EndedAt);
     }
+
+    [Fact]
+    public void ChannelHypeTrainBegin_V2()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelHypeTrainBeginV2Json);
+        var msg = new ChannelHypeTrainBegin(json.AsMemory());
+
+        Assert.Equal("1b0AsbInCHZW2SQFQkCzqN07Ib2", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(137, msg.Total);
+        Assert.Equal(137, msg.Progress);
+        Assert.Equal(500, msg.Goal);
+        Assert.Equal(1, msg.Level);
+        Assert.Equal(4, msg.AllTimeHighLevel);
+        Assert.Equal(2845, msg.AllTimeHighTotal);
+        Assert.Null(msg.SharedTrainParticipants);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:11.17106713Z"), msg.ExpiresAt);
+        Assert.Equal("regular", msg.Type);
+        Assert.False(msg.IsSharedTrain);
+
+        Assert.Single(msg.TopContributions);
+        var c = msg.TopContributions[0];
+        Assert.Equal(123, c.UserId);
+        Assert.Equal("pogchamp", c.Username);
+        Assert.Equal("PogChamp", c.UserDisplayName);
+        Assert.Equal("bits", c.Type);
+        Assert.Equal(50, c.Total);
+    }
+
+    [Fact]
+    public void ChannelHypeTrainBegin_V2_Shared()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelHypeTrainBeginV2SharedJson);
+        var msg = new ChannelHypeTrainBegin(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal(500, msg.Total);
+        Assert.Equal(100, msg.Progress);
+        Assert.True(msg.IsSharedTrain);
+        Assert.Equal("treasure", msg.Type);
+        Assert.Empty(msg.TopContributions);
+
+        Assert.NotNull(msg.SharedTrainParticipants);
+        Assert.Equal(2, msg.SharedTrainParticipants.Length);
+        Assert.Equal(100, msg.SharedTrainParticipants[0].BroadcasterId);
+        Assert.Equal("other1", msg.SharedTrainParticipants[0].BroadcasterUsername);
+        Assert.Equal("Other1", msg.SharedTrainParticipants[0].BroadcasterDisplayName);
+        Assert.Equal(200, msg.SharedTrainParticipants[1].BroadcasterId);
+        Assert.Equal("other2", msg.SharedTrainParticipants[1].BroadcasterUsername);
+        Assert.Equal("Other2", msg.SharedTrainParticipants[1].BroadcasterDisplayName);
+    }
+
+    [Fact]
+    public void ChannelHypeTrainProgress_V2()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelHypeTrainProgressV2Json);
+        var msg = new ChannelHypeTrainProgress(json.AsMemory());
+
+        Assert.Equal("1b0AsbInCHZW2SQFQkCzqN07Ib2", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(200, msg.Total);
+        Assert.Equal(63, msg.Progress);
+        Assert.Equal(500, msg.Goal);
+        Assert.Equal(1, msg.Level);
+        Assert.Equal(4, msg.AllTimeHighLevel);
+        Assert.Equal(2845, msg.AllTimeHighTotal);
+        Assert.Null(msg.SharedTrainParticipants);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:11.17106713Z"), msg.ExpiresAt);
+        Assert.Equal("golden_kappa", msg.Type);
+        Assert.False(msg.IsSharedTrain);
+
+        Assert.Single(msg.TopContributions);
+        var c = msg.TopContributions[0];
+        Assert.Equal(456, c.UserId);
+        Assert.Equal("subscriber1", c.Username);
+        Assert.Equal("Subscriber1", c.UserDisplayName);
+        Assert.Equal("subscription", c.Type);
+        Assert.Equal(1000, c.Total);
+    }
+
+    [Fact]
+    public void ChannelHypeTrainEnd_V2()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.ChannelHypeTrainEndV2Json);
+        var msg = new ChannelHypeTrainEnd(json.AsMemory());
+
+        Assert.Equal("1b0AsbInCHZW2SQFQkCzqN07Ib2", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal(137, msg.Total);
+        Assert.Equal(1, msg.Level);
+        Assert.Null(msg.SharedTrainParticipants);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:03.17106713Z"), msg.StartedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-15T17:16:11.17106713Z"), msg.EndedAt);
+        Assert.Equal(DateTimeOffset.Parse("2020-07-16T17:16:11.17106713Z"), msg.CooldownEndsAt);
+        Assert.Equal("regular", msg.Type);
+        Assert.False(msg.IsSharedTrain);
+
+        Assert.Single(msg.TopContributions);
+        var c = msg.TopContributions[0];
+        Assert.Equal(123, c.UserId);
+        Assert.Equal("pogchamp", c.Username);
+        Assert.Equal("PogChamp", c.UserDisplayName);
+        Assert.Equal("bits", c.Type);
+        Assert.Equal(50, c.Total);
+    }
 }

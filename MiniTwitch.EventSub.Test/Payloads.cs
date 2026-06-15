@@ -2258,4 +2258,124 @@ public static class Payloads
         "ended_at": "2020-07-16T17:16:03.17106713Z"
     }
     """;
+
+    [EventPayload(typeof(ChannelHypeTrainBegin))]
+    public const string ChannelHypeTrainBeginV2Json = """
+    {
+        "id": "1b0AsbInCHZW2SQFQkCzqN07Ib2",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "total": 137,
+        "progress": 137,
+        "goal": 500,
+        "top_contributions": [
+            {
+                "user_id": "123",
+                "user_login": "pogchamp",
+                "user_name": "PogChamp",
+                "type": "bits",
+                "total": 50
+            }
+        ],
+        "shared_train_participants": null,
+        "level": 1,
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "expires_at": "2020-07-15T17:16:11.17106713Z",
+        "is_shared_train": false,
+        "type": "regular",
+        "all_time_high_level": 4,
+        "all_time_high_total": 2845
+    }
+    """;
+
+    [EventPayload(typeof(ChannelHypeTrainBegin))]
+    public const string ChannelHypeTrainBeginV2SharedJson = """
+    {
+        "id": "1b0AsbInCHZW2SQFQkCzqN07Ib2",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "total": 500,
+        "progress": 100,
+        "goal": 500,
+        "top_contributions": [],
+        "shared_train_participants": [
+            {
+                "broadcaster_user_id": "100",
+                "broadcaster_user_login": "other1",
+                "broadcaster_user_name": "Other1"
+            },
+            {
+                "broadcaster_user_id": "200",
+                "broadcaster_user_login": "other2",
+                "broadcaster_user_name": "Other2"
+            }
+        ],
+        "level": 1,
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "expires_at": "2020-07-15T17:16:11.17106713Z",
+        "is_shared_train": true,
+        "type": "treasure",
+        "all_time_high_level": 4,
+        "all_time_high_total": 2845
+    }
+    """;
+
+    [EventPayload(typeof(ChannelHypeTrainProgress))]
+    public const string ChannelHypeTrainProgressV2Json = """
+    {
+        "id": "1b0AsbInCHZW2SQFQkCzqN07Ib2",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "total": 200,
+        "progress": 63,
+        "goal": 500,
+        "top_contributions": [
+            {
+                "user_id": "456",
+                "user_login": "subscriber1",
+                "user_name": "Subscriber1",
+                "type": "subscription",
+                "total": 1000
+            }
+        ],
+        "shared_train_participants": null,
+        "level": 1,
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "expires_at": "2020-07-15T17:16:11.17106713Z",
+        "is_shared_train": false,
+        "type": "golden_kappa",
+        "all_time_high_level": 4,
+        "all_time_high_total": 2845
+    }
+    """;
+
+    [EventPayload(typeof(ChannelHypeTrainEnd))]
+    public const string ChannelHypeTrainEndV2Json = """
+    {
+        "id": "1b0AsbInCHZW2SQFQkCzqN07Ib2",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "total": 137,
+        "top_contributions": [
+            {
+                "user_id": "123",
+                "user_login": "pogchamp",
+                "user_name": "PogChamp",
+                "type": "bits",
+                "total": 50
+            }
+        ],
+        "shared_train_participants": null,
+        "level": 1,
+        "started_at": "2020-07-15T17:16:03.17106713Z",
+        "ended_at": "2020-07-15T17:16:11.17106713Z",
+        "cooldown_ends_at": "2020-07-16T17:16:11.17106713Z",
+        "is_shared_train": false,
+        "type": "regular"
+    }
+    """;
 }
