@@ -2216,4 +2216,29 @@ public class DeserializationTests
         Assert.Equal(860, msg.ViewerCount);
         Assert.Equal(DateTimeOffset.Parse("2022-07-26T17:00:03.17106713Z"), msg.StartedAt);
     }
+
+    [Fact]
+    public void StreamOnline_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.StreamOnlineV1Json);
+        var msg = new StreamOnline(json.AsMemory());
+
+        Assert.Equal("9001", msg.Id);
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+        Assert.Equal("live", msg.Type);
+        Assert.Equal(DateTimeOffset.Parse("2020-10-11T10:11:12.123Z"), msg.StartedAt);
+    }
+
+    [Fact]
+    public void StreamOffline_V1()
+    {
+        var json = Encoding.UTF8.GetBytes(Payloads.StreamOfflineV1Json);
+        var msg = new StreamOffline(json.AsMemory());
+
+        Assert.Equal(1337, msg.BroadcasterId);
+        Assert.Equal("cool_user", msg.BroadcasterUsername);
+        Assert.Equal("Cool_User", msg.BroadcasterDisplayName);
+    }
 }

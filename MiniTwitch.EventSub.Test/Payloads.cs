@@ -2437,4 +2437,25 @@ public static class Payloads
         "started_at": "2022-07-26T17:00:03.17106713Z"
     }
     """;
+
+    [EventPayload(typeof(StreamOnline))]
+    public const string StreamOnlineV1Json = """
+    {
+        "id": "9001",
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User",
+        "type": "live",
+        "started_at": "2020-10-11T10:11:12.123Z"
+    }
+    """;
+
+    [EventPayload(typeof(StreamOffline))]
+    public const string StreamOfflineV1Json = """
+    {
+        "broadcaster_user_id": "1337",
+        "broadcaster_user_login": "cool_user",
+        "broadcaster_user_name": "Cool_User"
+    }
+    """;
 }
