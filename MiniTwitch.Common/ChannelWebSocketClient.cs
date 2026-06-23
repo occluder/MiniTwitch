@@ -322,7 +322,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     void CopyAndEnqueueMessage(Memory<byte> bufferMemory, ref int written)
     {
-        int length = TrimTrailingNewline(bufferMemory, written);
+        int length = TrimTrailingNewline(bufferMemory.Span, written);
         byte[] copy = ArrayPool<byte>.Shared.Rent(length);
         bufferMemory[..length].CopyTo(copy);
 
@@ -334,10 +334,10 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         written = 0;
     }
 
-    static int TrimTrailingNewline(Memory<byte> memory, int length)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static int TrimTrailingNewline(ReadOnlySpan<byte> span, int length)
     {
         const byte lf = (byte)'\n';
-        ReadOnlySpan<byte> span = memory.Span;
         if (length > 0 && span[length - 1] == lf)
         {
             return length - 1;
@@ -400,7 +400,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static bool MatchNonce(byte[] message, PendingRequest req) => message.AsSpan().SequenceEqual(req.NonceBytes);
+    static bool MatchNonce(byte[] message, PendingRequest req) => message.AsSpan().IndexOf(req.NonceBytes) >= 0;
 
     async Task SendLoop()
     {
