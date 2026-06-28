@@ -9,6 +9,8 @@ namespace MiniTwitch.EventSub.Models;
 [EventSubEvent("stream.offline", "1")]
 public partial struct StreamOffline
 {
+    /// <summary>The id of the stream</summary>
+    public partial string Id { get; }
     /// <summary>The broadcaster's user id</summary>
     [JsonPropertyName("broadcaster_user_id")]
     public partial long BroadcasterId { get; }
