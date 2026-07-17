@@ -17,5 +17,6 @@ public partial struct Emote
     /// Possible values: <c>animated</c> (An animated GIF is available for this emote),
     /// <c>static</c> (A static PNG file is available for this emote)
     /// </summary>
+    [Intern]
     public partial string[] Format { get; }
 }

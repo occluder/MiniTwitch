@@ -20,4 +20,6 @@ public partial struct MessageFragment
     public partial Emote Emote { get; }
     /// <summary>Metadata pertaining to the mention</summary>
     public partial Mention Mention { get; }
+    /// <summary>Metadata pertaining to the GIF</summary>
+    public partial Gif Gif { get; }
 }
