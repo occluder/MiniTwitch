@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using MiniTwitch.Irc.Internal.Models;
 using MiniTwitch.Irc.Internal.Parsing;
+using MiniTwitch.Irc.Models;
 using Xunit;
 
 namespace MiniTwitch.Irc.Test;
@@ -59,6 +60,31 @@ public class IrcParsingTests
         string username = new IrcMessage(Encoding.UTF8.GetBytes(raw)).GetUsername();
 
         Assert.Equal("feelsczechman", username);
+    }
+
+    [Fact]
+    public void Parse_Gifs()
+    {
+        string raw = "@badge-info=subscriber/30;badges=broadcaster/1,subscriber/0;color=#033700;display-name=TwitchDev;emotes=;first-msg=0;flags=;gifs=0-33|joSNxeswxuc74Juo8X|https://media4.giphy.com/media/joSNxeswxuc74Juo8X/giphy.gif?cid=095d7a5dzizsiwgabonagkmigggv8v1spfai91ac3x0dsiy0&ep=v1_gifs_trending&rid=giphy.gif&ct=g;id=401abf17-7e99-45d6-9bdf-43934e839327;mod=0;returning-chatter=0;room-id=12826;subscriber=1;tmi-sent-ts=1783632907018;turbo=0;user-id=141981764;user-type= :twitchdev!twitchdev@twitchdev.tmi.twitch.tv PRIVMSG #twitch :[Y A Y Yes GIF by Djemilah Birnie]";
+        Privmsg msg = Privmsg.Construct(raw);
+
+        Assert.Single(msg.Gifs);
+        Assert.InRange(msg.Gifs[0].StartPosition, 0, msg.Content.Length - 1);
+        Assert.InRange(msg.Gifs[0].EndPosition, 0, msg.Content.Length - 1);
+        Assert.Equal(0, msg.Gifs[0].StartPosition);
+        Assert.Equal(33, msg.Gifs[0].EndPosition);
+        Assert.Equal(msg.Content[msg.Gifs[0].StartPosition..(msg.Gifs[0].EndPosition + 1)], msg.Content);
+        Assert.Equal("joSNxeswxuc74Juo8X", msg.Gifs[0].Id);
+        Assert.Equal("https://media4.giphy.com/media/joSNxeswxuc74Juo8X/giphy.gif?cid=095d7a5dzizsiwgabonagkmigggv8v1spfai91ac3x0dsiy0&ep=v1_gifs_trending&rid=giphy.gif&ct=g", msg.Gifs[0].Url);
+    }
+
+    [Fact]
+    public void Parse_Gifs_Empty()
+    {
+        string raw = "@badge-info=;badges=;color=;display-name=test;emotes=;first-msg=0;flags=;gifs=;id=abc123;mod=0;returning-chatter=0;room-id=1;subscriber=0;tmi-sent-ts=0;turbo=0;user-id=1;user-type= :test!test@test.tmi.twitch.tv PRIVMSG #channel :hello";
+        Privmsg msg = Privmsg.Construct(raw);
+
+        Assert.Empty(msg.Gifs);
     }
 
     [Fact]

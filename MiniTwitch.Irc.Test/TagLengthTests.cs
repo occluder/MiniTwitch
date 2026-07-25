@@ -20,6 +20,7 @@ public class TagLengthTests
         { "turbo", (int)Tags.Turbo },
         { "badges", (int)Tags.Badges },
         { "emotes", (int)Tags.Emotes },
+        { "gifs", (int)Tags.Gifs },
         { "user-id", (int)Tags.UserId },
         { "first-msg", (int)Tags.FirstMsg },
         { "msg-id", (int)Tags.MsgId },

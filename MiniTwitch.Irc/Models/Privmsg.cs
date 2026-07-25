@@ -89,6 +89,10 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
     /// </summary>
     public bool IsGigantifiedEmoteMessage { get; init; }
     /// <summary>
+    /// GIFs in the message
+    /// </summary>
+    public MessageGif[] Gifs { get; init; }
+    /// <summary>
     /// Source information about the message.
     /// <para>Only populated if <see cref="MessageSource.HasSource"/> is <see langword="true"/></para>
     /// </summary>
@@ -148,6 +152,9 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
         bool animated = false;
         string animation = string.Empty;
 
+        // gifs
+        MessageGif[] gifs = [];
+
         // MessageSource
         string sourceBadgeInfo = string.Empty;
         string sourceBadges = string.Empty;
@@ -181,6 +188,11 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
                 //bits
                 case (int)Tags.Bits when tagKey.SequenceEqual("bits"u8):
                     bits = TagHelper.GetInt(tagValue);
+                    break;
+
+                //gifs
+                case (int)Tags.Gifs when tagKey.SequenceEqual("gifs"u8) && tagValue.Length > 0:
+                    gifs = ParseGifs(tagValue);
                     break;
 
                 //flags
@@ -400,6 +412,7 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
             IsAnimated = animated,
             AnimationId = animation
         };
+        this.Gifs = gifs;
         this.Source = new MessageSource()
         {
             BadgeInfo = sourceBadgeInfo,
@@ -430,6 +443,44 @@ public readonly struct Privmsg : IUnixTimestamped, IHelixMessageTarget, IEquatab
         ReadOnlyMemory<byte> memory = new(Encoding.UTF8.GetBytes(rawData));
         var message = new IrcMessage(memory);
         return new(ref message);
+    }
+
+    private static MessageGif[] ParseGifs(ReadOnlySpan<byte> value)
+    {
+        int commaCount = 0;
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (value[i] == ',')
+            {
+                commaCount++;
+            }
+        }
+
+        var result = new MessageGif[commaCount + 1];
+        int resultIndex = 0;
+        int segmentStart = 0;
+        for (int i = 0; i <= value.Length; i++)
+        {
+            if (i == value.Length || value[i] == ',')
+            {
+                ReadOnlySpan<byte> segment = value[segmentStart..i];
+                int firstPipe = segment.IndexOf((byte)'|');
+                int secondPipe = segment[(firstPipe + 1)..].IndexOf((byte)'|') + firstPipe + 1;
+                ReadOnlySpan<byte> positions = segment[..firstPipe];
+                int dash = positions.IndexOf((byte)'-');
+                result[resultIndex] = new MessageGif()
+                {
+                    StartPosition = TagHelper.GetInt(positions[..dash]),
+                    EndPosition = TagHelper.GetInt(positions[(dash + 1)..]),
+                    Id = TagHelper.GetString(segment[(firstPipe + 1)..secondPipe]),
+                    Url = TagHelper.GetString(segment[(secondPipe + 1)..])
+                };
+                resultIndex++;
+                segmentStart = i + 1;
+            }
+        }
+
+        return result;
     }
 
     /// <inheritdoc/>
