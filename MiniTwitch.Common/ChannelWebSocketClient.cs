@@ -82,7 +82,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         _broadcastReader = new BroadcastReader(_broadcast.Reader);
         _outbound = Channel.CreateBounded<OutboundItem>(new BoundedChannelOptions(OutboundCapacity)
         {
-            FullMode = BoundedChannelFullMode.DropOldest,
+            FullMode = BoundedChannelFullMode.Wait,
             SingleWriter = false,
             SingleReader = true,
         });
@@ -417,7 +417,9 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
                 {
                     if (!this.IsConnected)
                     {
-                        break;
+                        item.Tcs?.TrySetException(new InvalidOperationException(
+                            "Cannot send data while the WebSocket is not connected."));
+                        continue;
                     }
 
                     try
@@ -426,6 +428,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
                     }
                     catch (Exception ex)
                     {
+                        item.Tcs?.TrySetException(ex);
                         LogException(ex, "Exception caught whilst trying to send data.");
                     }
                 }
