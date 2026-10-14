@@ -69,9 +69,12 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     public ChannelWebSocketClient(TimeSpan reconnectionDelay)
     {
         _reconnectDelay = reconnectionDelay;
+        // Wait + TryWrite (rather than DropOldest) so that a full channel reports the
+        // overflow back to the writer, which can then return the pooled buffer instead
+        // of silently leaking it out of the array pool.
         _broadcast = Channel.CreateBounded<PooledBuffer>(new BoundedChannelOptions(BroadcastCapacity)
         {
-            FullMode = BoundedChannelFullMode.DropOldest,
+            FullMode = BoundedChannelFullMode.Wait,
             SingleWriter = true,
             SingleReader = true,
             AllowSynchronousContinuations = true,
@@ -99,7 +102,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     {
         _rawInbound = Channel.CreateBounded<PooledBuffer>(new BoundedChannelOptions(RawInboundCapacity)
         {
-            FullMode = BoundedChannelFullMode.DropOldest,
+            FullMode = BoundedChannelFullMode.Wait,
             SingleWriter = true,
             SingleReader = true,
         });
@@ -387,22 +390,11 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
                         }
                     }
 
-                    if (!matched)
+                    if (!matched && !_broadcast.Writer.TryWrite(message))
                     {
-                        try
-                        {
-                            await _broadcast.Writer.WriteAsync(message, _cts.Token).ConfigureAwait(false);
-                        }
-                        catch (OperationCanceledException) when (_cts.IsCancellationRequested)
-                        {
-                            ArrayPool<byte>.Shared.Return(message.Buffer);
-                            return;
-                        }
-                        catch (ChannelClosedException)
-                        {
-                            ArrayPool<byte>.Shared.Return(message.Buffer);
-                            return;
-                        }
+                        // The broadcast channel is full; a blocking write here would stall
+                        // the dispatch (and therefore the receive) loop, so drop and reclaim.
+                        ArrayPool<byte>.Shared.Return(message.Buffer);
                     }
                 }
             }
