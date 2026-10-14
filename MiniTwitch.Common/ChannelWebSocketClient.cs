@@ -140,9 +140,11 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
             _cts = new();
         }
 
-        _receiveTask = Task.Factory.StartNew(ReceiveLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-        _dispatchTask = Task.Factory.StartNew(DispatchLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-        _sendTask = Task.Factory.StartNew(SendLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        // StartNew over an async method returns Task<Task>; Unwrap so the stored tasks
+        // track the loops themselves (needed to join them on restart/disposal).
+        _receiveTask = Task.Factory.StartNew(ReceiveLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+        _dispatchTask = Task.Factory.StartNew(DispatchLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+        _sendTask = Task.Factory.StartNew(SendLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
         int attempts = 0;
         while (!this.IsConnected)
         {
@@ -217,6 +219,19 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         }
 
         _pending.Clear();
+
+        // The previous receive loop is the caller, but the dispatch and send loops
+        // must be allowed to observe the cancellation and stop before a new
+        // generation is started. Otherwise both generations could read from the
+        // freshly created raw inbound channel and process the same message twice.
+        try
+        {
+            await Task.WhenAll(_dispatchTask, _sendTask).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Termination is signalled through cancellation; failures are logged in the loops.
+        }
 
         _rawInbound.Writer.TryComplete();
 
@@ -313,6 +328,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task ReceiveLoop()
     {
+        var ws = _ws;
         using var buffer = MemoryPool<byte>.Shared.Rent(1024 * 32);
         int written = 0;
 
@@ -320,7 +336,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         {
             try
             {
-                ValueWebSocketReceiveResult result = await _ws.ReceiveAsync(buffer.Memory[written..], _cts.Token).ConfigureAwait(false);
+                ValueWebSocketReceiveResult result = await ws.ReceiveAsync(buffer.Memory[written..], _cts.Token).ConfigureAwait(false);
                 written += result.Count;
 
                 if (result.EndOfMessage)
@@ -382,11 +398,12 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task DispatchLoop()
     {
+        var inbound = _rawInbound;
         try
         {
-            while (await _rawInbound.Reader.WaitToReadAsync(_cts.Token).ConfigureAwait(false))
+            while (await inbound.Reader.WaitToReadAsync(_cts.Token).ConfigureAwait(false))
             {
-                while (_rawInbound.Reader.TryRead(out PooledBuffer message))
+                while (inbound.Reader.TryRead(out PooledBuffer message))
                 {
                     bool matched = false;
 
@@ -427,6 +444,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task SendLoop()
     {
+        var ws = _ws;
         try
         {
             while (await _outbound.Reader.WaitToReadAsync(_cts.Token).ConfigureAwait(false))
@@ -442,7 +460,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
                     try
                     {
-                        await _ws.SendAsync(item.Data, WebSocketMessageType.Text, true, _cts.Token).ConfigureAwait(false);
+                        await ws.SendAsync(item.Data, WebSocketMessageType.Text, true, _cts.Token).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
