@@ -65,6 +65,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     Task _dispatchTask = Task.CompletedTask;
     Task _sendTask = Task.CompletedTask;
     bool _reconnecting;
+    volatile bool _disposed;
 
     public ChannelWebSocketClient(TimeSpan reconnectionDelay)
     {
@@ -110,6 +111,11 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     public async Task Start(Uri uri, CancellationToken ct = default)
     {
+        if (_disposed)
+        {
+            return;
+        }
+
         if (_ws.State == WebSocketState.Aborted)
         {
             Log(LogLevel.Error, "Cannot start WebSocket in aborted state");
@@ -159,6 +165,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     public async Task Disconnect(CancellationToken ct = default)
     {
+        _disposed = true;
         _cts.Cancel();
 
         if (this.IsConnected)
@@ -192,7 +199,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task Restart(TimeSpan delay, CancellationToken ct = default)
     {
-        if (_reconnecting)
+        if (_reconnecting || _disposed)
         {
             return;
         }
@@ -219,6 +226,11 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
         await Task.Delay(_reconnectDelay, ct).ConfigureAwait(false);
         Log(LogLevel.Debug, "Finished waiting for reconnection delay");
+
+        if (_disposed)
+        {
+            return;
+        }
 
         if (_cts.IsCancellationRequested)
         {
@@ -461,11 +473,12 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        if (this.IsConnected)
-        {
-            await Disconnect().ConfigureAwait(false);
-            return;
-        }
+        await Disconnect().ConfigureAwait(false);
+
+        // Give the loops a moment to observe cancellation and stop using the client.
+        await Task.WhenAny(
+            Task.WhenAll(_receiveTask, _dispatchTask, _sendTask),
+            Task.Delay(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
 
         Log(LogLevel.Debug, "Disposed {Name}", nameof(ChannelWebSocketClient));
     }
