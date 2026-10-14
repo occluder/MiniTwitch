@@ -257,14 +257,14 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         var nonceBytes = Encoding.UTF8.GetBytes(nonce);
         _pending[nonce] = new PendingRequest(nonceBytes, tcs);
 
-        await _outbound.Writer.WriteAsync(new OutboundItem(data, nonce, tcs), ct).ConfigureAwait(false);
-
         TimeSpan effectiveTimeout = timeout ?? TimeSpan.FromSeconds(30);
         using var timeoutCts = new CancellationTokenSource(effectiveTimeout);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
 
         try
         {
+            await _outbound.Writer.WriteAsync(new OutboundItem(data, nonce, tcs), linked.Token).ConfigureAwait(false);
+
             byte[] result = await tcs.Task.WaitAsync(linked.Token).ConfigureAwait(false);
             return result;
         }
@@ -279,6 +279,12 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         }
         catch (OperationCanceledException)
         {
+            _pending.TryRemove(nonce, out _);
+            throw;
+        }
+        catch
+        {
+            // The enqueue failed (or the response task faulted); don't leave a stale entry behind.
             _pending.TryRemove(nonce, out _);
             throw;
         }
