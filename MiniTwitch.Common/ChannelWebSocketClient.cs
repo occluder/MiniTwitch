@@ -8,6 +8,19 @@ using Microsoft.Extensions.Logging;
 
 namespace MiniTwitch.Common;
 
+/// <summary>
+/// A pooled array together with the number of valid bytes it contains.
+/// <see cref="ArrayPool{T}"/> may return an array larger than requested, so the
+/// logical length has to travel with the buffer. Using <c>byte[].Length</c>
+/// instead would expose stale data left in the tail of the pooled array.
+/// </summary>
+readonly struct PooledBuffer(byte[] buffer, int length)
+{
+    public readonly byte[] Buffer = buffer;
+    public readonly int Length = length;
+    public ReadOnlyMemory<byte> Memory => Buffer.AsMemory(0, Length);
+}
+
 public sealed class ChannelWebSocketClient : IAsyncDisposable
 {
     readonly struct OutboundItem(ReadOnlyMemory<byte> data, string? nonce, TaskCompletionSource<byte[]>? tcs)
@@ -40,14 +53,14 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     readonly SemaphoreSlim _reconnectionLock = new(0);
     readonly ConcurrentDictionary<string, PendingRequest> _pending = new();
     readonly Channel<ConnectionState> _connectionState;
-    readonly Channel<byte[]> _broadcast;
+    readonly Channel<PooledBuffer> _broadcast;
     readonly BroadcastReader _broadcastReader;
     readonly Channel<OutboundItem> _outbound;
     readonly FireForgetWriter _writer;
     CancellationTokenSource _cts = new();
     ClientWebSocket _ws = new();
     Uri _uri = default!;
-    Channel<byte[]> _rawInbound = default!;
+    Channel<PooledBuffer> _rawInbound = default!;
     Task _receiveTask = Task.CompletedTask;
     Task _dispatchTask = Task.CompletedTask;
     Task _sendTask = Task.CompletedTask;
@@ -56,7 +69,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     public ChannelWebSocketClient(TimeSpan reconnectionDelay)
     {
         _reconnectDelay = reconnectionDelay;
-        _broadcast = Channel.CreateBounded<byte[]>(new BoundedChannelOptions(BroadcastCapacity)
+        _broadcast = Channel.CreateBounded<PooledBuffer>(new BoundedChannelOptions(BroadcastCapacity)
         {
             FullMode = BoundedChannelFullMode.DropOldest,
             SingleWriter = true,
@@ -84,7 +97,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     void InitRawInbound()
     {
-        _rawInbound = Channel.CreateBounded<byte[]>(new BoundedChannelOptions(RawInboundCapacity)
+        _rawInbound = Channel.CreateBounded<PooledBuffer>(new BoundedChannelOptions(RawInboundCapacity)
         {
             FullMode = BoundedChannelFullMode.DropOldest,
             SingleWriter = true,
@@ -326,7 +339,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         byte[] copy = ArrayPool<byte>.Shared.Rent(length);
         bufferMemory[..length].CopyTo(copy);
 
-        if (!_rawInbound.Writer.TryWrite(copy))
+        if (!_rawInbound.Writer.TryWrite(new PooledBuffer(copy, length)))
         {
             ArrayPool<byte>.Shared.Return(copy);
         }
@@ -352,17 +365,17 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         {
             while (await _rawInbound.Reader.WaitToReadAsync(_cts.Token).ConfigureAwait(false))
             {
-                while (_rawInbound.Reader.TryRead(out byte[]? message))
+                while (_rawInbound.Reader.TryRead(out PooledBuffer message))
                 {
                     bool matched = false;
 
                     foreach (var (nonce, req) in _pending)
                     {
-                        if (MatchNonce(message, req))
+                        if (MatchNonce(message.Memory.Span, req.NonceBytes))
                         {
                             byte[] responseCopy = new byte[message.Length];
-                            Buffer.BlockCopy(message, 0, responseCopy, 0, message.Length);
-                            ArrayPool<byte>.Shared.Return(message);
+                            Buffer.BlockCopy(message.Buffer, 0, responseCopy, 0, message.Length);
+                            ArrayPool<byte>.Shared.Return(message.Buffer);
 
                             if (req.Tcs.TrySetResult(responseCopy))
                             {
@@ -382,12 +395,12 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
                         }
                         catch (OperationCanceledException) when (_cts.IsCancellationRequested)
                         {
-                            ArrayPool<byte>.Shared.Return(message);
+                            ArrayPool<byte>.Shared.Return(message.Buffer);
                             return;
                         }
                         catch (ChannelClosedException)
                         {
-                            ArrayPool<byte>.Shared.Return(message);
+                            ArrayPool<byte>.Shared.Return(message.Buffer);
                             return;
                         }
                     }
@@ -400,7 +413,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static bool MatchNonce(byte[] message, PendingRequest req) => message.AsSpan().IndexOf(req.NonceBytes) >= 0;
+    static bool MatchNonce(ReadOnlySpan<byte> message, ReadOnlySpan<byte> nonce) => message.IndexOf(nonce) >= 0;
 
     async Task SendLoop()
     {
@@ -464,21 +477,22 @@ public enum ConnectionState
     Reconnecting
 }
 
-internal sealed class BroadcastReader(ChannelReader<byte[]> inner) : ChannelReader<ReadOnlyMemory<byte>>
+internal sealed class BroadcastReader(ChannelReader<PooledBuffer> inner) : ChannelReader<ReadOnlyMemory<byte>>
 {
     public override Task Completion => inner.Completion;
 
-    byte[]? _previous;
+    PooledBuffer _previous;
 
     public override bool TryRead(out ReadOnlyMemory<byte> item)
     {
         ReturnPrevious();
-        if (inner.TryRead(out byte[]? arr))
+        if (inner.TryRead(out PooledBuffer buffer))
         {
-            _previous = arr;
-            item = arr;
+            _previous = buffer;
+            item = buffer.Memory;
             return true;
         }
+
         item = default;
         return false;
     }
@@ -489,18 +503,18 @@ internal sealed class BroadcastReader(ChannelReader<byte[]> inner) : ChannelRead
     public override async ValueTask<ReadOnlyMemory<byte>> ReadAsync(CancellationToken ct = default)
     {
         ReturnPrevious();
-        byte[] arr = await inner.ReadAsync(ct).ConfigureAwait(false);
-        _previous = arr;
-        return arr;
+        PooledBuffer buffer = await inner.ReadAsync(ct).ConfigureAwait(false);
+        _previous = buffer;
+        return buffer.Memory;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ReturnPrevious()
     {
-        if (_previous is not null)
+        if (_previous.Buffer is not null)
         {
-            ArrayPool<byte>.Shared.Return(_previous);
-            _previous = null;
+            ArrayPool<byte>.Shared.Return(_previous.Buffer);
+            _previous = default;
         }
     }
 }
