@@ -13,6 +13,7 @@ internal enum Tags
     Turbo = 5, // "turbo"
     Badges = 6, // "badges"
     Emotes = 6, // "emotes"
+    Gifs = 4, // "gifs"
     UserId = 7, // "user-id"
     FirstMsg = 9, // "first-msg"
     MsgId = 6, // "msg-id"
