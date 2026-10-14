@@ -75,7 +75,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         _broadcast = Channel.CreateBounded<PooledBuffer>(new BoundedChannelOptions(BroadcastCapacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
-            SingleWriter = true,
+            SingleWriter = false,
             SingleReader = true,
             AllowSynchronousContinuations = true,
         });
@@ -89,7 +89,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         _connectionState = Channel.CreateBounded<ConnectionState>(new BoundedChannelOptions(StateCapacity)
         {
             FullMode = BoundedChannelFullMode.DropOldest,
-            SingleWriter = true,
+            SingleWriter = false,
             SingleReader = false,
         });
         _writer = new FireForgetWriter(_outbound.Writer);
@@ -103,7 +103,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         _rawInbound = Channel.CreateBounded<PooledBuffer>(new BoundedChannelOptions(RawInboundCapacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
-            SingleWriter = true,
+            SingleWriter = false,
             SingleReader = true,
         });
     }
