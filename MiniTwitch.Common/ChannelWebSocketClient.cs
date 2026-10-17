@@ -48,6 +48,8 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     const int OutboundCapacity = 256;
     const int StateCapacity = 1;
     const int RawInboundCapacity = 64;
+    const int InitialReceiveBufferSize = 1024 * 64;
+    const int MaxReceiveBufferSize = 1024 * 1024 * 4;
 
     readonly TimeSpan _reconnectDelay;
     readonly SemaphoreSlim _reconnectionLock = new(0);
@@ -57,6 +59,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     readonly BroadcastReader _broadcastReader;
     readonly Channel<OutboundItem> _outbound;
     readonly FireForgetWriter _writer;
+    readonly object _generationLock = new();
     CancellationTokenSource _cts = new();
     ClientWebSocket _ws = new();
     Uri _uri = default!;
@@ -65,6 +68,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     Task _dispatchTask = Task.CompletedTask;
     Task _sendTask = Task.CompletedTask;
     bool _reconnecting;
+    volatile bool _disconnected;
     volatile bool _disposed;
 
     public ChannelWebSocketClient(TimeSpan reconnectionDelay)
@@ -109,17 +113,35 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         });
     }
 
+    /// <summary>
+    /// Connects to <paramref name="uri"/> and starts the receive, dispatch and send loops.
+    /// May be called again after <see cref="Disconnect"/> to reconnect; the persistent
+    /// <see cref="InboundReader"/>, <see cref="StateReader"/> and <see cref="Writer"/> stay
+    /// alive across the cycle. Only <see cref="DisposeAsync"/> makes the instance unusable.
+    /// </summary>
     public async Task Start(Uri uri, CancellationToken ct = default)
     {
         if (_disposed)
         {
+            Log(LogLevel.Warning, "Cannot start a disposed WebSocket client.");
             return;
         }
 
-        if (_ws.State == WebSocketState.Aborted)
+        // An explicit Start clears a previous Disconnect. The internal reconnect path
+        // (Restart) calls StartCore directly so it cannot undo a user Disconnect.
+        _disconnected = false;
+        await StartCore(uri, ct).ConfigureAwait(false);
+    }
+
+    async Task StartCore(Uri uri, CancellationToken ct = default)
+    {
+        // A ClientWebSocket cannot be reused once it is Closed/Aborted: Dispose leaves it
+        // Closed (not Aborted) and a failed connect leaves it Closed too, so a fresh
+        // instance is needed to reconnect.
+        if (_ws.State is WebSocketState.Closed or WebSocketState.Aborted)
         {
-            Log(LogLevel.Error, "Cannot start WebSocket in aborted state");
-            return;
+            _ws.Dispose();
+            _ws = new ClientWebSocket();
         }
 
         _uri = uri;
@@ -135,19 +157,42 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
             return;
         }
 
-        if (_cts.IsCancellationRequested)
+        // A Disconnect/Dispose may have landed while connecting; it snapshots the
+        // generation while holding this same lock, so the check and the spawn must be
+        // atomic — otherwise a Disconnect could slip in between and leave the freshly
+        // spawned loops running on a token nothing cancels.
+        lock (_generationLock)
         {
-            _cts = new();
+            if (_disconnected || _disposed)
+            {
+                return;
+            }
+
+            if (_cts.IsCancellationRequested)
+            {
+                _cts = new();
+            }
+
+            // Always start on a fresh raw inbound channel. A completed channel can still
+            // hold an undrained message, in which case its Completion stays incomplete;
+            // reusing it would leave a new receive loop writing into a closed writer.
+            InitRawInbound();
+
+            // StartNew over an async method returns Task<Task>; Unwrap so the stored tasks
+            // track the loops themselves (needed to join them on restart/disposal).
+            _receiveTask = Task.Factory.StartNew(ReceiveLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+            _dispatchTask = Task.Factory.StartNew(DispatchLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+            _sendTask = Task.Factory.StartNew(SendLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
         }
 
-        // StartNew over an async method returns Task<Task>; Unwrap so the stored tasks
-        // track the loops themselves (needed to join them on restart/disposal).
-        _receiveTask = Task.Factory.StartNew(ReceiveLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
-        _dispatchTask = Task.Factory.StartNew(DispatchLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
-        _sendTask = Task.Factory.StartNew(SendLoop, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
         int attempts = 0;
         while (!this.IsConnected)
         {
+            if (_disconnected || _disposed)
+            {
+                return;
+            }
+
             if (attempts++ >= 20)
             {
                 Log(LogLevel.Error, "WebSocket connection timed out.");
@@ -165,10 +210,31 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         _connectionState.Writer.TryWrite(ConnectionState.Connected);
     }
 
+    /// <summary>
+    /// Gracefully closes the current connection and stops the loops. The client remains
+    /// reusable: call <see cref="Start"/> again to reconnect. The persistent
+    /// <see cref="InboundReader"/>, <see cref="StateReader"/> and <see cref="Writer"/> are
+    /// left open; use <see cref="DisposeAsync"/> to tear them down for good.
+    /// </summary>
     public async Task Disconnect(CancellationToken ct = default)
     {
-        _disposed = true;
-        _cts.Cancel();
+        _disconnected = true;
+
+        // Capture the generation being stopped under the lock so a concurrent StartCore
+        // cannot spawn a replacement we would miss, and so we never await a newer
+        // generation's loops, which nothing here cancels.
+        Task dispatch;
+        Task send;
+        CancellationTokenSource cts;
+        lock (_generationLock)
+        {
+            _disconnected = true;
+            dispatch = _dispatchTask;
+            send = _sendTask;
+            cts = _cts;
+        }
+
+        cts.Cancel();
 
         if (this.IsConnected)
         {
@@ -193,25 +259,51 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         _pending.Clear();
 
         _rawInbound.Writer.TryComplete();
-        _broadcast.Writer.TryComplete();
-        _outbound.Writer.TryComplete();
+
+        // The receive loop observes cancellation and exits without restarting (its
+        // captured token is cancelled), but the dispatch and send loops must be joined
+        // here so a later Start cannot run a second generation against the persistent
+        // channels (in particular the single-reader outbound channel).
+        try
+        {
+            await Task.WhenAll(dispatch, send).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            LogException(ex, "Dispatch or send loop faulted while disconnecting.");
+        }
+
         _connectionState.Writer.TryWrite(ConnectionState.Disconnected);
-        _connectionState.Writer.TryComplete();
     }
 
     async Task Restart(TimeSpan delay, CancellationToken ct = default)
     {
-        if (_reconnecting || _disposed)
+        // Capture the generation being restarted under the lock so a concurrent Start
+        // cannot swap it out from under the join below.
+        Task dispatch;
+        Task send;
+        CancellationTokenSource cts;
+        lock (_generationLock)
         {
-            return;
+            if (_reconnecting || _disconnected || _disposed)
+            {
+                return;
+            }
+
+            _reconnecting = true;
+            dispatch = _dispatchTask;
+            send = _sendTask;
+            cts = _cts;
         }
 
-        _reconnecting = true;
         _connectionState.Writer.TryWrite(ConnectionState.Reconnecting);
 
         Log(LogLevel.Critical, "The WebSocket client is restarting in {Delay}", delay);
 
-        _cts.Cancel();
+        cts.Cancel();
 
         foreach (var (_, req) in _pending)
         {
@@ -226,24 +318,28 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
         // freshly created raw inbound channel and process the same message twice.
         try
         {
-            await Task.WhenAll(_dispatchTask, _sendTask).ConfigureAwait(false);
+            await Task.WhenAll(dispatch, send).ConfigureAwait(false);
         }
-        catch
+        catch (OperationCanceledException)
         {
-            // Termination is signalled through cancellation; failures are logged in the loops.
+        }
+        catch (Exception ex)
+        {
+            LogException(ex, "Dispatch or send loop faulted while restarting.");
         }
 
         _rawInbound.Writer.TryComplete();
 
         _ws.Dispose();
         _ws = new ClientWebSocket();
-        InitRawInbound();
 
         await Task.Delay(_reconnectDelay, ct).ConfigureAwait(false);
         Log(LogLevel.Debug, "Finished waiting for reconnection delay");
 
-        if (_disposed)
+        // A Disconnect/Dispose may have happened while waiting; don't resurrect.
+        if (_disconnected || _disposed)
         {
+            _reconnecting = false;
             return;
         }
 
@@ -252,8 +348,16 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
             _cts = new();
         }
 
-        await Start(_uri, ct).ConfigureAwait(false);
+        await StartCore(_uri, ct).ConfigureAwait(false);
         Log(LogLevel.Trace, "If the WebSocket doesn't reconnect in 10 seconds you will see a warning");
+
+        // StartCore bails (without spawning loops) when a Disconnect/Dispose landed while
+        // connecting; don't wait on a reconnection that will not come.
+        if (_disconnected || _disposed)
+        {
+            _reconnecting = false;
+            return;
+        }
 
         if (!await _reconnectionLock.WaitAsync(TimeSpan.FromSeconds(10), ct).ConfigureAwait(false))
         {
@@ -282,7 +386,13 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
         var tcs = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
         var nonceBytes = Encoding.UTF8.GetBytes(nonce);
-        _pending[nonce] = new PendingRequest(nonceBytes, tcs);
+
+        // Reject a nonce that is already in flight. Overwriting the previous entry
+        // would strand its TaskCompletionSource until it timed out.
+        if (!_pending.TryAdd(nonce, new PendingRequest(nonceBytes, tcs)))
+        {
+            throw new InvalidOperationException($"A request with nonce '{nonce}' is already pending.");
+        }
 
         TimeSpan effectiveTimeout = timeout ?? TimeSpan.FromSeconds(30);
         using var timeoutCts = new CancellationTokenSource(effectiveTimeout);
@@ -328,55 +438,88 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task ReceiveLoop()
     {
+        // Capture the generation up front so a Start that replaces _cts/_ws/_rawInbound
+        // cannot make this loop keep running or enqueue into a newer channel.
+        CancellationTokenSource cts = _cts;
+        ChannelWriter<PooledBuffer> inbound = _rawInbound.Writer;
         var ws = _ws;
-        using var buffer = MemoryPool<byte>.Shared.Rent(1024 * 32);
+        byte[] buffer = ArrayPool<byte>.Shared.Rent(InitialReceiveBufferSize);
         int written = 0;
 
-        while (this.IsConnected && !_cts.IsCancellationRequested)
+        try
         {
-            try
+            while (this.IsConnected && !cts.IsCancellationRequested)
             {
-                ValueWebSocketReceiveResult result = await ws.ReceiveAsync(buffer.Memory[written..], _cts.Token).ConfigureAwait(false);
-                written += result.Count;
-
-                if (result.EndOfMessage)
+                try
                 {
-                    CopyAndEnqueueMessage(buffer.Memory, ref written);
+                    // A message that outgrows the buffer (ArrayPool may return more than
+                    // requested, but a fragment can still fill it) is grown rather than
+                    // overflowing the slice and throwing.
+                    if (written == buffer.Length)
+                    {
+                        if (buffer.Length >= MaxReceiveBufferSize)
+                        {
+                            Log(LogLevel.Error, "Incoming WebSocket message exceeded the {Max} byte limit; reconnecting.", MaxReceiveBufferSize);
+                            break;
+                        }
+
+                        byte[] grown = ArrayPool<byte>.Shared.Rent(written * 2);
+                        buffer.AsSpan(0, written).CopyTo(grown);
+                        ArrayPool<byte>.Shared.Return(buffer);
+                        buffer = grown;
+                    }
+
+                    ValueWebSocketReceiveResult result = await ws.ReceiveAsync(buffer.AsMemory(written), cts.Token).ConfigureAwait(false);
+                    written += result.Count;
+
+                    if (result.EndOfMessage)
+                    {
+                        CopyAndEnqueueMessage(inbound, buffer, ref written);
+                    }
+                }
+                catch (WebSocketException wse)
+                {
+                    Log(LogLevel.Critical, "An error occurred while receiving data from the WebSocket connection: {Message}", wse.Message);
+                    break;
+                }
+                catch (ObjectDisposedException)
+                {
+                    // The socket was disposed by a Disconnect/Restart while a receive was pending.
+                    break;
+                }
+                catch (InvalidOperationException)
+                {
+                    Log(LogLevel.Warning, "Tried to receive data, but the WebSocket client is not connected");
+                    break;
+                }
+                catch (OperationCanceledException) when (cts.IsCancellationRequested)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    LogException(ex, "Exception caught in data receiver: ");
                 }
             }
-            catch (WebSocketException wse)
+
+            if (!cts.IsCancellationRequested)
             {
-                Log(LogLevel.Critical, "An error occurred while receiving data from the WebSocket connection: {Message}", wse.Message);
-                break;
-            }
-            catch (InvalidOperationException)
-            {
-                Log(LogLevel.Warning, "Tried to receive data, but the WebSocket client is not connected");
-                break;
-            }
-            catch (OperationCanceledException) when (_cts.IsCancellationRequested)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                LogException(ex, "Exception caught in data receiver: ");
+                await Restart(_reconnectDelay).ConfigureAwait(false);
             }
         }
-
-        if (!_cts.IsCancellationRequested)
+        finally
         {
-            await Restart(_reconnectDelay).ConfigureAwait(false);
+            ArrayPool<byte>.Shared.Return(buffer);
         }
     }
 
-    void CopyAndEnqueueMessage(Memory<byte> bufferMemory, ref int written)
+    void CopyAndEnqueueMessage(ChannelWriter<PooledBuffer> inbound, byte[] buffer, ref int written)
     {
-        int length = TrimTrailingNewline(bufferMemory.Span, written);
+        int length = TrimTrailingNewline(buffer.AsSpan(0, written), written);
         byte[] copy = ArrayPool<byte>.Shared.Rent(length);
-        bufferMemory[..length].CopyTo(copy);
+        buffer.AsSpan(0, length).CopyTo(copy);
 
-        if (!_rawInbound.Writer.TryWrite(new PooledBuffer(copy, length)))
+        if (!inbound.TryWrite(new PooledBuffer(copy, length)))
         {
             ArrayPool<byte>.Shared.Return(copy);
         }
@@ -398,10 +541,11 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task DispatchLoop()
     {
+        CancellationTokenSource cts = _cts;
         var inbound = _rawInbound;
         try
         {
-            while (await inbound.Reader.WaitToReadAsync(_cts.Token).ConfigureAwait(false))
+            while (await inbound.Reader.WaitToReadAsync(cts.Token).ConfigureAwait(false))
             {
                 while (inbound.Reader.TryRead(out PooledBuffer message))
                 {
@@ -434,7 +578,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
                 }
             }
         }
-        catch (OperationCanceledException) when (_cts.IsCancellationRequested)
+        catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
         }
     }
@@ -444,10 +588,11 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
     async Task SendLoop()
     {
+        CancellationTokenSource cts = _cts;
         var ws = _ws;
         try
         {
-            while (await _outbound.Reader.WaitToReadAsync(_cts.Token).ConfigureAwait(false))
+            while (await _outbound.Reader.WaitToReadAsync(cts.Token).ConfigureAwait(false))
             {
                 while (_outbound.Reader.TryRead(out OutboundItem item))
                 {
@@ -460,7 +605,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
 
                     try
                     {
-                        await ws.SendAsync(item.Data, WebSocketMessageType.Text, true, _cts.Token).ConfigureAwait(false);
+                        await ws.SendAsync(item.Data, WebSocketMessageType.Text, true, cts.Token).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -470,7 +615,7 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
                 }
             }
         }
-        catch (OperationCanceledException) when (_cts.IsCancellationRequested)
+        catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
         }
     }
@@ -489,9 +634,23 @@ public sealed class ChannelWebSocketClient : IAsyncDisposable
     void LogException(Exception ex, string template, params object[] properties)
         => OnLogEx?.Invoke(ex, template, properties);
 
+    /// <summary>
+    /// Terminates the client for good. Unlike <see cref="Disconnect"/>, the persistent
+    /// channels are completed so consumers of <see cref="InboundReader"/> and
+    /// <see cref="StateReader"/> finish, and the instance cannot be started again.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
+        lock (_generationLock)
+        {
+            _disposed = true;
+        }
+
         await Disconnect().ConfigureAwait(false);
+
+        _broadcast.Writer.TryComplete();
+        _outbound.Writer.TryComplete();
+        _connectionState.Writer.TryComplete();
 
         // Give the loops a moment to observe cancellation and stop using the client.
         await Task.WhenAny(
