@@ -67,10 +67,16 @@ public class ChannelExtensions : BaseResponse<ChannelExtensions.Extension>
         bool CanLinkExternalContent
     );
 
+    public record LiveConfig(
+        string ViewerUrl,
+        bool CanLinkExternalContent
+    );
+
     public record Views(
         Mobile Mobile,
         Panel Panel,
         VideoOverlay VideoOverlay,
-        Component Component
+        Component Component,
+        LiveConfig? LiveConfig
     );
 }

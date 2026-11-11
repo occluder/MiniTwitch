@@ -8,7 +8,7 @@ public class ChannelGuestStarSettings : BaseResponse<ChannelGuestStarSettings.Se
         bool IsModeratorSendLiveEnabled,
         int SlotCount,
         bool IsBrowserSourceAudioEnabled,
-        string Layout,
-        string BrowserSourceToken
+        string GroupLayout,
+        string? BrowserSourceToken
     );
 }

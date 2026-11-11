@@ -6,6 +6,7 @@ public class NewSubscription
     public string Version { get; }
     public EventsubTransport Transport { get; }
     public object Condition { get; }
+    public bool? IsBatchingEnabled { get; }
 
     public readonly struct EventsubTransport
     {
@@ -31,11 +32,12 @@ public class NewSubscription
         }
     }
 
-    public NewSubscription(string type, string version, EventsubTransport transport, object condition)
+    public NewSubscription(string type, string version, EventsubTransport transport, object condition, bool? isBatchingEnabled = null)
     {
         this.Type = type;
         this.Version = version;
         this.Transport = transport;
         this.Condition = condition;
+        this.IsBatchingEnabled = isBatchingEnabled;
     }
 }

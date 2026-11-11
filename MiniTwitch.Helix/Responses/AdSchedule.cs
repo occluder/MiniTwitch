@@ -1,15 +1,17 @@
-﻿using MiniTwitch.Helix.Models;
+﻿using System.Text.Json.Serialization;
+using MiniTwitch.Helix.Internal.Json;
+using MiniTwitch.Helix.Models;
 
 namespace MiniTwitch.Helix.Responses;
 
 public class AdSchedule : BaseResponse<AdSchedule.Ad>
 {
     public record Ad(
-         DateTime? NextAdAt,
-         DateTime? LastAdAt,
+         [property: JsonConverter(typeof(UnixSecondsDateTimeConverter))] DateTime? NextAdAt,
+         [property: JsonConverter(typeof(UnixSecondsDateTimeConverter))] DateTime? LastAdAt,
          int Duration,
          int PrerollFreeTime,
          int SnoozeCount,
-         DateTime? SnoozeRefreshAt
+         [property: JsonConverter(typeof(UnixSecondsDateTimeConverter))] DateTime? SnoozeRefreshAt
     );
 }

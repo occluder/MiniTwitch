@@ -38,6 +38,16 @@ internal class RequestData
         return this;
     }
 
+    public RequestData AddParam(string key, bool? value)
+    {
+        if (value is null)
+        {
+            return this;
+        }
+
+        return AddParam(key, value.Value ? "true" : "false");
+    }
+
     public RequestData AddParam(string key, object? value)
     {
         if (value is null)

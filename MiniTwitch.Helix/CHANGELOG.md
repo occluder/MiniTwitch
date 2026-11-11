@@ -1,5 +1,33 @@
 # MiniTwitch.Helix Changelog
 
+## Unreleased
+
+### Fixes
+- `GetAdSchedule` and `SnoozeNextAd` now deserialize the documented Unix timestamps (seconds) to `DateTime?`
+- `GetEventSubSubscriptions` now treats `condition` as a JSON object, and exposes `is_batching_enabled` and conduit transports
+- Added the missing event subscription and conduit shard statuses
+- `GetChannelStreamSchedule` now exposes the top-level `pagination` object
+- `CreateChannelStreamScheduleSegment` and `UpdateChannelStreamScheduleSegment` now send `duration` as an integer in minutes
+- `UpdateChannelGuestStarSettings` now uses `PATCH`, and Guest Star responses match the documented `audio`/`video` fields
+- `GetUserBlockList` now supports filtering by one or more `user_id`s
+- `GetChannelGuestStarSettings` now reads `group_layout` and a nullable `browser_source_token`
+- Added `views.live_config` to extension responses and `broadcaster_id` to extension configuration segments
+- Added the missing locale values for content classification labels
+- `GetCustomRewardRedemption` no longer requires `status` when `id` is specified
+- `GetBroadcasterSubscriptions` now exposes `points` and `total` as nullable when they are omitted, and handles the empty `gifter_id` sent for non-gift subscriptions
+
+### Breaking Changes
+- EventSub `Condition` is now `IReadOnlyDictionary<string, string>`
+- `SnoozedAd` timestamps are now nullable
+- `BroadcasterSubscriptions.Points` and `Total` are now nullable, and `GifterId` is nullable
+- Guest Star session guests no longer expose `user_name`/`user_login` and use `Audio`/`Video`
+- `NewScheduleSegment`/`UpdatedScheduleSegment` replace `DurationHours` with `Duration` (minutes)
+- `UpdateGuestStarSlot` requires `destinationSlotId`
+- `UpdateGuestStarSlotSettings` no longer accepts `volume`
+- `DeleteGuestStarSlot` takes `shouldReinviteGuest` as a Boolean
+- `ExtensionPubSubMessage.BroadcasterId` is nullable, and a global-broadcast constructor was added
+***
+
 ## 2.1.0
 ### Minor Changes
 - Added `Get Custom Power-up` endpoint (#223)
