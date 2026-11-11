@@ -8,11 +8,8 @@ public enum EventSubStatus
     NotificationFailuresExceeded,
     AuthorizationRevoked,
     ModeratorRemoved,
-    GuestStarModeratorRemoved,
     UserRemoved,
-    ChatUserBanned,
     VersionRemoved,
-    BetaMaintenance,
     WebsocketDisconnected,
     WebsocketFailedPingPong,
     WebsocketReceivedInboundTraffic,
@@ -20,6 +17,10 @@ public enum EventSubStatus
     WebsocketInternalError,
     WebsocketNetworkTimeout,
     WebsocketNetworkError,
+    GuestStarModeratorRemoved,
+    ChatUserBanned,
+    BetaMaintenance,
     WebsocketFailedToReconnect,
-    ConduitDeleted
+    ConduitDeleted,
+    Unknown
 }

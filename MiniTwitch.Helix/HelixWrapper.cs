@@ -609,13 +609,11 @@ public class HelixWrapper
     ///</summary>
     public Task<HelixResult<BlockList>> GetUserBlockList(
         int? first = null,
-        long? userId = null,
         CancellationToken cancellationToken = default)
     {
         HelixEndpoint endpoint = Endpoints.GetUserBlockList;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, this.UserId)
-            .AddParam(QueryParams.UserId, userId)
             .AddParam(QueryParams.First, first);
 
         return HelixResultFactory.Create<BlockList>(Client, request, endpoint, cancellationToken);
@@ -1554,6 +1552,11 @@ public class HelixWrapper
         bool? isLive = null,
         CancellationToken cancellationToken = default)
     {
+        if (isAudioEnabled is null && isVideoEnabled is null && isLive is null)
+        {
+            throw new ArgumentException("At least one of isAudioEnabled, isVideoEnabled, or isLive must be provided.");
+        }
+
         HelixEndpoint endpoint = Endpoints.UpdateGuestStarSlotSettings;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, broadcasterId)

@@ -112,12 +112,15 @@ internal class EnumConverter<TEnum> : JsonConverter<TEnum>
 
     internal static TEnum ReadEnum(string? enumString)
     {
-        if (Enum.TryParse(typeof(TEnum), SnakeCase.Instance.ConvertFromCase(enumString), out object? enumMember))
+        if (
+            Enum.TryParse(typeof(TEnum), SnakeCase.Instance.ConvertFromCase(enumString), out object? enumMember)
+            && Enum.IsDefined(typeof(TEnum), enumMember)
+        )
         {
             return (TEnum)enumMember;
         }
 
-        return default!;
+        return Enum.TryParse(typeof(TEnum), "Unknown", out object? unknown) ? (TEnum)unknown : default!;
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
@@ -191,11 +194,18 @@ internal class UnixSecondsDateTimeConverter : JsonConverter<DateTime?>
         {
             if (!reader.TryGetInt64(out seconds))
             {
-                throw new JsonException($"Cannot convert numeric value to a Unix timestamp");
+                throw new JsonException("Cannot convert numeric value to a Unix timestamp");
             }
         }
         else if (reader.TokenType == JsonTokenType.String)
         {
+            if (reader.TryGetDateTime(out var dateTime))
+            {
+                return dateTime.Kind == DateTimeKind.Unspecified
+                    ? DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)
+                    : dateTime.ToUniversalTime();
+            }
+
             var value = reader.GetString();
             if (string.IsNullOrEmpty(value))
             {
@@ -205,10 +215,6 @@ internal class UnixSecondsDateTimeConverter : JsonConverter<DateTime?>
             if (long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
             {
                 seconds = parsed;
-            }
-            else if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var dateTime))
-            {
-                return dateTime;
             }
             else
             {

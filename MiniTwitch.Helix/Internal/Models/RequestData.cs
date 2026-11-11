@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 
 namespace MiniTwitch.Helix.Internal.Models;
 
@@ -38,16 +39,6 @@ internal class RequestData
         return this;
     }
 
-    public RequestData AddParam(string key, bool? value)
-    {
-        if (value is null)
-        {
-            return this;
-        }
-
-        return AddParam(key, value.Value ? "true" : "false");
-    }
-
     public RequestData AddParam(string key, object? value)
     {
         if (value is null)
@@ -64,7 +55,13 @@ internal class RequestData
             _paramBuilder.Append('&');
         }
 
-        _paramBuilder.Append($"{key}={value}");
+        string formatted = value switch
+        {
+            bool flag => flag ? "true" : "false",
+            _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty
+        };
+
+        _paramBuilder.Append(key).Append('=').Append(formatted);
         return this;
     }
 

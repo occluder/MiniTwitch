@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using MiniTwitch.Helix.Enums;
+using MiniTwitch.Helix.Internal.Json;
 using MiniTwitch.Helix.Models;
 
 namespace MiniTwitch.Helix.Responses;
@@ -14,7 +16,8 @@ public class CreatedSubscription : BaseResponse<CreatedSubscription.Info>
 
     public record Info(
         string Id,
-        string Status,
+        [property: JsonConverter(typeof(EnumConverter<EventSubStatus>))]
+        EventSubStatus Status,
         string Type,
         string Version,
         IReadOnlyDictionary<string, string> Condition,
