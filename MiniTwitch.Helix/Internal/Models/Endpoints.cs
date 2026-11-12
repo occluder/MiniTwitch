@@ -378,7 +378,7 @@ internal static class Endpoints
 
     public static readonly HelixEndpoint UpdateChannelGuestStarSettings = new()
     {
-        Method = HttpMethod.Put,
+        Method = HttpMethod.Patch,
         Route = "/guest_star/channel_settings",
     };
 

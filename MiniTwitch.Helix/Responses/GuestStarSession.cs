@@ -5,7 +5,7 @@ namespace MiniTwitch.Helix.Responses;
 
 public class GuestStarSession : BaseResponse<GuestStarSession.Info>
 {
-    public record AudioSettings(
+    public record Audio(
        bool IsAvailable,
        bool IsHostEnabled,
        bool IsGuestEnabled
@@ -19,16 +19,14 @@ public class GuestStarSession : BaseResponse<GuestStarSession.Info>
     public record Guest(
         string SlotId,
         long UserId,
-        [property: JsonPropertyName("user_display_name")] string DisplayName,
-        [property: JsonPropertyName("user_login")] string Username,
         bool IsLive,
         int Volume,
         DateTime AssignedAt,
-        AudioSettings AudioSettings,
-        VideoSettings VideoSettings
+        [property: JsonPropertyName("audio")] Audio Audio,
+        [property: JsonPropertyName("video")] Video Video
     );
 
-    public record VideoSettings(
+    public record Video(
         bool IsAvailable,
         bool IsHostEnabled,
         bool IsGuestEnabled

@@ -361,18 +361,23 @@ public class HelixWrapper
     ///</summary>
     public Task<HelixResult<CustomRewardRedemptions>> GetCustomRewardRedemption(
         string rewardId,
-        RewardRedemptionStatus status,
+        RewardRedemptionStatus? status = null,
         string? id = null,
         SortMethod? sort = null,
         int? first = null,
         CancellationToken cancellationToken = default)
     {
+        if (status is null && id is null)
+        {
+            throw new ArgumentException("status is required if id is not specified.");
+        }
+
         HelixEndpoint endpoint = Endpoints.GetCustomRewardRedemption;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, this.UserId)
             .AddParam(QueryParams.RewardId, rewardId)
             .AddParam(QueryParams.Id, id)
-            .AddParam(QueryParams.Status, status.ToString())
+            .AddParam(QueryParams.Status, status?.ToString())
             .AddParam(QueryParams.Sort, sort?.ToString())
             .AddParam(QueryParams.First, first);
 
@@ -384,18 +389,23 @@ public class HelixWrapper
     ///</summary>
     public Task<HelixResult<CustomRewardRedemptions>> GetCustomRewardRedemption(
         string rewardId,
-        RewardRedemptionStatus status,
+        RewardRedemptionStatus? status = null,
         IEnumerable<string>? ids = null,
         SortMethod? sort = null,
         int? first = null,
         CancellationToken cancellationToken = default)
     {
+        if (status is null && ids is null)
+        {
+            throw new ArgumentException("status is required if ids is not specified.");
+        }
+
         HelixEndpoint endpoint = Endpoints.GetCustomRewardRedemption;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, this.UserId)
             .AddParam(QueryParams.RewardId, rewardId)
             .AddMultiParam(QueryParams.Id, ids)
-            .AddParam(QueryParams.Status, status.ToString())
+            .AddParam(QueryParams.Status, status?.ToString())
             .AddParam(QueryParams.Sort, sort?.ToString())
             .AddParam(QueryParams.First, first);
 
@@ -604,6 +614,23 @@ public class HelixWrapper
         HelixEndpoint endpoint = Endpoints.GetUserBlockList;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, this.UserId)
+            .AddParam(QueryParams.First, first);
+
+        return HelixResultFactory.Create<BlockList>(Client, request, endpoint, cancellationToken);
+    }
+
+    ///<summary>
+    ///<see href="https://dev.twitch.tv/docs/api/reference/#get-user-block-list">API Reference</see>
+    ///</summary>
+    public Task<HelixResult<BlockList>> GetUserBlockList(
+        IEnumerable<long> userIds,
+        int? first = null,
+        CancellationToken cancellationToken = default)
+    {
+        HelixEndpoint endpoint = Endpoints.GetUserBlockList;
+        RequestData request = new RequestData(_baseUrl, endpoint)
+            .AddParam(QueryParams.BroadcasterId, this.UserId)
+            .AddMultiParam(QueryParams.UserId, userIds)
             .AddParam(QueryParams.First, first);
 
         return HelixResultFactory.Create<BlockList>(Client, request, endpoint, cancellationToken);
@@ -879,7 +906,7 @@ public class HelixWrapper
         HelixEndpoint endpoint = Endpoints.GetConduitShards;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.ConduitId, conduitId)
-            .AddParam(QueryParams.Status, status?.ToString().ToLower());
+            .AddParam(QueryParams.Status, status is null ? null : SnakeCase.Instance.ConvertToCase(status.Value.ToString()));
 
         return HelixResultFactory.Create<ConduitShards>(Client, request, endpoint, cancellationToken);
     }
@@ -1250,7 +1277,7 @@ public class HelixWrapper
     {
         HelixEndpoint endpoint = Endpoints.GetEventSubSubscriptions;
         RequestData request = new RequestData(_baseUrl, endpoint)
-            .AddParam(QueryParams.Status, SnakeCase.Instance.ConvertToCase(status.ToString()))
+            .AddParam(QueryParams.Status, status is null ? null : SnakeCase.Instance.ConvertToCase(status.Value.ToString()))
             .AddParam(QueryParams.Type, type)
             .AddParam(QueryParams.UserId, userId)
             .AddParam(QueryParams.SubscriptionId, subscriptionId)
@@ -1406,7 +1433,7 @@ public class HelixWrapper
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, broadcasterId)
             .AddParam(QueryParams.ModeratorId, this.UserId)
-            .AddParam(sessionId, sessionId);
+            .AddParam(QueryParams.SessionId, sessionId);
 
         return HelixResultFactory.Create<GuestStarInvites>(Client, request, endpoint, cancellationToken);
     }
@@ -1476,7 +1503,7 @@ public class HelixWrapper
         long broadcasterId,
         string sessionId,
         string sourceSlotId,
-        string? destinationSlotId = null,
+        string destinationSlotId,
         CancellationToken cancellationToken = default)
     {
         HelixEndpoint endpoint = Endpoints.UpdateGuestStarSlot;
@@ -1498,7 +1525,7 @@ public class HelixWrapper
         string sessionId,
         long guestId,
         string slotId,
-        string? shouldReinviteGuest = null,
+        bool? shouldReinviteGuest = null,
         CancellationToken cancellationToken = default)
     {
         HelixEndpoint endpoint = Endpoints.DeleteGuestStarSlot;
@@ -1523,9 +1550,13 @@ public class HelixWrapper
         bool? isAudioEnabled = null,
         bool? isVideoEnabled = null,
         bool? isLive = null,
-        int? volume = null,
         CancellationToken cancellationToken = default)
     {
+        if (isAudioEnabled is null && isVideoEnabled is null && isLive is null)
+        {
+            throw new ArgumentException("At least one of isAudioEnabled, isVideoEnabled, or isLive must be provided.");
+        }
+
         HelixEndpoint endpoint = Endpoints.UpdateGuestStarSlotSettings;
         RequestData request = new RequestData(_baseUrl, endpoint)
             .AddParam(QueryParams.BroadcasterId, broadcasterId)
@@ -1534,8 +1565,7 @@ public class HelixWrapper
             .AddParam(QueryParams.SlotId, slotId)
             .AddParam(QueryParams.IsAudioEnabled, isAudioEnabled)
             .AddParam(QueryParams.IsVideoEnabled, isVideoEnabled)
-            .AddParam(QueryParams.IsLive, isLive)
-            .AddParam(QueryParams.Volume, volume);
+            .AddParam(QueryParams.IsLive, isLive);
 
         return HelixResultFactory.Create(Client, request, endpoint, cancellationToken);
     }

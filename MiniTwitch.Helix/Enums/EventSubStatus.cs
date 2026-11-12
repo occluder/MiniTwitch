@@ -16,5 +16,11 @@ public enum EventSubStatus
     WebsocketConnectionUnused,
     WebsocketInternalError,
     WebsocketNetworkTimeout,
-    WebsocketNetworkError
+    WebsocketNetworkError,
+    GuestStarModeratorRemoved,
+    ChatUserBanned,
+    BetaMaintenance,
+    WebsocketFailedToReconnect,
+    ConduitDeleted,
+    Unknown
 }

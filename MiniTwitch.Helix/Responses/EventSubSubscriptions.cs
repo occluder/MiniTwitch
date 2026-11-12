@@ -14,22 +14,17 @@ public class EventSubSubscriptions : PaginableResponse<EventSubSubscriptions.Sub
     [JsonPropertyName("total")]
     public int Total { get; init; }
 
-    public record Condition(
-        [property: JsonPropertyName("broadcaster_user_id")]
-        string BroadcasterId,
-        string UserId
-    );
-
     public record Subscription(
         string Id,
         [property: JsonConverter(typeof(EnumConverter<EventSubStatus>))]
         EventSubStatus Status,
         string Type,
         string Version,
-        Condition Condition,
+        IReadOnlyDictionary<string, string> Condition,
         string CreatedAt,
         Transport Transport,
-        int Cost
+        int Cost,
+        bool IsBatchingEnabled
     );
 
     public record Transport(
@@ -38,6 +33,7 @@ public class EventSubSubscriptions : PaginableResponse<EventSubSubscriptions.Sub
         string? Secret,
         string? SessionId,
         string? ConnectedAt,
-        string? DisconnectedAt
+        string? DisconnectedAt,
+        string? ConduitId
     );
 }

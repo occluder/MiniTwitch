@@ -6,25 +6,25 @@ public class ActiveExtensions
 
     public record Component(
          bool Active,
-         string Id,
-         string Version,
-         string Name,
-         int X,
-         int Y
+         string? Id,
+         string? Version,
+         string? Name,
+         int? X,
+         int? Y
     );
 
     public record Panel(
          bool Active,
-         string Id,
-         string Version,
-         string Name
+         string? Id,
+         string? Version,
+         string? Name
     );
 
     public record Overlay(
          bool Active,
-         string Id,
-         string Version,
-         string Name
+         string? Id,
+         string? Version,
+         string? Name
     );
 
     public record ExtensionsData(

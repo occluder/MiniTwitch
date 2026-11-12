@@ -41,7 +41,6 @@ internal static class QueryParams
     public const string IsAudioEnabled = "is_audio_enabled";
     public const string IsVideoEnabled = "is_video_enabled";
     public const string IsLive = "is_live";
-    public const string Volume = "volume";
     public const string MsgId = "msg_id";
     public const string Action = "action";
     public const string MessageId = "message_id";

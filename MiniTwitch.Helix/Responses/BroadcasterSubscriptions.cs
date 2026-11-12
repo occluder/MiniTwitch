@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MiniTwitch.Helix.Internal.Json;
 using MiniTwitch.Helix.Models;
 
 namespace MiniTwitch.Helix.Responses;
@@ -6,9 +7,9 @@ namespace MiniTwitch.Helix.Responses;
 public class BroadcasterSubscriptions : PaginableResponse<BroadcasterSubscriptions.Subscription>
 {
 
-    public int Total { get; init; }
+    public int? Total { get; init; }
 
-    public int Points { get; init; }
+    public int? Points { get; init; }
 
     public record Subscription(
          long BroadcasterId,
@@ -22,6 +23,6 @@ public class BroadcasterSubscriptions : PaginableResponse<BroadcasterSubscriptio
        long UserId,
         [property: JsonPropertyName("user_name")] string UserDisplayName,
         [property: JsonPropertyName("user_login")] string Username,
-         long GifterId
+        [property: JsonConverter(typeof(OptionalLongConverter))] long? GifterId
     );
 }

@@ -12,5 +12,6 @@ public enum ConduitShardStatus
     WebsocketInternalError,
     WebsocketNetworkTimeout,
     WebsocketNetworkError,
-    WebsocketFailedToReconnect
+    WebsocketFailedToReconnect,
+    WebsocketConnectionUnused
 }

@@ -2,6 +2,7 @@
 
 public enum LabelLocale
 {
+    ar_SA,
     bg_BG,
     cs_CZ,
     da_DK,
@@ -20,7 +21,7 @@ public enum LabelLocale
     nl_NL,
     no_NO,
     pl_PL,
-    pt_BT,
+    pt_BR,
     pt_PT,
     ro_RO,
     ru_RU,
@@ -28,6 +29,7 @@ public enum LabelLocale
     sv_SE,
     th_TH,
     tr_TR,
+    uk_UA,
     vi_VN,
     zh_CN,
     zh_TW

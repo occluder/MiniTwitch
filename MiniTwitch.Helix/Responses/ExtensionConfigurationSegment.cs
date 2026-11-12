@@ -6,6 +6,7 @@ public class ExtensionConfigurationSegment : BaseResponse<ExtensionConfiguration
 {
     public record ConfigSegment(
         string Segment,
+        string BroadcasterId,
         string Content,
         string Version
     );

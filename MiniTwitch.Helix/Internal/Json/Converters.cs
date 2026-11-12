@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MiniTwitch.Helix.Responses;
@@ -111,12 +112,15 @@ internal class EnumConverter<TEnum> : JsonConverter<TEnum>
 
     internal static TEnum ReadEnum(string? enumString)
     {
-        if (Enum.TryParse(typeof(TEnum), SnakeCase.Instance.ConvertFromCase(enumString), out object? enumMember))
+        if (
+            Enum.TryParse(typeof(TEnum), SnakeCase.Instance.ConvertFromCase(enumString), out object? enumMember)
+            && Enum.IsDefined(typeof(TEnum), enumMember)
+        )
         {
             return (TEnum)enumMember;
         }
 
-        return default!;
+        return Enum.TryParse(typeof(TEnum), "Unknown", out object? unknown) ? (TEnum)unknown : default!;
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
@@ -169,6 +173,71 @@ public class ConduitTransportConverter : JsonConverter<ConduitTransport>
         }
 
         return null;
+    }
+}
+
+/// <summary>
+/// Reads DateTime? from a Unix timestamp in seconds, a numeric string, or an RFC3339 string.
+/// A value of 0 is treated as <see langword="null"/>. Writes DateTime as an RFC3339 string.
+/// </summary>
+internal class UnixSecondsDateTimeConverter : JsonConverter<DateTime?>
+{
+    public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        long seconds;
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return null;
+        }
+
+        if (reader.TokenType == JsonTokenType.Number)
+        {
+            if (!reader.TryGetInt64(out seconds))
+            {
+                throw new JsonException("Cannot convert numeric value to a Unix timestamp");
+            }
+        }
+        else if (reader.TokenType == JsonTokenType.String)
+        {
+            if (reader.TryGetDateTime(out var dateTime))
+            {
+                return dateTime.Kind == DateTimeKind.Unspecified
+                    ? DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)
+                    : dateTime.ToUniversalTime();
+            }
+
+            var value = reader.GetString();
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            if (long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed))
+            {
+                seconds = parsed;
+            }
+            else
+            {
+                throw new JsonException($"Cannot convert value {value} to DateTime?");
+            }
+        }
+        else
+        {
+            throw new JsonException($"Expected a number or string token but got {reader.TokenType}");
+        }
+
+        return seconds == 0 ? null : DateTimeOffset.FromUnixTimeSeconds(seconds).UtcDateTime;
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options)
+    {
+        if (value is null)
+        {
+            writer.WriteNullValue();
+            return;
+        }
+
+        writer.WriteStringValue($"{value:O}");
     }
 }
 
